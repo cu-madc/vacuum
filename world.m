@@ -6,10 +6,10 @@ classdef world < dynamicprops % dynamicprops is subclass of handle
     end
     
     properties
-        N=7; %size of grid
-        r; %rate constant for exponential distribution of time between dust events
+        N=5; %size of grid
+        r; %rate constant for - events per unit time(world wide)
         s; %size constant for exponential distribution of sizes
-        v; %rate constant for exp dist of time between RAIN events
+        v; %rate constant for RAIN events - events per unit time (world wide)
         cloudsize; %average size of rain event
         A; %array of values for dirt levels
         Moisture; %array of values for moisture level
