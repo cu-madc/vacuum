@@ -38,8 +38,11 @@ classdef planner < handle
             a.isWorking=true;
             %create distance matrix
             [I,J]=ind2sub([a.N a.N],1:(a.N^2));
-            a.Z=squareform(pdist([I;J]','cityblock'));
+            %a.Z=squareform(pdist([I;J]','cityblock')); % replace to allow
+            %non-stats toolbox commands
+            a.Z=ipdm([I',J'],'metric',1);
             a.wDist=0; %default
+            
         end  
     end
     
