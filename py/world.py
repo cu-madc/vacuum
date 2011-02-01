@@ -61,6 +61,8 @@
 # 
 
 
+from numpy import *
+from numpy.linalg import *
 
 class  World :  # (handle) :
 
@@ -87,8 +89,8 @@ class  World :  # (handle) :
                                    # time (world wide)
         self.cloudsize = cloudsize # average size of rain event
 
-        self.A = []                # array of values for dirt levels
-        self.Moisture = []         # array of values for moisture level
+        self.A = numpy.zeros(1,dtype=numpy.float64)        # array of values for dirt levels
+        self.Moisture = numpy.zeros(1,dtype=numpy.float64) # array of values for moisture level
 
 
 
@@ -96,8 +98,7 @@ class  World :  # (handle) :
         
     def clean(self,a,x,y) :
         # reset location x,y dirt level to 0
-        #self.A(x,y)=0;
-        pass
+        self.A[x,y] = 0.0
 
 
     def inc(self,a) :
@@ -106,15 +107,15 @@ class  World :  # (handle) :
         # dustfall procedure -----
         t=self.time;               # start time
         T=t+1;                     # final time
-        tau=-log(rand(1))/self.r ; #time until first event
+        tau=-log(random.rand(1)[0])/self.r ; #time until first event
         t=t+tau;
             
         while(t<T) :
             # accumulate dirt until next event falls past final time
-            dustball=-log(rand(1))*self.s; # dustball size
-            I=randi(self.N^2); #select site
+            dustball=-log(random.rand(1.0)[0])*self.s; # dustball size
+            I=random.randint(self.N^2); #select site
             #self.A(I)=self.A(I)+dustball;
-            tau=-log(rand(1))/self.r ; #time until next event
+            tau=-log(random.rand(1.0)[0])/self.r ; #time until next event
             t=t+tau;
             # end dustfall
             
@@ -123,15 +124,15 @@ class  World :  # (handle) :
             
         # rainfall procedure -----
         t=self.time;               # start time
-        tau=-log(rand(1))/self.v   #time until first event
+        tau=-log(random.rand(1.0)[0])/self.v   #time until first event
         t=t+tau
 
             
         while (t<T) :
             # accumulate dirt until next event falls past final time
-            I=randi(self.N^2);     #select site
+            I=random.randint(self.N^2);     #select site
             #self.Moisture(I)=self.Moisture(I)+ceil(2*rand(1)*self.cloudsize); #uniform 0# to 200# of average
-            tau=-log(rand(1))/self.v ; #time until next event
+            tau=-log(random.rand(1.0)[0])/self.v ; #time until next event
             t=t+tau;
             # end rainfall
             
@@ -142,7 +143,7 @@ class  World :  # (handle) :
     def draw(self,world) :
         # produce standard three frame graphic
         if isempty(world.g_handle) or ~ishandle(world.g_handle) :
-            subplot(1,3,1)
+            #subplot(1,3,1)
             #imagesc(world.A') 
             vacs=world.vacuumArray;
             for i in range(len(vacs)) :
