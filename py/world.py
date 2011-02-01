@@ -90,8 +90,10 @@ class  World :  # (handle) :
                                    # time (world wide)
         self.cloudsize = cloudsize # average size of rain event
 
-        self.A = zeros(1,dtype=numpy.float64)        # array of values for dirt levels
-        self.Moisture = zeros(1,dtype=numpy.float64) # array of values for moisture level
+        self.A = zeros(self.N*self.N,dtype=float64)        # array of values for dirt levels
+        self.A.reshape(self.N,self.N)
+        self.Moisture = zeros(self.N*self.N,dtype=float64) # array of values for moisture level
+        self.Moisture.reshape(self.N,self.N)
 
 
 
@@ -133,7 +135,7 @@ class  World :  # (handle) :
             # accumulate dirt until next event falls past final time
             I=random.randint(self.N^2);     #select site
             self.Moisture[I] = self.Moisture[I] + \
-                    numpy.ceil(2*random.rand(1.0)[0]*self.cloudsize); #uniform 0# to 200# of average
+                               ceil(2*random.rand(1.0)[0]*self.cloudsize); #uniform 0# to 200# of average
             tau=-log(random.rand(1.0)[0])/self.v ; #time until next event
             t=t+tau;
             # end rainfall
@@ -204,4 +206,5 @@ class  World :  # (handle) :
             
             
 if (__name__ =='__main__') :
-    pass
+    world = World()
+    world.inc(1)
