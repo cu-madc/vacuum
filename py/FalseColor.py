@@ -62,6 +62,8 @@
 
 
 import math
+import re
+
 
 class FalseColor :
 
@@ -69,6 +71,7 @@ class FalseColor :
         self.setLow(low);
         self.setHigh(high)
 
+        self.stripHex = re.compile(r'^0x')
 
     def setLow(self,low) :
         self.low = low
@@ -108,7 +111,20 @@ class FalseColor :
             green = 0
             blue = int(255.0/60.0*(360.0-angle)+0.5)
 
-        return([red,green,blue])
+        red   = self.stripHex.sub('',hex(red))
+        while(len(red)<2) :
+            red = '0' + red
+            
+        green = self.stripHex.sub('',hex(green))
+        while(len(green)<2) :
+            green = '0' + green
+            
+        blue  = self.stripHex.sub('',hex(blue))
+        while(len(blue)<2) :
+            blue = '0' + blue
+
+        return('#'+red+green+blue)
+
         
 
     def calcColorBounds(self,value,low,high) :
