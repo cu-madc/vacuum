@@ -61,10 +61,13 @@
 # 
 
 
+from numpy import *
+from numpy.linalg import *
 from Tkinter import *
 
 from World import World
 from WorldView import WorldView
+from FalseColor import FalseColor
 
 class  GraphicalWorld (World,Tk) :
 
@@ -96,12 +99,33 @@ class  GraphicalWorld (World,Tk) :
         self.plannerView = WorldView(self.frame,self,"Planner")
         self.plannerView.pack(side=LEFT,expand=YES,fill=BOTH)
 
+        legendFrame = Frame(self.frame)
+        legendFrame.pack(side=LEFT,expand=YES)
+        Label(legendFrame,text="Legend").pack(side=TOP)
+        self.legend = Canvas(legendFrame,width=20,height=200)
+        self.legend.pack(side=TOP,expand=YES)
+        self.makeLegend(0.0,1.0);
+
+
+    def makeLegend(self,lower,upper) :
+        color = FalseColor(lower,upper)
+        for scale in range(255) :
+            self.legend.create_rectangle(0,200*scale/255,
+                                         20,200*(scale+1)/255,
+                                         fill=color.calcColor(float(scale)/255.0),
+                                         outline="")
 
 
     def draw(self) :
-        self.realView.draw(self.vacuumArray,self.A)
-        #self.sensorView.draw()
-        #self.plannerView.draw()
+        self.realView.draw(self.vacuumArray,self.A,[0.0,1.0])
+
+        trial = random.rand(self.N*self.N)
+        trial = trial.reshape(self.N,self.N)
+        self.sensorView.draw(self.vacuumArray,trial,[0.0,1.0])
+
+        trial = random.rand(self.N*self.N)
+        trial = trial.reshape(self.N,self.N)
+        self.plannerView.draw(self.vacuumArray,trial,[0.0,1.0])
 
 
 
