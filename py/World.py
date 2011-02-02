@@ -121,7 +121,10 @@ class  World :  # (handle) :
     def randomDust(self) :
         self.A = random.rand(self.N*self.N)
         self.A = self.A.reshape(self.N,self.N)
-        
+
+
+    def addExpenditure(self,value) :
+        self.expenditure += value
 
     def inc(self) :
         # single time step of simulated world

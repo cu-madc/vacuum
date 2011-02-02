@@ -70,15 +70,18 @@ class Vacuum :
 
     def __init__(self,IDnum,currentTime) : #class constructor
             
-        self.xPos=1;
-        self.yPos=1;
-        self.status=3;                        # 1 - moving, 2-cleaning, 3-waiting, 4-repairing
-        self.timeDone=currentTime+randi(10);  # time it will be done with current operation
-        self.ghan=[];                         # graphics handle
-        self.IDnum=IDnum;
-        self.range=3;                         # maximum distance that can be travelled 
-        self.queX=[];
-        self.isWorking=true;
+        self.xPos   = 1
+        self.yPos   = 1
+        self.status = 3                        # 1 - moving, 2-cleaning, 3-waiting, 4-repairing
+        self.timeDone=currentTime+ \
+                       random.randint(10);    # time it will be done with current operation
+
+        self.ghan  = []                       # graphics handle
+        self.IDnum = IDnum;
+        self.range = 3                        # maximum distance that can be travelled 
+        self.queX  = []
+        self.queY  = []
+        self.setWorking(True)
 
         self.chanComm = 0;                    #channel to commander
 
@@ -130,14 +133,14 @@ class Vacuum :
         if (ordered_distance <= self.range) :
             self.xPos=x;
             self.yPos=y;
-            self.world.expenditure  + self.moveCost;     # update funds expended
+            self.world.addExpenditure(self.moveCost);     # update funds expended
             self.timeDone=self.timeDone+1;
             self.status=1;
 
 
 
 
-    def  moveandclean(self,x,y) :
+    def  moveAndClean(self,x,y) :
         # execute an order to move to new location and clean
         # note - this method will only be called if vacuum is working,
         # so no need to check status
@@ -148,14 +151,14 @@ class Vacuum :
             self.yPos=y
             self.odometer += R
             self.missions += 1
-            self.world.expenditure += self.moveCost
+            self.world.addExpenditure(self.moveCost)
             
-            if (self.world.Moisture[x,y] > 0 ) :
+            if (self.world.Moisture[self.xPos,self.yPos] > 0 ) :
                 # location is wet
                 # repairs required before cleaning
                 self.timeDone=self.world.time+self.timeToRepair 
                 self.status=4;
-                self.world.expenditure += self.repairCost;
+                self.world.addExpenditure(self.repairCost);
                 self.repairs += 1;
                 
             else :
@@ -169,8 +172,8 @@ class Vacuum :
            
     def moveord(self,xord,yord) :
         # update que for new location to clean
-        self.queX=xord;
-        self.queY=yord;
+        self.queX.append(xord)
+        self.queY.append(yord)
 
         
         
@@ -223,3 +226,13 @@ class Vacuum :
             
     
     
+if (__name__ =='__main__') :
+    world = World()
+    world.inc()
+
+    vacuum = Vacuum(1,0.0)
+    vacuum.registerWorld(world,None)
+    vacuum.move(1,1)
+    vacuum.moveAndClean(1,1)
+    vacuum.moveord(1,1)
+    vacuum.timeStep(1,1)
