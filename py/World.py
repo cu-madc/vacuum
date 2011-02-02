@@ -111,6 +111,12 @@ class  World :  # (handle) :
     def maxDust(self) :
         return(max(self.A))
 
+    def getNumber(self) :
+        return(self.N)
+
+
+    def getArray(self) :
+        return(self.A)
 
     def randomDust(self) :
         self.A = random.rand(self.N*self.N)
@@ -165,4 +171,4 @@ class  World :  # (handle) :
             
 if (__name__ =='__main__') :
     world = World()
-    world.inc(1)
+    world.inc()
