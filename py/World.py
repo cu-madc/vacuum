@@ -134,8 +134,11 @@ class  World :  # (handle) :
         while (t<T) :
             # accumulate dirt until next event falls past final time
             I=random.randint(self.N^2);              #select site
-            self.Moisture[I] = self.Moisture[I] + \  #uniform 0# to 200# of average
-                               ceil(2*random.rand(1.0)[0]*self.cloudsize); 
+
+            #uniform 0# to 200# of average
+            self.Moisture[I] = self.Moisture[I] + \
+                               ceil(2*random.rand(1.0)[0]*self.cloudsize);
+                               
             tau=-log(random.rand(1.0)[0])/self.v ;   #time until next event
             t=t+tau;
             # end rainfall
@@ -144,65 +147,6 @@ class  World :  # (handle) :
         self.time=T;
 
         
-    def draw(self,world) :
-        # produce standard three frame graphic
-        if isempty(self.g_handle) or ~ishandle(self.g_handle) :
-            #subplot(1,3,1)
-            #imagesc(self.A') 
-            for vacuum in self.vacuumArray :
-                vacuum.draw()
-
-            #set(gca,'Xtick',1:self.N,'Ytick',1:self.N,'color',[0 0 1]);
-            #gridxy((0:self.N)+.5,(0:self.N)+.5);
-            #caxis([0 max(max(self.A(:)),max(self.sensor.array(:)))]);
-            #colorbar
-            #title(['real   t=',num2str(self.time)]);
-                
-            #subplot(1,3,2)
-            #imagesc(self.sensor.array')  # '
-            for vacuum in self.vacuumArray :
-                vacuum.draw()
-
-                
-            #set(gca,'Xtick',1:self.N,'Ytick',1:self.N,'color',[0 0 1]);
-            #gridxy((0:self.N)+.5,(0:self.N)+.5);
-            #caxis([0 max(max(self.A(:)),max(self.sensor.array(:)))]);
-            #colorbar
-            #title('sensor')
-                
-            #subplot(1,3,3)
-            #imagesc(self.planner.worldview') 
-            #vacs=self.vacuumArray;
-            for vacuum in self.vacuumArray :
-                vacuum.draw()
-
-            #set(gca,'Xtick',1:self.N,'Ytick',1:self.N,'color',[0 0 1]);
-            #gridxy((0:self.N)+.5,(0:self.N)+.5);
-            #caxis([0 max(max(self.A(:)),max(self.sensor.array(:)))]);
-            #colorbar
-            #title('planner')
-            #colormap('bone');c=colormap;colormap(flipud(c));
-            #drawnow;
-            #self.g_handle=gcf;
-            
-        else :
-                
-            for i in range(len(self.vacuumArray)) : 
-                v=findobj(self.g_handle,'string',num2str(i)); #handle to vacuum text
-                #set(v,'position',[self.vacuumArray(i).xPos self.vacuumArray(i).yPos]);
-                #set(v,'backgroundcolor',[.7 .7 .7]+[.3 -.5 -.5]*(self.vacuumArray(i).status==4));
-                
-            #C_des=[0 max(max(self.A(:)),max(self.sensor.array(:)))];
-                
-            I=findobj(self.g_handle,'type','image'); #Image components
-            #set(I(4),'CData',self.planner.worldview'); # '
-            #set(I(5),'CData',self.sensor.array','AlphaData',(self.sensor.Wet'==0)); # '
-            #set(I(6),'CData',self.A','AlphaData',(self.Moisture'==0)); # '
-                
-            ax=findobj(self.g_handle,'type','axes');
-            for i in range(4,caxis(ax[i],C_des),6) :
-            #    title(ax(6),['real   t=',num2str(self.time)]);
-                drawnow;
             
             
 if (__name__ =='__main__') :
