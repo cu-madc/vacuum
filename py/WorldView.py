@@ -60,8 +60,11 @@
 # 
 # 
 
-
+from numpy import *
+from numpy.linalg import *
 from Tkinter import *
+
+from FalseColor import FalseColor
 
 class  WorldView (Frame) :
 
@@ -90,13 +93,27 @@ class  WorldView (Frame) :
         
 
 
-    def draw(self,world) :
+    def draw(self,vacuumArray,levels) :
         # produce standard three frame graphic
-        if isempty(self.g_handle) or ~ishandle(self.g_handle) :
+
+        dim = levels.shape
+        minVal = amin(levels)
+        maxVal = amax(levels)
+        color = FalseColor(minVal,maxVal)
+
+        for i in range(dim[0]):
+            for j in range(dim[1]) :
+                self.canvas.create_rectangle(200*i/dim[0],200*j/dim[1],
+                                             200*(i+1)/dim[0],200*(j+1)/dim[1],
+                                             fill=color.calcColor(levels[i,j]))
+        
+        return
+    
+        #if isempty(self.g_handle) or ~ishandle(self.g_handle) :
             #subplot(1,3,1)
             #imagesc(self.A') 
-            for vacuum in self.vacuumArray :
-                vacuum.draw()
+        for vacuum in self.vacuumArray :
+            vacuum.draw()
 
             #set(gca,'Xtick',1:self.N,'Ytick',1:self.N,'color',[0 0 1]);
             #gridxy((0:self.N)+.5,(0:self.N)+.5);
@@ -106,8 +123,8 @@ class  WorldView (Frame) :
                 
             #subplot(1,3,2)
             #imagesc(self.sensor.array')  # '
-            for vacuum in self.vacuumArray :
-                vacuum.draw()
+        for vacuum in self.vacuumArray :
+            vacuum.draw()
 
                 
             #set(gca,'Xtick',1:self.N,'Ytick',1:self.N,'color',[0 0 1]);
@@ -119,8 +136,8 @@ class  WorldView (Frame) :
             #subplot(1,3,3)
             #imagesc(self.planner.worldview') 
             #vacs=self.vacuumArray;
-            for vacuum in self.vacuumArray :
-                vacuum.draw()
+        for vacuum in self.vacuumArray :
+            vacuum.draw()
 
             #set(gca,'Xtick',1:self.N,'Ytick',1:self.N,'color',[0 0 1]);
             #gridxy((0:self.N)+.5,(0:self.N)+.5);
@@ -131,22 +148,22 @@ class  WorldView (Frame) :
             #drawnow;
             #self.g_handle=gcf;
             
-        else :
+        #else :
                 
-            for i in range(len(self.vacuumArray)) : 
-                v=findobj(self.g_handle,'string',num2str(i)); #handle to vacuum text
+            #for i in range(len(self.vacuumArray)) : 
+            #    v=findobj(self.g_handle,'string',num2str(i)); #handle to vacuum text
                 #set(v,'position',[self.vacuumArray(i).xPos self.vacuumArray(i).yPos]);
                 #set(v,'backgroundcolor',[.7 .7 .7]+[.3 -.5 -.5]*(self.vacuumArray(i).status==4));
                 
             #C_des=[0 max(max(self.A(:)),max(self.sensor.array(:)))];
                 
-            I=findobj(self.g_handle,'type','image'); #Image components
+            #I=findobj(self.g_handle,'type','image'); #Image components
             #set(I(4),'CData',self.planner.worldview'); # '
             #set(I(5),'CData',self.sensor.array','AlphaData',(self.sensor.Wet'==0)); # '
             #set(I(6),'CData',self.A','AlphaData',(self.Moisture'==0)); # '
                 
-            ax=findobj(self.g_handle,'type','axes');
-            for i in range(4,caxis(ax[i],C_des),6) :
+            #ax=findobj(self.g_handle,'type','axes');
+            #for i in range(4,caxis(ax[i],C_des),6) :
             #    title(ax(6),['real   t=',num2str(self.time)]);
-                drawnow;
+            #    drawnow;
 

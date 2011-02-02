@@ -98,14 +98,16 @@ class  GraphicalWorld (World,Tk) :
 
 
 
-    def draw(self,world) :
-        self.realView.draw()
-        self.sensorView.draw()
-        self.plannerView.draw()
+    def draw(self) :
+        self.realView.draw(self.vacuumArray,self.A)
+        #self.sensorView.draw()
+        #self.plannerView.draw()
 
 
 
 if (__name__ =='__main__') :
     world = GraphicalWorld()
     world.inc()
+    world.randomDust()
+    world.draw()
     world.mainloop()
