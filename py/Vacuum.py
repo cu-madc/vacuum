@@ -83,8 +83,7 @@ class Vacuum :
         self.queY  = []
         self.setWorking(True)
 
-        self.chanComm = 0;                    #channel to commander
-
+        self.setChannel(0)                    #channel to commander
         self.timeToClean=8;
         self.timeToRepair=32;
         self.odometer=0;                      # tracks distance travelled
@@ -102,6 +101,11 @@ class Vacuum :
     def getWorking(self) :
         return(self.isWorking)
 
+    def getChannel(self) :
+        return(self.chanComm)
+
+    def setChannel(self,value) :
+        self.chanComm = value
 
     def registerWorld(self,W,command) :
         #make vacuum aware of its world and who is its commander
