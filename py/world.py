@@ -99,12 +99,12 @@ class  World :  # (handle) :
 
 
         
-    def clean(self,a,x,y) :
+    def clean(self,x,y) :
         # reset location x,y dirt level to 0
         self.A[x,y] = 0.0
 
 
-    def inc(self,a) :
+    def inc(self) :
         # single time step of simulated world
             
         # dustfall procedure -----
@@ -116,9 +116,9 @@ class  World :  # (handle) :
         while(t<T) :
             # accumulate dirt until next event falls past final time
             dustball=-log(random.rand(1.0)[0])*self.s; # dustball size
-            I=random.randint(self.N**2); #select site
-            self.A[I] = self.A[I]+dustball;
-            tau=-log(random.rand(1.0)[0])/self.r ; #time until next event
+            I=random.randint(self.N**2);               # select site
+            self.A[I] = self.A[I]+dustball;            # update the dustlevel
+            tau=-log(random.rand(1.0)[0])/self.r ;     # time until next event
             t=t+tau;
             # end dustfall
             
@@ -126,17 +126,17 @@ class  World :  # (handle) :
         self.Moisture[self.Moisture>0]=self.Moisture[self.Moisture>0]-1;
             
         # rainfall procedure -----
-        t=self.time;               # start time
+        t=self.time;                           # start time
         tau=-log(random.rand(1.0)[0])/self.v   #time until first event
         t=t+tau
 
             
         while (t<T) :
             # accumulate dirt until next event falls past final time
-            I=random.randint(self.N^2);     #select site
-            self.Moisture[I] = self.Moisture[I] + \
-                               ceil(2*random.rand(1.0)[0]*self.cloudsize); #uniform 0# to 200# of average
-            tau=-log(random.rand(1.0)[0])/self.v ; #time until next event
+            I=random.randint(self.N^2);              #select site
+            self.Moisture[I] = self.Moisture[I] + \  #uniform 0# to 200# of average
+                               ceil(2*random.rand(1.0)[0]*self.cloudsize); 
+            tau=-log(random.rand(1.0)[0])/self.v ;   #time until next event
             t=t+tau;
             # end rainfall
             
