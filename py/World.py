@@ -91,9 +91,9 @@ class  World :  # (handle) :
         self.cloudsize = cloudsize # average size of rain event
 
         self.A = zeros(self.N*self.N,dtype=float64)        # array of values for dirt levels
-        self.A.reshape(self.N,self.N)
+        self.A = self.A.reshape(self.N,self.N)
         self.Moisture = zeros(self.N*self.N,dtype=float64) # array of values for moisture level
-        self.Moisture.reshape(self.N,self.N)
+        self.Moisture = self.Moisture.reshape(self.N,self.N)
 
 
 
@@ -103,6 +103,19 @@ class  World :  # (handle) :
         # reset location x,y dirt level to 0
         self.A[x,y] = 0.0
 
+
+    def minDust(self) :
+        return(min(self.A))
+
+
+    def maxDust(self) :
+        return(max(self.A))
+
+
+    def randomDust(self) :
+        self.A = random.rand(self.N*self.N)
+        self.A = self.A.reshape(self.N,self.N)
+        
 
     def inc(self) :
         # single time step of simulated world
@@ -116,14 +129,15 @@ class  World :  # (handle) :
         while(t<T) :
             # accumulate dirt until next event falls past final time
             dustball=-log(random.rand(1.0)[0])*self.s; # dustball size
-            I=random.randint(self.N**2);               # select site
-            self.A[I] = self.A[I]+dustball;            # update the dustlevel
+            Ix=random.randint(self.N);                 # select site
+            Iy=random.randint(self.N);                 # select site
+            self.A[Ix,Iy] = self.A[Ix,Iy]+dustball;    # update the dustlevel
             tau=-log(random.rand(1.0)[0])/self.r ;     # time until next event
             t=t+tau;
             # end dustfall
             
         # drying
-        self.Moisture[self.Moisture>0]=self.Moisture[self.Moisture>0]-1;
+        self.Moisture[self.Moisture>0] -= 1;
             
         # rainfall procedure -----
         t=self.time;                           # start time
@@ -133,11 +147,11 @@ class  World :  # (handle) :
             
         while (t<T) :
             # accumulate dirt until next event falls past final time
-            I=random.randint(self.N^2);              #select site
+            Ix=random.randint(self.N);                 # select site
+            Iy=random.randint(self.N);                 # select site
 
             #uniform 0# to 200# of average
-            self.Moisture[I] = self.Moisture[I] + \
-                               ceil(2*random.rand(1.0)[0]*self.cloudsize);
+            self.Moisture[Ix,Iy] += ceil(2*random.rand(1.0)[0]*self.cloudsize);
                                
             tau=-log(random.rand(1.0)[0])/self.v ;   #time until next event
             t=t+tau;
