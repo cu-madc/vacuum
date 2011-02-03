@@ -91,6 +91,9 @@ class  GraphicalWorld (World,Tk) :
 
 
     def setupWindow(self) :
+        self.timeLabel = Label(self.frame,"t=0")
+        self.timeLabel.pack(side=TOP,expand=YES)
+        
         self.realView = WorldView(self.frame,self,"Real")
         self.realView.pack(side=LEFT,expand=YES,fill=BOTH)
 

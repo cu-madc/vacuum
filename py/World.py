@@ -188,6 +188,9 @@ class  World :  # (handle) :
         if(self.sensor) :
             self.sensor.measure()
 
+        if(self.planner) :
+            self.planner.updateView(None,None)
+
         for vacuum in self.vacuumArray:
             vacuum.timeStep(None,None)
             
