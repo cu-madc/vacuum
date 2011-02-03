@@ -74,7 +74,7 @@ class  World :  # (handle) :
     
         self.N=5                   # %size of grid
         self.vacuumArray = []      # array of object handles
-        self.sensor = []           # data as recorded on sensor
+        self.sensor = None         # data as recorded on sensor
         self.planner = None        # handle to planning processor
         self.g_handle = None       # handle to worlddraw graph
         self.expenditure = 0.0     # cummulative funds expended since last reset
@@ -125,6 +125,22 @@ class  World :  # (handle) :
 
     def addExpenditure(self,value) :
         self.expenditure += value
+
+    def addVacuum(self,vacuum) :
+        self.vacuumArray.append(vacuum)
+
+    def setSensor(self,sensor) :
+        self.sensor = sensor
+
+    def getSensor(self) :
+        return(self.sensor)
+
+    def setPlanner(self,planner) :
+        self.planner = planner
+
+    def getPlanner(self) :
+        return(self.planner)
+
 
     def inc(self) :
         # single time step of simulated world

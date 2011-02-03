@@ -68,7 +68,7 @@ class Vacuum :
     # robot vaccum object
 
 
-    def __init__(self,IDnum,currentTime) : #class constructor
+    def __init__(self,IDnum,currentTime=0.0) : #class constructor
             
         self.xPos   = 1
         self.yPos   = 1
@@ -102,10 +102,10 @@ class Vacuum :
         return(self.isWorking)
 
     def getChannel(self) :
-        return(self.chanComm)
+        return(self.channel)
 
     def setChannel(self,value) :
-        self.chanComm = value
+        self.channel = value
 
     def registerWorld(self,W,command) :
         #make vacuum aware of its world and who is its commander
@@ -197,13 +197,13 @@ class Vacuum :
                 # update world that location has been cleaned
                 self.world.clean(self.xPos,self.yPos) 
                 self.status=3                         # waiting new instruction
-                #self.chanComm.send(self.commander,@getReport,a,self.xPos,self.yPos,2); # report that cleaning complete, recieve new instruction
+                #self.channel.send(self.commander,@getReport,a,self.xPos,self.yPos,2); # report that cleaning complete, recieve new instruction
                 #getReport(self.commander,a,self.xPos,self.yPos,2)  # report that cleaning complete, recieve new instruction
 
                 
             elif ((self.status==3) and (len(self.queX)==0)) :
                 # nothing in que
-                #self.chanComm.send(self.commander,@getReport,a,self.xPos,self.yPos,self.status); # report to commander that vac is waiting
+                #self.channel.send(self.commander,@getReport,a,self.xPos,self.yPos,self.status); # report to commander that vac is waiting
                 #getReport(self.commander,a,self.xPos,self.yPos,self.status); # report to commander that vac is waiting
                 pass
 

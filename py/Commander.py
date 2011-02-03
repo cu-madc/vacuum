@@ -71,11 +71,11 @@ class Commander :
 
     def __init__(self,plan=None) : 
 
-        chanPlan = 0   # handle from channel to planner
-        chanVac = []   # list  of handles to assigned vacuums
+        self.chanPlan = 0   # handle from channel to planner
+        self.chanVac = []   # list  of handles to assigned vacuums
 
         self.setWorking(True)
-        self.planner=plan            # handle to planner
+        self.setChannel(plan)         # handle to planner
 
 
     def setWorking(self,value) :
@@ -86,7 +86,14 @@ class Commander :
         return(self.isWorking)
 
     def addVacuum(self,vacuum) :
-        chanVac.append(vacuum)
+        self.chanVac.append(vacuum)
+
+
+    def getChannel(self) :
+        return(self.channel)
+
+    def setChannel(self,value) :
+        self.channel = value
 
 
     def registerChannels(self,chanPlan,vacArray) :
@@ -112,10 +119,10 @@ class Commander :
 
             # get recommended order from the planner
             # returns empty if comms problem
-            #[xord,yord]=self.chanPlan.sendReceive(self.planner,self.planner.chanComm,@recommendOrder,aVac); 
+            #[xord,yord]=self.chanPlan.sendReceive(self.planner,self.planner.channel,@recommendOrder,aVac); 
             #if (len(xord)==0) :
             #   # retry
-            #    [xord,yord]=self.chanPlan.sendReceive(self.planner,self.planner.chanComm,@recommendOrder,aVac); 
+            #    [xord,yord]=self.chanPlan.sendReceive(self.planner,self.planner.channel,@recommendOrder,aVac); 
             #end
             
             

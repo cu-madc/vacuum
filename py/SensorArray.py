@@ -86,7 +86,7 @@ class SensorArray :
 
         self.setWorking(True)
 
-        self.chanPlan = 0                               # handle to channel to planner
+        self.channel = 0                               # handle to channel to planner
 
 
     def setWorking(self,value) :
@@ -95,6 +95,12 @@ class SensorArray :
     def getWorking(self):
         return(self.isWorking)
         
+
+    def getChannel(self) :
+        return(self.channel)
+
+    def setChannel(self,value) :
+        self.channel = value
 
     #events %sense
     #    sense; % sensor taking action - triggers action in planner
