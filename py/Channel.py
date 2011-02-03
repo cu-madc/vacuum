@@ -85,7 +85,7 @@ class Channel:
     def getWorking(self) :
         return(self.isWorking)
 
-    def send(self,target,aMethod,varargin) :
+    def send(self,target,aMethod,*varargin) :
         # assumes method is for the world
         
         if self.getWorking() and (self.reliability>random.rand(1)[0]) :
@@ -94,7 +94,7 @@ class Channel:
             
 
         
-    def sendReceive(self,target,returnChannel,aMethod,varargin) :
+    def sendReceive(self,target,returnChannel,aMethod,*varargin) :
         # implements methods that also return values via a channel
 
         varargout = []
@@ -103,10 +103,27 @@ class Channel:
             if ((not returnChannel.getWorking()) or
                  (returnChannel.reliability<random.rand(1)[0])) :
                  # execute method but don't return result
-                 varargout=cell
+                 for i in range(len(varargin)) :
+                     varargout.append([])
                  
-            else :
-                varargout=cell
+        else :
+            for i in range(len(varargin)) :
+                varargout.append([])
 
         return(varargout)
             
+
+
+
+if (__name__ =='__main__') :
+    world = World()
+    world.inc()
+
+    channel1 = Channel(world)
+    channel2 = Channel(world)
+
+    def silly(a,*b) :
+        print("type: {0}\n{1}".format(type(a),b))
+
+    channel1.send(world,silly,1,2,3)
+    channel1.sendReceive(world,channel2,silly,1,2,3)
