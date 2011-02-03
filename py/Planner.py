@@ -152,6 +152,9 @@ class Planner :
             
         # get data from sensor, if available
         dirtLevel = []
+        if(self.sensor) :
+            dirtLevel = self.sensor.getArray()
+            wetted    = self.sensor.getWet()
         #[dirtLevel,wetted]=self.chanSens.sendReceive(self.sensor,self.sensor.chanPlan,@measure,self.world);
             
         # update levels based on sensor information
@@ -161,7 +164,7 @@ class Planner :
         else :
             # data available 
             # bayes update on dirt  
-            tau=3./(self.sensor.accuracy^2*self.sensor.array+1);
+            tau=3./((self.sensor.accuracy**2)*self.sensor.array+1.0);
             mu=dirtLevel;
             self.worldview=(tau_0*mu_0+tau*mu)/(tau_0+tau);
             self.viewPrecision=tau+tau_0;

@@ -105,6 +105,9 @@ class SensorArray :
     def getArray(self) :
         return(self.array)
 
+    def getWet(self) :
+        return(self.Wet)
+
     #events %sense
     #    sense; % sensor taking action - triggers action in planner
     #end
