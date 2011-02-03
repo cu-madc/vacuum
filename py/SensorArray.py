@@ -102,6 +102,9 @@ class SensorArray :
     def setChannel(self,value) :
         self.channel = value
 
+    def getArray(self) :
+        return(self.array)
+
     #events %sense
     #    sense; % sensor taking action - triggers action in planner
     #end

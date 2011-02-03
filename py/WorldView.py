@@ -110,10 +110,15 @@ class  WorldView (Frame) :
                 self.canvas.create_rectangle(200*i/dim[0],200*j/dim[1],
                                              200*(i+1)/dim[0],200*(j+1)/dim[1],
                                              fill=color.calcColor(levels[i,j]))
-        
-        return
-    
-        for vacuum in self.vacuumArray :
-            vacuum.draw()
+
+        which = 0
+        for vacuum in vacuumArray :
+            which += 1
+            coords = vacuum.getPosition()
+            print(coords)
+            self.canvas.create_text(100/dim[0]+200*(coords[0]-1)/dim[0],
+                                    100/dim[1]+200*(coords[1]-1)/dim[1],
+                                    text="V"+str(which),
+                                    justify=CENTER)
 
 

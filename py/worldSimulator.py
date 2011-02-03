@@ -87,40 +87,37 @@ W = GraphicalWorld(r,s,v,cloudsize);
 N = W.getNumber() 
 
 
-numVacs=3
-vacArray = []
-
-for i in range(numVacs) :
-    vacuum = Vacuum(i,1.0)
-    vacArray.append(vacuum)
-    W.addVacuum(vacuum)
-
-
-
-sensor = SensorArray(.2,W)
-W.setSensor(sensor)
-
+# create the commander and planner
 plan = None
 #plan=Planner(r*s/float(N*N),r*s/float(N*N),sensor,vacArray,W);
 #W.setPlanner(plan)
 
 command=Commander(plan);
 
-for i in range(numVacs) :
-    vacArray[i].registerWorld(W,command)
-    command.addVacuum(vacArray[i])
-
-
 # channel setup
 chan1=Channel(W);   # TODO register the channel to the world
 chan2=Channel(W);
 chan3=Channel(W); 
-
 #scenario ---  chan1 - wired;  chan2 - wireless; chan3 - satellite
 #TODO fix for arbitary number of vacs    
 
+
+# Create vacuums
+numVacs=3
+vacArray = []
 for i in range(numVacs) :
-    vacArray[i].setChannel(chan2)
+    vacuum = Vacuum(i,1.0)
+    vacuum.registerWorld(W,command)
+    vacuum.setChannel(chan2)
+    vacArray.append(vacuum)
+    W.addVacuum(vacuum)
+    command.addVacuum(vacuum)
+
+
+
+sensor = SensorArray(.2,W)
+W.setSensor(sensor)
+
     
 #plan.chanComm=chan1;
 command.registerChannels(chan1, vacArray); 
@@ -140,6 +137,7 @@ R = []
 W.draw()
 for i in range(1000) :
     W.inc()
+    W.draw()
     H.append(sum(sum(W.A)))
     R.append(sum(W.Moisture>0))
     

@@ -60,6 +60,7 @@
 # 
 # 
 
+#import time
 
 from numpy import *
 from numpy.linalg import *
@@ -117,15 +118,22 @@ class  GraphicalWorld (World,Tk) :
 
 
     def draw(self) :
-        self.realView.draw(self.vacuumArray,self.A,[0.0,1.0])
+        # Get the arrays that need to be plotted
+        sensorArray = self.getSensor().getArray()
+        plannerArray = random.rand(self.N*self.N)
+        plannerArray = plannerArray.reshape(self.N,self.N)
 
-        trial = random.rand(self.N*self.N)
-        trial = trial.reshape(self.N,self.N)
-        self.sensorView.draw(self.vacuumArray,trial,[0.0,1.0])
+        # Figure out the bounds for the color scale.
+        low  = amin([amin(self.A),amin(sensorArray),amin(plannerArray)])
+        high = amax([amax(self.A),amax(sensorArray),amax(plannerArray)])
 
-        trial = random.rand(self.N*self.N)
-        trial = trial.reshape(self.N,self.N)
-        self.plannerView.draw(self.vacuumArray,trial,[0.0,1.0])
+        # Draw each depiction of the world
+        self.realView.draw(self.vacuumArray,self.A,[low,high])
+        self.sensorView.draw(self.vacuumArray,self.getSensor().getArray(),[low,high])
+        self.plannerView.draw(self.vacuumArray,plannerArray,[low,high])
+
+        self.update()
+        #time.sleep(1.0)
 
 
 

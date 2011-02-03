@@ -107,6 +107,9 @@ class Vacuum :
     def setChannel(self,value) :
         self.channel = value
 
+    def getPosition(self) :
+        return([self.xPos,self.yPos])
+
     def registerWorld(self,W,command) :
         #make vacuum aware of its world and who is its commander
         self.world=W
