@@ -91,7 +91,7 @@ class  GraphicalWorld (World,Tk) :
 
 
     def setupWindow(self) :
-        self.timeLabel = Label(self.frame,"t=0")
+        self.timeLabel = Label(self.frame,text="t=0")
         self.timeLabel.pack(side=TOP,expand=YES)
         
         self.realView = WorldView(self.frame,self,"Real")
@@ -133,6 +133,9 @@ class  GraphicalWorld (World,Tk) :
         self.realView.draw(self.vacuumArray,self.A,[low,high])
         self.sensorView.draw(self.vacuumArray,self.getSensor().getArray(),[low,high])
         self.plannerView.draw(self.vacuumArray,plannerArray,[low,high])
+
+        # Update the view of the time
+        self.timeLabel.config(text="t= {0}".format(self.time))
 
         self.update()
         #time.sleep(1.0)
