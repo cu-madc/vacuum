@@ -133,18 +133,17 @@ sensor.setChannel(chan3)
 # testing (??)
 S=vacArray[1].missions;
 S1=vacArray[1].repairs;
-#tic;
-#H=zeros(1000,1);R=H;
 
 
 H = []
 R = []
+W.draw()
 for i in range(1000) :
-    W.inc
+    W.inc()
     H.append(sum(sum(W.A)))
     R.append(sum(W.Moisture>0))
     
-mean(H)
+print("Mean of H: {0}".format(mean(H)))
 
 try:
     T_est=1000.0/(vacArray[1].missions-S)
@@ -156,4 +155,6 @@ S=vacArray[1].missions-S;
 
 
 W.draw()
+W.mainloop()
+
 

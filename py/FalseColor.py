@@ -80,7 +80,14 @@ class FalseColor :
         self.high = high
 
     def calcColor(self,value) :
-        angle = 240.0*(value-self.low)/(self.high-self.low)
+        
+        if (value > self.high) :
+            angle = 0.0
+        elif (value < self.low) :
+            angle = 240.0
+        else :
+            angle = 240.0*(value-self.low)/(self.high-self.low)
+            
         if(angle < 60.0) :
             red = 255
             green = int(255.0/60.0*angle+0.5)
