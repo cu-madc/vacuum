@@ -65,7 +65,7 @@ from numpy.linalg import *
 
 from Channel import Channel
 from Commander import Commander
-#from Planner import Planner
+from Planner import Planner
 from SensorArray import SensorArray
 from GraphicalWorld import GraphicalWorld
 from Vacuum import Vacuum
@@ -76,7 +76,7 @@ from Vacuum import Vacuum
 
 # Set the rate and size for dirtfall
 r = 0.5
-s = 10
+s = 10.0
 
 # Set the rate constant and size for rain
 v         = .1
@@ -86,13 +86,10 @@ cloudsize = 20
 W = GraphicalWorld(r,s,v,cloudsize);
 N = W.getNumber() 
 
+# create and set the sensor
 
-# create the commander and planner
-plan = None
-#plan=Planner(r*s/float(N*N),r*s/float(N*N),sensor,vacArray,W);
-#W.setPlanner(plan)
-
-command=Commander(plan);
+sensor = SensorArray(.2,W)
+W.setSensor(sensor)
 
 # channel setup
 chan1=Channel(W);   # TODO register the channel to the world
@@ -102,23 +99,28 @@ chan3=Channel(W);
 #TODO fix for arbitary number of vacs    
 
 
+
+
 # Create vacuums
 numVacs=3
 vacArray = []
 for i in range(numVacs) :
     vacuum = Vacuum(i,1.0)
-    vacuum.registerWorld(W,command)
     vacuum.setChannel(chan2)
     vacArray.append(vacuum)
     W.addVacuum(vacuum)
-    command.addVacuum(vacuum)
 
 
+# create the commander and planner
+plan=Planner(r*s/float(N*N),r*s/float(N*N),sensor,vacArray,W);
+command=Commander(plan);
+W.setPlanner(plan)
 
-sensor = SensorArray(.2,W)
-W.setSensor(sensor)
+for i in range(numVacs) :
+    vacArray[i].registerWorld(W,command)
+    command.addVacuum(vacArray[i])
 
-    
+
 #plan.chanComm=chan1;
 command.registerChannels(chan1, vacArray); 
 

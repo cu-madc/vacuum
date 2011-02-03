@@ -120,8 +120,7 @@ class  GraphicalWorld (World,Tk) :
     def draw(self) :
         # Get the arrays that need to be plotted
         sensorArray = self.getSensor().getArray()
-        plannerArray = random.rand(self.N*self.N)
-        plannerArray = plannerArray.reshape(self.N,self.N)
+        plannerArray = self.getPlanner().getArray()
 
         # Figure out the bounds for the color scale.
         low  = amin([amin(self.A),amin(sensorArray),amin(plannerArray)])

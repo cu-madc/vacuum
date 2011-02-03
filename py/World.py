@@ -141,7 +141,7 @@ class  World :  # (handle) :
     def getPlanner(self) :
         return(self.planner)
 
-    def getVaccuums(self) :
+    def getVacuums(self) :
         return(self.vacuumArray)
 
 

@@ -85,6 +85,8 @@ class FalseColor :
             angle = 0.0
         elif (value < self.low) :
             angle = 240.0
+        elif (abs(self.high-self.low)< 1.0E-6) :
+            angle = 0.0
         else :
             angle = 240.0*(value-self.low)/(self.high-self.low)
             

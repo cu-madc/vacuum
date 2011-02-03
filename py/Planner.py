@@ -77,13 +77,13 @@ class Planner :
         N = world.getNumber()
         self.setNumber(N)
 
-        self.worldview=zeros(N*N);
+        self.worldview = zeros(N*N,dtype=float64);
         self.worldview = self.worldview.reshape(N,N)
 
-        self.wetview=zeros(N*N);
+        self.wetview = zeros(N*N,dtype=float64);
         self.wetview = self.wetview.reshape(N,N)
 
-        self.viewPrecision=zeros(N*N);
+        self.viewPrecision = zeros(N*N,dtype=float64);
         self.viewPrecision = self.viewPrecision.reshape(N,N)
         
         self.errGrowth=errGrowth      # estimated growth in variance
@@ -94,10 +94,10 @@ class Planner :
         #timehear = addlistener(self.world,'time','PostSet',@(src,evnt)updateView(a,src,evnt)); % triggered by world time tick
         self.setSensor(sensor)
 
-        vacuums = self.world.getVacuums()
+        vacuums = world.getVacuums()
         i = 0
         for vacuum in vacuums: 
-            vacuum.setPos(Vacs[i].getPosition());
+            vacuum.setPosition(Vacs[i].getPosition());
             i += 1
 
         self.setWorking(True)
@@ -134,6 +134,11 @@ class Planner :
     def getWorld(self) :
         return(self.world)
 
+    def getWorldView(self) :
+        return(self.worldview)
+
+    def getArray(self) :
+        return(self.worldview)
 
     def updateView(self,src,evnt) :
         # triggered by world time tick - update planner's view of world
