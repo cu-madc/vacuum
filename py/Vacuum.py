@@ -110,19 +110,15 @@ class Vacuum :
     def getPosition(self) :
         return([self.xPos,self.yPos])
 
+    def setPosition(self,pos) :
+        self.xPos = pos[0]
+        self.yPos = pos[1]
+
     def registerWorld(self,W,command) :
         #make vacuum aware of its world and who is its commander
         self.world=W
         self.commander=command
         #timeHear= addlistener(W,'time','PostSet',@(src,evnt)timeStep(a,src,evnt));% listen to world time-tick    
-
-
-
-    def draw(self) :
-        #represent vacuum on a graph
-        #self.ghan=text(self.xPos,self.yPos,num2str(self.IDnum),'horizontalalignment','center',...
-        # 'fontsize',18,'VerticalAlignment','Middle','backgroundcolor',[.7 .7 .7]);
-        pass
 
 
         

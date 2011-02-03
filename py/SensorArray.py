@@ -113,23 +113,21 @@ class SensorArray :
 
     
     
-    def measure(self,aWorld) :
+    def measure(self) :
         # measure the world and return data
 
-        if(not self.isWorking) :
-            dirtLevel=[]
-            wetted=[]
-
-        else :
-            actualdata=aWorld.getArray()     #get real world values
+        dirtLevel=[]
+        wetted=[]
+        if (self.world and self.isWorking):
+            actualdata=self.world.getArray()     #get real world values
 
             #adjust for noise
-            print(actualdata)
-            self.array=actualdata*(1.0+2.0*self.accuracy*(random.rand(aWorld.getNumber())-0.5))
-            print(self.array)
+            #print(actualdata)
+            self.array=actualdata*(1.0+2.0*self.accuracy*(random.rand(self.world.getNumber())-0.5))
+            #print(self.array)
          
             dirtLevel=self.array;
-            self.Wet=(aWorld.Moisture>0);
+            self.Wet=(self.world.Moisture>0);
             wetted=self.Wet;
 
         return([dirtLevel,wetted])

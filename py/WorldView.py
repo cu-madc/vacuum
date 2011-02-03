@@ -115,7 +115,6 @@ class  WorldView (Frame) :
         for vacuum in vacuumArray :
             which += 1
             coords = vacuum.getPosition()
-            print(coords)
             self.canvas.create_text(100/dim[0]+200*(coords[0]-1)/dim[0],
                                     100/dim[1]+200*(coords[1]-1)/dim[1],
                                     text="V"+str(which),

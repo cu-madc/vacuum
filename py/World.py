@@ -141,6 +141,9 @@ class  World :  # (handle) :
     def getPlanner(self) :
         return(self.planner)
 
+    def getVaccuums(self) :
+        return(self.vacuumArray)
+
 
     def inc(self) :
         # single time step of simulated world
@@ -181,7 +184,12 @@ class  World :  # (handle) :
             tau=-log(random.rand(1.0)[0])/self.v ;   #time until next event
             t=t+tau;
             # end rainfall
-            
+
+        if(self.sensor) :
+            self.sensor.measure()
+
+        for vacuum in self.vacuumArray:
+            vacuum.timeStep(None,None)
             
         self.time=T;
 
