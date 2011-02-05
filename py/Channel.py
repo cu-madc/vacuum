@@ -101,7 +101,13 @@ class Channel:
     def sendMoveOrderFromCommander2Planner(self,xord,yord,vacummID) :
         pass
 
+    def sendMeasuredFromPlanner2Sensor(self) :
+        pass
 
+    def sendReportFromVacuum2Commander(self,xPos,yPos,status) :
+        pass
+
+    
     
 
     def send(self,target,aMethod,*varargin) :
