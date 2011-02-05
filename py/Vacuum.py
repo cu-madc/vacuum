@@ -211,9 +211,8 @@ class Vacuum :
                 
             elif ((self.status==3) and (len(self.queX)==0)) :
                 # nothing in que
-                #self.channel.send(self.commander,@getReport,a,self.xPos,self.yPos,self.status); # report to commander that vac is waiting
+                self.channel.sendReportFromVacuum2Commander(self.xPos,self.yPos,self.status,self.getID());
                 #getReport(self.commander,a,self.xPos,self.yPos,self.status); # report to commander that vac is waiting
-                pass
 
                 
             elif (self.status==3) :

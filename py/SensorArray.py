@@ -141,5 +141,5 @@ if (__name__ =='__main__') :
     world = World()
     world.randomDust()
     sensor = SensorArray(0.2,world)
-    sensor.measure(world)
+    sensor.measure()
 

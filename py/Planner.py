@@ -152,10 +152,9 @@ class Planner :
             
         # get data from sensor, if available
         dirtLevel = []
-        if(self.sensor) :
-            dirtLevel = self.sensor.getArray()
-            wetted    = self.sensor.getWet()
-        #[dirtLevel,wetted]=self.chanSens.sendReceive(self.sensor,self.sensor.chanPlan,@measure,self.world);
+        levels = self.channel.sendMeasuredFromPlanner2Sensor()
+        dirtLevel = levels[0]
+        wetted    = levels[1]
             
         # update levels based on sensor information
         if len(dirtLevel) == 0 :

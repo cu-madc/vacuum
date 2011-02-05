@@ -151,7 +151,7 @@ class Channel:
 
     def sendMeasuredFromPlanner2Sensor(self) :
         if(self.sendMessage()) :
-            pass
+            self.sensor.measure()
 
     def sendReportFromVacuum2Commander(self,xPos,yPos,status,IDnum) :
         if(self.sendMessage()) :
