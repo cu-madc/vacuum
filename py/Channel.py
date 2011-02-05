@@ -85,6 +85,25 @@ class Channel:
     def getWorking(self) :
         return(self.isWorking)
 
+
+    def sendVacuumReportFromCommander2Planner(self,xPos,yPos) :
+        pass
+
+    def sendRecommendOrderFromCommander2Planner(self,vacuumID) :
+        pass
+
+    def sendRecommendOrderFromPlanner2Commander(self,xPos,yPos) :
+        pass
+
+    def sendMoveOrderFromCommander2Vacuum(self,xord,yord,vacummID) :
+        pass
+
+    def sendMoveOrderFromCommander2Planner(self,xord,yord,vacummID) :
+        pass
+
+
+    
+
     def send(self,target,aMethod,*varargin) :
         # assumes method is for the world
         
