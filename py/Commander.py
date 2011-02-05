@@ -105,7 +105,7 @@ class Commander :
 
 
 
-    def getReport(self,aVac,xPos,yPos,status) :
+    def getReport(self,xPos,yPos,status,IDnum) :
         # receive a report from a vac and take action
         if (self.isWorking)  :
             # This commander is working

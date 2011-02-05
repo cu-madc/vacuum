@@ -68,7 +68,7 @@ class Vacuum :
     # robot vaccum object
 
 
-    def __init__(self,IDnum,currentTime=0.0) : #class constructor
+    def __init__(self,IDnum,currentTime=0.0,channel=None) : #class constructor
             
         self.xPos   = 1
         self.yPos   = 1
@@ -77,13 +77,13 @@ class Vacuum :
                        random.randint(10);    # time it will be done with current operation
 
         self.ghan  = []                       # graphics handle
-        self.IDnum = IDnum;
+        self.setID(IDnum)
         self.range = 3                        # maximum distance that can be travelled 
         self.queX  = []
         self.queY  = []
         self.setWorking(True)
 
-        self.setChannel(0)                    #channel to commander
+        self.setChannel(channel)              #channel to commander
         self.timeToClean=8;
         self.timeToRepair=32;
         self.odometer=0;                      # tracks distance travelled
@@ -113,6 +113,12 @@ class Vacuum :
     def setPosition(self,pos) :
         self.xPos = pos[0]
         self.yPos = pos[1]
+
+    def getID(self) :
+        return(self.IDnum)
+
+    def setID(self,value) :
+        self.IDnum = value
 
     def registerWorld(self,W,command) :
         #make vacuum aware of its world and who is its commander
@@ -196,7 +202,10 @@ class Vacuum :
                 # update world that location has been cleaned
                 self.world.clean(self.xPos,self.yPos) 
                 self.status=3                         # waiting new instruction
-                #self.channel.send(self.commander,@getReport,a,self.xPos,self.yPos,2); # report that cleaning complete, recieve new instruction
+
+                # report that cleaning complete, recieve new instruction
+                self.channel.sendReportFromVacuum2Commander(self.xPos,self.yPos,2,self.getID());
+                
                 #getReport(self.commander,a,self.xPos,self.yPos,2)  # report that cleaning complete, recieve new instruction
 
                 

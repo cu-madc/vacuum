@@ -153,9 +153,9 @@ class Channel:
         if(self.sendMessage()) :
             pass
 
-    def sendReportFromVacuum2Commander(self,xPos,yPos,status) :
+    def sendReportFromVacuum2Commander(self,xPos,yPos,status,IDnum) :
         if(self.sendMessage()) :
-            pass
+            self.commander.getReport(IDnum,xPos,yPos,status,IDnum)
 
     
     
