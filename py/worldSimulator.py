@@ -94,7 +94,6 @@ W.setSensor(sensor)
 # channel setup
 chan1=Channel(W);   # TODO register the channel to the world
 chan2=Channel(W);
-chan3=Channel(W); 
 #scenario ---  chan1 - wired;  chan2 - wireless; chan3 - satellite
 #TODO fix for arbitary number of vacs    
 
@@ -112,8 +111,12 @@ for i in range(numVacs) :
 
 
 # create the commander and planner
-plan=Planner(r*s/float(N*N),r*s/float(N*N),sensor,vacArray,W);
+plan=Planner(r*s/float(N*N),r*s/float(N*N),sensor,W);
+chan2.setPlanner(plan)
+chan1.setPlanner(plan)
+plan.setChannel(chan2)
 command=Commander(plan);
+chan2.setCommander(command)
 W.setPlanner(plan)
 
 for i in range(numVacs) :
@@ -124,8 +127,9 @@ for i in range(numVacs) :
 #plan.chanComm=chan1;
 command.registerChannels(chan1, vacArray); 
 
-#plan.chanSens=chan3;
-sensor.setChannel(chan3)
+#plan.chanSens=chan2;
+sensor.setChannel(chan2)
+chan2.setSensor(sensor)
 
 
 

@@ -67,7 +67,7 @@ from numpy.linalg import *
 class Planner :
 
 
-    def __init__(self,errGrowth,dirtRate,sensor,Vacs,world) :
+    def __init__(self,errGrowth,dirtRate,sensor,world) :
         
         # define the
         #     variance growth parameter,
@@ -93,12 +93,7 @@ class Planner :
         #eventsense = addlistener(sensor,'sense',@(src,evnt)updateView(a,src,evnt)); % triggered by sensor array report
         #timehear = addlistener(self.world,'time','PostSet',@(src,evnt)updateView(a,src,evnt)); % triggered by world time tick
         self.setSensor(sensor)
-
-        vacuums = world.getVacuums()
-        i = 0
-        for vacuum in vacuums: 
-            vacuum.setPosition(Vacs[i].getPosition());
-            i += 1
+        self.setChannel(None)
 
         self.setWorking(True)
         
@@ -140,6 +135,12 @@ class Planner :
     def getArray(self) :
         return(self.worldview)
 
+    def setChannel(self,value) :
+        self.channel = value
+
+    def getChannel(self) :
+        return(self.channel)
+
     def updateView(self,src,evnt) :
         # triggered by world time tick - update planner's view of world
         if not self.getWorking() :
@@ -151,10 +152,13 @@ class Planner :
         tau_0=self.viewPrecision;
             
         # get data from sensor, if available
-        dirtLevel = []
         levels = self.channel.sendMeasuredFromPlanner2Sensor()
-        dirtLevel = levels[0]
-        wetted    = levels[1]
+        if(levels) :
+            dirtLevel = levels[0]
+            wetted    = levels[1]
+
+        else :
+            return
             
         # update levels based on sensor information
         if len(dirtLevel) == 0 :

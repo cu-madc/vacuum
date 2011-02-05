@@ -155,7 +155,7 @@ class Channel:
 
     def sendReportFromVacuum2Commander(self,xPos,yPos,status,IDnum) :
         if(self.sendMessage()) :
-            self.commander.getReport(IDnum,xPos,yPos,status,IDnum)
+            self.commander.getReport(xPos,yPos,status,IDnum)
 
     
     
