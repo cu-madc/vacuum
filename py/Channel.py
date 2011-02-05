@@ -68,15 +68,20 @@ class Channel:
     
     
     
-    def __init__(self,world=None) :
-        self.world       = world;
-        self.setWorking(True)
-        self.reliability = 1.0   # Probability of properly transmitting the
-                                 # message. Default is full reliability.
-        
-        self.delay=0;            # default delay
+    def __init__(self,world=None,vacuums=[],sensor=None,planner=None,commander=None) :
 
-        self.delay = 0.0         # transmission delay - not yet implemented
+        self.setWorking(True)
+        self.setReliability(1.0)   # Probability of properly transmitting the
+                                   # message. Default is full reliability.
+        
+        self.delay = 0.0           # transmission delay - not yet implemented
+
+        self.setWorld(world)
+        self.vacuumArray = vacuums # array of object handles
+        self.setSensor(sensor)
+        self.setPlanner(planner)
+        self.setCommander(commander)
+
 
 
     def setWorking(self,value) :
@@ -85,27 +90,72 @@ class Channel:
     def getWorking(self) :
         return(self.isWorking)
 
+    def setReliability(self,value) :
+        self.reliability = value
+
+    def getReliability(self) :
+        return(self.reliability)
+
+    def setSensor(self,sensor) :
+        self.sensor = sensor
+
+    def getSensor(self) :
+        return(self.sensor)
+
+    def setCommander(self,value):
+        self.commander = value
+
+    def getCommander(self) :
+        return(self.commander)
+
+    def setPlanner(self,planner) :
+        self.planner = planner
+
+    def getPlanner(self) :
+        return(self.planner)
+
+    def addVacuum(self,vacuum) :
+        self.vacuumArray.append(vacuum)
+
+    def setWorld(self,value) :
+        self.world = value
+
+    def getWorld(self) :
+        return(self.world)
+
+    def sendMessage(self) :
+        if(self.reliability>random.rand(1)[0]) :
+            return(True)
+        return(False)
+    
 
     def sendVacuumReportFromCommander2Planner(self,xPos,yPos) :
-        pass
+        if(self.sendMessage()) :
+            pass
 
     def sendRecommendOrderFromCommander2Planner(self,vacuumID) :
-        pass
+        if(self.sendMessage()) :
+            pass
 
     def sendRecommendOrderFromPlanner2Commander(self,xPos,yPos) :
-        pass
+        if(self.sendMessage()) :
+            pass
 
     def sendMoveOrderFromCommander2Vacuum(self,xord,yord,vacummID) :
-        pass
+        if(self.sendMessage()) :
+            pass
 
     def sendMoveOrderFromCommander2Planner(self,xord,yord,vacummID) :
-        pass
+        if(self.sendMessage()) :
+            pass
 
     def sendMeasuredFromPlanner2Sensor(self) :
-        pass
+        if(self.sendMessage()) :
+            pass
 
     def sendReportFromVacuum2Commander(self,xPos,yPos,status) :
-        pass
+        if(self.sendMessage()) :
+            pass
 
     
     
