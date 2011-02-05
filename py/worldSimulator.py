@@ -117,6 +117,7 @@ chan1.setPlanner(plan)
 plan.setChannel(chan2)
 command=Commander(plan);
 chan2.setCommander(command)
+command.setChannel(chan2)
 W.setPlanner(plan)
 
 for i in range(numVacs) :

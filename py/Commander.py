@@ -114,11 +114,14 @@ class Commander :
             if (status==2) :
                 # just completed cleaning
                 # update planner status that location is clean
-                #self.chanPlan.send(self.planner,@receiveReport,xPos,yPos)
-                pass
+                self.channel.sendVacuumReportFromCommander2Planner(xPos,yPos)
+
 
             # get recommended order from the planner
             # returns empty if comms problem
+            xord = None
+            xord = 4
+            yord = 2
             #[xord,yord]=self.chanPlan.sendReceive(self.planner,self.planner.channel,@recommendOrder,aVac); 
             #if (len(xord)==0) :
             #   # retry
@@ -127,12 +130,13 @@ class Commander :
             
             
             # pass order to vacuum
-            #self.chanVac(aVac.IDnum).send(aVac,@moveord,xord,yord);
+            self.channel.sendMoveOrderFromCommander2Vacuum(xord,yord,IDnum)
             ##aVac.moveord(xord,yord);
             
             #tell planner that vacuum has been ordered to new location
-            #if len(xord)>0) :
-            #    self.chanPlan.send(self.planner,@receiveOrder,aVac.IDnum,xord,yord); 
+            if xord :
+                self.channel.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
+                
 
 
 if (__name__ =='__main__') :
