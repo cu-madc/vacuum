@@ -120,11 +120,9 @@ class Vacuum :
     def setID(self,value) :
         self.IDnum = value
 
-    def registerWorld(self,W,command) :
+    def registerWorld(self,W) :
         #make vacuum aware of its world and who is its commander
         self.world=W
-        self.commander=command
-        #timeHear= addlistener(W,'time','PostSet',@(src,evnt)timeStep(a,src,evnt));% listen to world time-tick    
 
 
         
@@ -242,7 +240,7 @@ if (__name__ =='__main__') :
     world.inc()
 
     vacuum = Vacuum(1,0.0)
-    vacuum.registerWorld(world,None)
+    vacuum.registerWorld(world)
     vacuum.move(1,1)
     vacuum.moveAndClean(1,1)
     vacuum.moveord(1,1)
