@@ -71,11 +71,10 @@ class Commander :
 
     def __init__(self,channel=None) : 
 
-        self.chanPlan = 0   # handle from channel to planner
-        self.chanVac = []   # list  of handles to assigned vacuums
-
+        self.chanPlan = 0        # handle from channel to planner
+        self.numberVacuums = 0   # Number of vacuums to track
         self.setWorking(True)
-        self.setChannel(channel)         # handle to planner
+        self.setChannel(channel) # handle to planner
 
 
     def setWorking(self,value) :
@@ -85,9 +84,11 @@ class Commander :
     def getWorking(self) :
         return(self.isWorking)
 
-    def addVacuum(self,vacuum) :
-        self.chanVac.append(vacuum)
+    def setNumberVacuums(self,value) :
+        self.numberVacuums = value
 
+    def getNumberVacuums(self) :
+        return(self.numberVacuums)
 
     def getChannel(self) :
         return(self.channel)
@@ -95,13 +96,6 @@ class Commander :
     def setChannel(self,value) :
         self.channel = value
 
-
-    def registerChannels(self,chanPlan,vacArray) :
-        # chanVac is an array, one element for each vac
-        self.chanPlan=chanPlan;
-        for vacuum in vacArray :
-            self.addVacuum(vacuum.getChannel())
-    
 
 
 

@@ -106,6 +106,7 @@ vacArray = []
 for i in range(numVacs) :
     vacuum = Vacuum(i,1.0)
     vacuum.setChannel(chan2)
+    vacuum.registerWorld(W)
     vacArray.append(vacuum)
     W.addVacuum(vacuum)
 
@@ -115,17 +116,12 @@ plan=Planner(r*s/float(N*N),r*s/float(N*N),sensor,W);
 chan2.setPlanner(plan)
 chan1.setPlanner(plan)
 plan.setChannel(chan2)
-command=Commander(chan2);
-chan2.setCommander(command)
 W.setPlanner(plan)
 
-for i in range(numVacs) :
-    vacArray[i].registerWorld(W,command)
-    command.addVacuum(vacArray[i])
+command=Commander(chan2);
+chan2.setCommander(command)
+command.setNumberVacuums(len(vacArray))
 
-
-#plan.chanComm=chan1;
-command.registerChannels(chan1, vacArray); 
 
 #plan.chanSens=chan2;
 sensor.setChannel(chan2)
