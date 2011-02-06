@@ -96,6 +96,7 @@ class Planner :
         self.setChannel(None)
 
         self.setWorking(True)
+        self.vacuumlocation = []
         
         #create distance matrix
         #[self.I,self.J]=ind2sub([self.N self.N],1:(self.N^2));
@@ -195,14 +196,19 @@ class Planner :
 
 
 
-    def recommendOrder(self,aVacuum) :
+    def recommendOrder(self,id) :
         # decide on recommended order for a vacuum
         if not self.getWorking() :
-            return([]) 
+            return([])
+
+        if(len(self.vacuumlocation)>id) :
+            pos = self.vacuumlocation[id]
+        else :
+            return
             
         A=self.worldview
-        x=aVacuum.xPos
-        y=aVacuum.yPos
+        x=pos[0]
+        y=pos[1]
         
         #s=sub2ind(size(A),x,y); %index of current location
         #ID=aVacuum.IDnum;
@@ -229,6 +235,9 @@ class Planner :
                 
         #[~, I]=max(A(:));    #determine viable location with max weight adjusted dirt
         #[xord,yord]=ind2sub(size(A),I);
+        xord = x
+        yord = y
 
-        return([xord,yord])
+        self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord)
+        return
     

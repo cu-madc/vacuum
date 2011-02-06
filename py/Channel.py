@@ -135,7 +135,7 @@ class Channel:
 
     def sendRecommendOrderFromCommander2Planner(self,vacuumID) :
         if(self.sendMessage()) :
-            pass
+            self.planner.recommendOrder(vacuumID)
 
     def sendRecommendOrderFromPlanner2Commander(self,xPos,yPos) :
         if(self.sendMessage()) :

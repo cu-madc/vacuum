@@ -122,21 +122,26 @@ class Commander :
             xord = None
             xord = 4
             yord = 2
-            #[xord,yord]=self.chanPlan.sendReceive(self.planner,self.planner.channel,@recommendOrder,aVac); 
-            #if (len(xord)==0) :
-            #   # retry
-            #    [xord,yord]=self.chanPlan.sendReceive(self.planner,self.planner.channel,@recommendOrder,aVac); 
-            #end
+            
+            self.channel.sendRecommendOrderFromCommander2Planner(IDnum)
+
+
+    def receiveReport(self,xord,yord) :
+        #[xord,yord]=self.chanPlan.sendReceive(self.planner,self.planner.channel,@recommendOrder,aVac); 
+        #if (len(xord)==0) :
+        #   # retry
+        #    [xord,yord]=self.chanPlan.sendReceive(self.planner,self.planner.channel,@recommendOrder,aVac); 
+        #end
             
             
-            # pass order to vacuum
-            self.channel.sendMoveOrderFromCommander2Vacuum(xord,yord,IDnum)
-            ##aVac.moveord(xord,yord);
+        # pass order to vacuum
+        self.channel.sendMoveOrderFromCommander2Vacuum(xord,yord,IDnum)
+        ##aVac.moveord(xord,yord);
             
-            #tell planner that vacuum has been ordered to new location
-            if xord :
-                self.channel.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
-                
+        #tell planner that vacuum has been ordered to new location
+        if xord :
+            self.channel.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
+
 
 
 if (__name__ =='__main__') :
