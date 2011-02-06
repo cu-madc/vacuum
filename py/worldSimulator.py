@@ -115,9 +115,8 @@ plan=Planner(r*s/float(N*N),r*s/float(N*N),sensor,W);
 chan2.setPlanner(plan)
 chan1.setPlanner(plan)
 plan.setChannel(chan2)
-command=Commander(plan);
+command=Commander(chan2);
 chan2.setCommander(command)
-command.setChannel(chan2)
 W.setPlanner(plan)
 
 for i in range(numVacs) :

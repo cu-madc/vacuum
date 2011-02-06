@@ -90,8 +90,6 @@ class Planner :
         self.dirtRate=dirtRate        #
         
         self.setWorld(world)
-        #eventsense = addlistener(sensor,'sense',@(src,evnt)updateView(a,src,evnt)); % triggered by sensor array report
-        #timehear = addlistener(self.world,'time','PostSet',@(src,evnt)updateView(a,src,evnt)); % triggered by world time tick
         self.setSensor(sensor)
         self.setChannel(None)
 

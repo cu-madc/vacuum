@@ -69,13 +69,13 @@ class Commander :
     
     # command and control object
 
-    def __init__(self,plan=None) : 
+    def __init__(self,channel=None) : 
 
         self.chanPlan = 0   # handle from channel to planner
         self.chanVac = []   # list  of handles to assigned vacuums
 
         self.setWorking(True)
-        self.setChannel(plan)         # handle to planner
+        self.setChannel(channel)         # handle to planner
 
 
     def setWorking(self,value) :
@@ -127,13 +127,6 @@ class Commander :
 
 
     def receiveReport(self,xord,yord) :
-        #[xord,yord]=self.chanPlan.sendReceive(self.planner,self.planner.channel,@recommendOrder,aVac); 
-        #if (len(xord)==0) :
-        #   # retry
-        #    [xord,yord]=self.chanPlan.sendReceive(self.planner,self.planner.channel,@recommendOrder,aVac); 
-        #end
-            
-            
         # pass order to vacuum
         self.channel.sendMoveOrderFromCommander2Vacuum(xord,yord,IDnum)
         ##aVac.moveord(xord,yord);
