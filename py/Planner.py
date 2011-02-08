@@ -78,6 +78,7 @@ class Planner :
         #     handle to array of vacuums)
         N = world.getNumber()
         self.setNumber(N)
+        self.vacuumRange = 3
 
         self.worldview = zeros(N*N,dtype=float64);
         self.worldview = self.worldview.reshape(N,N)
@@ -99,8 +100,6 @@ class Planner :
         self.vacuumlocation = []
         
         #create distance matrix
-        #[self.I,self.J]=ind2sub([self.N self.N],1:(self.N^2));
-        ##self.Z=squareform(pdist([I;J]','cityblock')); % replace to allow
         self.defineDistanceArray()
         
         #non-stats toolbox commands
@@ -212,8 +211,11 @@ class Planner :
         # keep updated status on expected vacuum locations
         if not self.getWorking() :
             return
-            
-        self.vacuumlocation[IDnum,:] = [x,y];
+
+        while(IDnum >= len(self.vacuumlocation)) :
+            self.vacuumlocation.append([])
+           
+        self.vacuumlocation[IDnum] = [x,y];
 
 
 
@@ -230,36 +232,24 @@ class Planner :
         A=self.worldview
         x=pos[0]
         y=pos[1]
+        distance = self.Z[x][y]
+        A = self.worldview
         
-        #s=sub2ind(size(A),x,y); %index of current location
-        #ID=aVacuum.IDnum;
-#             B=zeros(self.N);%initialize
-#             for i=1:self.N; % decide on which locations are within range of vacuum
-#                 for j=1:self.N; 
-#                     if abs(i-x)+abs(j-y) <=3
-#                         B(i,j)=1;
-#                     end
-#                 end
-#             end
-#             % value of -1 for dirt level implies location is not viable
-#             A(~B)=-1; % out of range locations
-
-        #A(self.Z[s,:]>aVacuum.range)=-1;    # out of range
-        A[self.wetview>0] = -1               # exclude wetted locations
-        L=self.vacuumlocation;
-        #A(sub2ind(size(A),L(:,1),L(:,2)))=-1;% exclude where robot already assigned.
+        A[distance>self.vacuumRange] = -1;  # out of range
+        A[self.wetview>0] = -1              # exclude wetted locations
+        for loc in self.vacuumlocation :
+            A[loc[0],loc[1]] = -1           # exclude where robot already assigned.
             
         # distance weighting
-        #for i in range(len(aVacuum)) :
+        #for i in r,ange(len(aVacuum)) :
         #    A[self.Z(s,:)==i]=A[self.Z(s,:)==i]*(1+self.wDist*i);
             
-                
-        #[~, I]=max(A(:));    #determine viable location with max weight adjusted dirt
-        #[xord,yord]=ind2sub(size(A),I);
-        xord = x
-        yord = y
 
-        self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord)
+        I = argmax(A)
+        xord = I/self.getNumber()
+        yord = I%self.getNumber()
+
+        #self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord)
         return
     
 
@@ -269,9 +259,11 @@ if (__name__ =='__main__') :
     sensor = SensorArray(0.1,world)
     planner = Planner(0.2,0.1,sensor,world)
 
-    N = world.getNumber()
-    for i in range(N) :
-        for j in range(N) :
-            print("\n\nRow: {0} Col: {1}\n{2}".format(i,j,planner.Z[i][j]))
+    #N = world.getNumber()
+    #for i in range(N) :
+    #    for j in range(N) :
+    #        print("\n\nRow: {0} Col: {1}\n{2}".format(i,j,planner.Z[i][j]))
 
-    print("Val: {0}".format(planner.Z[1][2][3,4]))
+    #print("Val: {0}".format(planner.Z[1][2][3,4]))
+    planner.receiveOrder(0,2,3)
+    planner.recommendOrder(0)
