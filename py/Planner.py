@@ -63,6 +63,8 @@
 
 from numpy import *
 from numpy.linalg import *
+from World import World
+from SensorArray import SensorArray
 
 class Planner :
 
@@ -99,6 +101,7 @@ class Planner :
         #create distance matrix
         #[self.I,self.J]=ind2sub([self.N self.N],1:(self.N^2));
         ##self.Z=squareform(pdist([I;J]','cityblock')); % replace to allow
+        self.defineDistanceArray()
         
         #non-stats toolbox commands
         #self.Z=ipdm([I',J'],'metric',1) #'
@@ -140,15 +143,34 @@ class Planner :
     def getChannel(self) :
         return(self.channel)
 
+
+    def defineDistanceArray(self) :
+
+        N = self.getNumber()
+        self.Z = range(N)
+        for i in range(N) :
+            self.Z[i] = range(N)
+            for j in range(self.getNumber()) :
+                distance = zeros(N*N,dtype=float64);
+                distance = distance.reshape(N,N)
+
+                for m in range(N) :
+                    for n in range(N) : 
+                        distance[m,n] = fabs(m-i) + fabs(n-j)
+
+                self.Z[i][j] = distance
+
+    
+
     def updateView(self,src,evnt) :
         # triggered by world time tick - update planner's view of world
         if not self.getWorking() :
             return
 
         # update for error growth due to dynamics
-        self.viewPrecision=self.viewPrecision/(1+self.errGrowth*self.viewPrecision); 
-        mu_0=self.worldview+self.dirtRate;
-        tau_0=self.viewPrecision;
+        self.viewPrecision=self.viewPrecision/(1+self.errGrowth*self.viewPrecision);  # entry by entry - ok
+        mu_0=self.worldview+self.dirtRate; # matrix + scalar
+        tau_0=self.viewPrecision;          # matrix
             
         # get data from sensor, if available
         levels = self.channel.sendMeasuredFromPlanner2Sensor()
@@ -160,18 +182,19 @@ class Planner :
             return
             
         # update levels based on sensor information
+        # (Bayesian update - see wikipedia page for now)
         if len(dirtLevel) == 0 :
             # no data available  
             self.worldview=mu_0; # adjust dirt ONLY FOR DYNAMICS
         else :
             # data available 
             # bayes update on dirt  
-            tau=3./((self.sensor.accuracy**2)*self.sensor.array+1.0);
+            tau=3./((self.sensor.accuracy**2)*self.sensor.array+1.0);  # Uniform error/assumes exact information from sensor (??)
             mu=dirtLevel;
-            self.worldview=(tau_0*mu_0+tau*mu)/(tau_0+tau);
+            self.worldview=(tau_0*mu_0+tau*mu)/(tau_0+tau);            # update assuming normal
             self.viewPrecision=tau+tau_0;
             self.wetview=wetted;  # when sensor data available, accept as valid
-
+            # see http://en.wikipedia.org/wiki/Conjugate_prior for details.
 
             
     def receiveReport(self,x,y) :
@@ -239,3 +262,16 @@ class Planner :
         self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord)
         return
     
+
+
+if (__name__ =='__main__') :
+    world = World()
+    sensor = SensorArray(0.1,world)
+    planner = Planner(0.2,0.1,sensor,world)
+
+    N = world.getNumber()
+    for i in range(N) :
+        for j in range(N) :
+            print("\n\nRow: {0} Col: {1}\n{2}".format(i,j,planner.Z[i][j]))
+
+    print("Val: {0}".format(planner.Z[1][2][3,4]))
