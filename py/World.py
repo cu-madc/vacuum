@@ -90,10 +90,8 @@ class  World :  # (handle) :
                                    # time (world wide)
         self.cloudsize = cloudsize # average size of rain event
 
-        self.A = zeros(self.N*self.N,dtype=float64)        # array of values for dirt levels
-        self.A = self.A.reshape(self.N,self.N)
-        self.Moisture = zeros(self.N*self.N,dtype=float64) # array of values for moisture level
-        self.Moisture = self.Moisture.reshape(self.N,self.N)
+        self.A = zeros((self.N,self.N),dtype=float64)        # array of values for dirt levels
+        self.Moisture = zeros((self.N,self.N),dtype=float64) # array of values for moisture level
 
 
 
@@ -119,8 +117,7 @@ class  World :  # (handle) :
         return(self.A)
 
     def randomDust(self) :
-        self.A = random.rand(self.N*self.N)
-        self.A = self.A.reshape(self.N,self.N)
+        self.A = random.rand(self.N*self.N).reshape(self.N,self.N)
 
 
     def addExpenditure(self,value) :
