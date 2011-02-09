@@ -131,7 +131,7 @@ class Channel:
 
     def sendVacuumReportFromCommander2Planner(self,xPos,yPos) :
         if(self.sendMessage()) :
-            pass
+            self.commander.receiveReport(xPos,yPos)
 
     def sendRecommendOrderFromCommander2Planner(self,vacuumID) :
         if(self.sendMessage()) :
@@ -139,15 +139,12 @@ class Channel:
 
     def sendRecommendOrderFromPlanner2Commander(self,xPos,yPos) :
         if(self.sendMessage()) :
-            pass
+            self.commander.receiveReport(xPos,yPos)
 
     def sendMoveOrderFromCommander2Vacuum(self,xord,yord,vacummID) :
         if(self.sendMessage()) :
-            pass
-
-    def sendMoveOrderFromCommander2Planner(self,xord,yord,vacummID) :
-        if(self.sendMessage()) :
-            pass
+            if(vacummID < len(self.vacuumArray)) :
+                self.vacuumArray[vacummID].moveord(xord,yord)
 
     def sendMeasuredFromPlanner2Sensor(self) :
         if(self.sendMessage()) :

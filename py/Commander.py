@@ -111,12 +111,7 @@ class Commander :
                 self.channel.sendVacuumReportFromCommander2Planner(xPos,yPos)
 
 
-            # get recommended order from the planner
-            # returns empty if comms problem
-            xord = None
-            xord = 4
-            yord = 2
-            
+            # send recommended order to the planner
             self.channel.sendRecommendOrderFromCommander2Planner(IDnum)
 
 
@@ -125,9 +120,12 @@ class Commander :
         self.channel.sendMoveOrderFromCommander2Vacuum(xord,yord,IDnum)
         ##aVac.moveord(xord,yord);
             
-        #tell planner that vacuum has been ordered to new location
-        if xord :
-            self.channel.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
+        # resend request to tell planner that vacuum has been ordered
+        # to new location because it did not go through the first
+        # time.
+        
+        #if xord :
+        #    self.channel.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
 
 
 

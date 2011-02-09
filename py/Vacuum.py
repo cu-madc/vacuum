@@ -181,6 +181,7 @@ class Vacuum :
         # update que for new location to clean
         self.queX.append(xord)
         self.queY.append(yord)
+        print("Queue: {0}".format(self.queX))
 
         
         

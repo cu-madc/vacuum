@@ -80,14 +80,9 @@ class Planner :
         self.setNumber(N)
         self.vacuumRange = 3
 
-        self.worldview = zeros(N*N,dtype=float64);
-        self.worldview = self.worldview.reshape(N,N)
-
-        self.wetview = zeros(N*N,dtype=float64);
-        self.wetview = self.wetview.reshape(N,N)
-
-        self.viewPrecision = zeros(N*N,dtype=float64);
-        self.viewPrecision = self.viewPrecision.reshape(N,N)
+        self.worldview = zeros((N,N),dtype=float64);
+        self.wetview = zeros((N,N),dtype=float64);
+        self.viewPrecision = zeros((N,N),dtype=float64);
         
         self.errGrowth=errGrowth      # estimated growth in variance
         self.dirtRate=dirtRate        #
@@ -101,10 +96,9 @@ class Planner :
         
         #create distance matrix
         self.defineDistanceArray()
+        self.wDist=0;               # default
         
-        #non-stats toolbox commands
-        #self.Z=ipdm([I',J'],'metric',1) #'
-        #self.wDist=0; %default
+        
 
     def setNumber(self,value) :
         self.N = value
@@ -150,8 +144,7 @@ class Planner :
         for i in range(N) :
             self.Z[i] = range(N)
             for j in range(self.getNumber()) :
-                distance = zeros(N*N,dtype=int16);
-                distance = distance.reshape(N,N)
+                distance = zeros((N,N),dtype=int16);
 
                 for m in range(N) :
                     for n in range(N) : 
@@ -159,7 +152,6 @@ class Planner :
 
                 self.Z[i][j] = distance
 
-    
 
     def updateView(self,src,evnt) :
         # triggered by world time tick - update planner's view of world
@@ -241,20 +233,23 @@ class Planner :
             A[loc[0],loc[1]] = -1           # exclude where robot already assigned.
             
         # distance weighting
-        #for i in r,ange(len(aVacuum)) :
-        #    A[self.Z(s,:)==i]=A[self.Z(s,:)==i]*(1+self.wDist*i);
+        for i in range(self.vacuumRange) :
+            A[distance==i]=A[distance==i]*(1+self.wDist*i);
             
 
         I = argmax(A)
         xord = I/self.getNumber()
         yord = I%self.getNumber()
 
-        #self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord)
+        self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord)
         return
     
 
 
 if (__name__ =='__main__') :
+    from Channel import Channel
+    from Commander import Commander
+
     world = World()
     sensor = SensorArray(0.1,world)
     planner = Planner(0.2,0.1,sensor,world)
@@ -266,4 +261,5 @@ if (__name__ =='__main__') :
 
     #print("Val: {0}".format(planner.Z[1][2][3,4]))
     planner.receiveOrder(0,2,3)
+    planner.setChannel(Channel(world,[],sensor,planner,Commander()))
     planner.recommendOrder(0)
