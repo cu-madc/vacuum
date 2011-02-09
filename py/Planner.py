@@ -153,7 +153,7 @@ class Planner :
                 self.Z[i][j] = distance
 
 
-    def updateView(self,src,evnt) :
+    def updateView(self) :
         # triggered by world time tick - update planner's view of world
         if not self.getWorking() :
             return
