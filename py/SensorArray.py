@@ -72,17 +72,14 @@ class SensorArray :
         # constructor (accuracy of measurement, world object)
         self.accuracy=accuracy-float(int(accuracy))  #force to be within constraints
 
-        self.world = world
         if(world) :
-            self.N=world.getNumber();
+            self.setWorld(world)
         else :
+            self.world = None
             self.N = 1
 
-        self.array = zeros(self.N*self.N,dtype=float64) # array of values for dirt levels
-        self.array = self.array.reshape(self.N,self.N)
-
-        self.Wet = zeros(self.N*self.N,dtype=float64)   # array of values for dirt levels
-        self.Wet = self.array.reshape(self.N,self.N)
+        self.array = zeros((self.N,self.N),dtype=float64) # array of values for dirt levels
+        self.Wet = zeros((self.N,self.N),dtype=float64)   # array of values for dirt levels
 
         self.setWorking(True)
 
@@ -108,6 +105,10 @@ class SensorArray :
     def getWet(self) :
         return(self.Wet)
 
+    def setWorld(self,value) :
+        self.world = value
+        self.N = value.getNumber()
+
     #events %sense
     #    sense; % sensor taking action - triggers action in planner
     #end
@@ -119,14 +120,15 @@ class SensorArray :
     def measure(self) :
         # measure the world and return data
 
-        dirtLevel=[]
-        wetted=[]
+        dirtLevel=None
+        wetted=None
         if (self.world and self.isWorking):
             actualdata=self.world.getArray()     #get real world values
 
             #adjust for noise
             #print(actualdata)
-            self.array=actualdata*(1.0+2.0*self.accuracy*(random.rand(self.world.getNumber())-0.5))
+            self.array=actualdata*(
+                1.0+2.0*self.accuracy*(random.rand(self.N*self.N).reshape(self.N,self.N)-0.5))
             #print(self.array)
          
             dirtLevel=self.array;
@@ -142,4 +144,5 @@ if (__name__ =='__main__') :
     world.randomDust()
     sensor = SensorArray(0.2,world)
     sensor.measure()
+    #print(sensor.array)
 
