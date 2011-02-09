@@ -124,8 +124,8 @@ class Commander :
         # to new location because it did not go through the first
         # time.
         
-        #if xord :
-        #    self.channel.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
+        if xord :
+            self.channel.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
 
 
 

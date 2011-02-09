@@ -154,7 +154,9 @@ class Channel:
         if(self.sendMessage()) :
             self.commander.getReport(xPos,yPos,status,IDnum)
 
-    
+    def sendMoveOrderFromCommander2Planner(self,xord,yord,IDnum) :
+        if(self.sendMessage()) :
+            planner.receiveOrder(IDnum,xord,yord)
     
 
     def send(self,target,aMethod,*varargin) :
