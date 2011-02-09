@@ -70,8 +70,8 @@ class Vacuum :
 
     def __init__(self,IDnum,currentTime=0.0,channel=None) : #class constructor
             
-        self.xPos   = 1
-        self.yPos   = 1
+        self.xPos   = 0
+        self.yPos   = 0
         self.status = 3                        # 1 - moving, 2-cleaning, 3-waiting, 4-repairing
         self.timeDone=currentTime+ \
                        random.randint(10);    # time it will be done with current operation
@@ -79,8 +79,7 @@ class Vacuum :
         self.ghan  = []                       # graphics handle
         self.setID(IDnum)
         self.range = 3                        # maximum distance that can be travelled 
-        self.queX  = []
-        self.queY  = []
+        self.queue  = []
         self.setWorking(True)
 
         self.setChannel(channel)              #channel to commander
@@ -138,10 +137,9 @@ class Vacuum :
         
         ordered_distance=abs(self.xPos-x)+abs(self.yPos-y)
         if (ordered_distance <= self.range) :
-            self.xPos=x;
-            self.yPos=y;
+            self.setPosition([x,y]);
             self.world.addExpenditure(self.moveCost);     # update funds expended
-            self.timeDone=self.timeDone+1;
+            self.timeDone += 1;
             self.status=1;
 
 
@@ -154,13 +152,12 @@ class Vacuum :
         R=abs(self.xPos-x)+abs(self.yPos-y)   # proposed distance to move
         if (R <= self.range) :
             # move is not too far to achieve
-            self.xPos=x
-            self.yPos=y
+            self.setPosition([x,y])
             self.odometer += R
             self.missions += 1
             self.world.addExpenditure(self.moveCost)
             
-            if (self.world.Moisture[self.xPos,self.yPos] > 0 ) :
+            if (self.world.Moisture[x,y] > 0 ) :
                 # location is wet
                 # repairs required before cleaning
                 self.timeDone=self.world.time+self.timeToRepair 
@@ -173,15 +170,14 @@ class Vacuum :
                 self.status=2;
 
             
-            self.queX=[]; # reset que
+            self.queue=[]; # reset que
 
 
            
     def moveord(self,xord,yord) :
         # update que for new location to clean
-        self.queX.append(xord)
-        self.queY.append(yord)
-        print("Queue: {0}".format(self.queX))
+        self.queue.append([xord,yord])
+        print("Queue: {0}".format(self.queue))
 
         
         
@@ -208,15 +204,16 @@ class Vacuum :
                 #getReport(self.commander,a,self.xPos,self.yPos,2)  # report that cleaning complete, recieve new instruction
 
                 
-            elif ((self.status==3) and (len(self.queX)==0)) :
+            elif ((self.status==3) and (len(self.queue)==0)) :
                 # nothing in que
                 self.channel.sendReportFromVacuum2Commander(self.xPos,self.yPos,self.status,self.getID());
                 #getReport(self.commander,a,self.xPos,self.yPos,self.status); # report to commander that vac is waiting
 
                 
             elif (self.status==3) :
-                # next job is now qued
-                self.moveandclean(self.queX,self.queY);
+                # next job is in the queue
+                pos = self.queue.pop(0)
+                self.moveandclean(pos[0],pos[1]);
 
                 
             elif (self.status==4) :
