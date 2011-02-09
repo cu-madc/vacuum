@@ -150,12 +150,12 @@ class Planner :
         for i in range(N) :
             self.Z[i] = range(N)
             for j in range(self.getNumber()) :
-                distance = zeros(N*N,dtype=float64);
+                distance = zeros(N*N,dtype=int16);
                 distance = distance.reshape(N,N)
 
                 for m in range(N) :
                     for n in range(N) : 
-                        distance[m,n] = fabs(m-i) + fabs(n-j)
+                        distance[m,n] = abs(m-i) + abs(n-j)
 
                 self.Z[i][j] = distance
 
