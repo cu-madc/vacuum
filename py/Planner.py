@@ -226,10 +226,9 @@ class Planner :
             self.setVacuumLocation(id,xPos,yPos)
         else :
             return
-            
+
         A=self.worldview
         distance = self.Z[xPos][yPos]
-        A = self.worldview
         
         A[distance>self.vacuumRange] = -1;  # out of range
         A[self.wetview>0] = -1              # exclude wetted locations
@@ -239,12 +238,12 @@ class Planner :
         # distance weighting
         for i in range(self.vacuumRange) :
             A[distance==i]=A[distance==i]*(1+self.wDist*i);
-            
 
         I = argmax(A)
         xord = I/self.getNumber()
         yord = I%self.getNumber()
-
+        #print("view: {0}\n {1}: {2} {3} from {4} {5}".format(A,I,xord,yord,xPos,yPos))
+        #raw_input("Press Enter to continue...")
         self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord,id)
     
 

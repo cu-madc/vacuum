@@ -76,7 +76,6 @@ class Vacuum :
         self.timeDone=currentTime+ \
                        random.randint(10);    # time it will be done with current operation
 
-        self.ghan  = []                       # graphics handle
         self.setID(IDnum)
         self.range = 3                        # maximum distance that can be travelled 
         self.queue  = []
@@ -177,7 +176,6 @@ class Vacuum :
     def moveord(self,xord,yord) :
         # update que for new location to clean
         self.queue.append([xord,yord])
-
         
         
     def timeStep(self) :
@@ -198,20 +196,19 @@ class Vacuum :
                 self.status=3                         # waiting new instruction
 
                 # report that cleaning complete, recieve new instruction
-                self.channel.sendReportFromVacuum2Commander(self.xPos,self.yPos,2,self.getID());
+                self.channel.sendReportFromVacuum2Commander(
+                    self.xPos,self.yPos,2,self.getID());
                 
-                #getReport(self.commander,a,self.xPos,self.yPos,2)  # report that cleaning complete, recieve new instruction
 
-                
             elif ((self.status==3) and (len(self.queue)==0)) :
                 # nothing in queue
-                self.channel.sendReportFromVacuum2Commander(self.xPos,self.yPos,self.status,self.getID());
-                #getReport(self.commander,a,self.xPos,self.yPos,self.status); # report to commander that vac is waiting
+                self.channel.sendReportFromVacuum2Commander(
+                    self.xPos,self.yPos,self.status,self.getID());
 
                 
             elif (self.status==3) :
                 # next job is in the queue
-                pos = self.queue.pop(0)
+                pos = self.queue.pop()
                 self.moveAndClean(pos[0],pos[1]);
 
                 
