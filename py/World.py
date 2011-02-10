@@ -64,7 +64,7 @@
 from numpy import *
 from numpy.linalg import *
 
-class  World :  # (handle) :
+class  World :
 
 
 
@@ -125,6 +125,7 @@ class  World :  # (handle) :
 
     def addVacuum(self,vacuum) :
         self.vacuumArray.append(vacuum)
+        vacuum.setID(len(self.vacuumArray)-1)
 
     def setSensor(self,sensor) :
         self.sensor = sensor
@@ -182,14 +183,11 @@ class  World :  # (handle) :
             t=t+tau;
             # end rainfall
 
-        if(self.sensor) :
-            self.sensor.measure()
-
         if(self.planner) :
             self.planner.updateView()
 
         for vacuum in self.vacuumArray:
-            vacuum.timeStep(None,None)
+            vacuum.timeStep()
             
         self.time=T;
 

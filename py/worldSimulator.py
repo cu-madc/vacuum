@@ -92,10 +92,7 @@ sensor = SensorArray(.2,W)
 W.setSensor(sensor)
 
 # channel setup
-chan1=Channel(W);   # TODO register the channel to the world
-chan2=Channel(W);
-#scenario ---  chan1 - wired;  chan2 - wireless; chan3 - satellite
-#TODO fix for arbitary number of vacs    
+chan = Channel(W);   # TODO register the channel to the world
 
 
 
@@ -105,7 +102,7 @@ numVacs=3
 vacArray = []
 for i in range(numVacs) :
     vacuum = Vacuum(i,1.0)
-    vacuum.setChannel(chan2)
+    vacuum.setChannel(chan)
     vacuum.registerWorld(W)
     vacArray.append(vacuum)
     W.addVacuum(vacuum)
@@ -113,19 +110,16 @@ for i in range(numVacs) :
 
 # create the commander and planner
 plan=Planner(r*s/float(N*N),r*s/float(N*N),sensor,W);
-chan2.setPlanner(plan)
-chan1.setPlanner(plan)
-plan.setChannel(chan2)
+chan.setPlanner(plan)
+plan.setChannel(chan)
 W.setPlanner(plan)
 
-command=Commander(chan2);
-chan2.setCommander(command)
+command=Commander(chan);
+chan.setCommander(command)
 command.setNumberVacuums(len(vacArray))
 
-
-#plan.chanSens=chan2;
-sensor.setChannel(chan2)
-chan2.setSensor(sensor)
+sensor.setChannel(chan)
+chan.setSensor(sensor)
 
 
 

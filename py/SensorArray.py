@@ -135,7 +135,9 @@ class SensorArray :
             self.Wet=(self.world.Moisture>0);
             wetted=self.Wet;
 
-        return([dirtLevel,wetted])
+            return([dirtLevel,wetted])
+
+        return(None)
 
 
 
