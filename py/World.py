@@ -76,7 +76,7 @@ class  World :
         self.vacuumArray = []      # array of object handles
         self.sensor = None         # data as recorded on sensor
         self.planner = None        # handle to planning processor
-        self.g_handle = None       # handle to worlddraw graph
+        self.channel = None        # handle to the channel for sending info.
         self.expenditure = 0.0     # cummulative funds expended since last reset
         self.intializeVariables(r,s,v,cloudsize)
 
@@ -127,6 +127,13 @@ class  World :
         self.vacuumArray.append(vacuum)
         vacuum.setID(len(self.vacuumArray)-1)
 
+        pos = vacuum.getPosition()
+        if(self.planner) :
+            self.planner.setVacuumLocation(len(self.vacuumArray)-1,pos[0],pos[1])
+
+        if(self.channel) :
+            self.channel.addVacuum(vacuum,len(self.vacuumArray)-1)
+
     def setSensor(self,sensor) :
         self.sensor = sensor
 
@@ -141,6 +148,12 @@ class  World :
 
     def getVacuums(self) :
         return(self.vacuumArray)
+
+    def setChannel(self,value) :
+        self.channel = value
+
+    def getChannel(self) :
+        return(self.channel)
 
 
     def inc(self) :

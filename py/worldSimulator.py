@@ -95,6 +95,17 @@ W.setSensor(sensor)
 chan = Channel(W);   # TODO register the channel to the world
 
 
+# create the commander and planner
+plan=Planner(r*s/float(N*N),r*s/float(N*N),sensor,W);
+chan.setPlanner(plan)
+plan.setChannel(chan)
+W.setPlanner(plan)
+W.setChannel(chan)
+
+command=Commander(chan);
+chan.setCommander(command)
+sensor.setChannel(chan)
+chan.setSensor(sensor)
 
 
 # Create vacuums
@@ -108,18 +119,8 @@ for i in range(numVacs) :
     W.addVacuum(vacuum)
 
 
-# create the commander and planner
-plan=Planner(r*s/float(N*N),r*s/float(N*N),sensor,W);
-chan.setPlanner(plan)
-plan.setChannel(chan)
-W.setPlanner(plan)
-
-command=Commander(chan);
-chan.setCommander(command)
 command.setNumberVacuums(len(vacArray))
 
-sensor.setChannel(chan)
-chan.setSensor(sensor)
 
 
 

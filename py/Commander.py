@@ -104,21 +104,19 @@ class Commander :
         if (self.isWorking)  :
             # This commander is working
             
-            
             if (status==2) :
                 # just completed cleaning
                 # update planner status that location is clean
-                self.channel.sendVacuumReportFromCommander2Planner(xPos,yPos)
+                self.channel.sendVacuumReportFromCommander2Planner(xPos,yPos,IDnum)
 
 
             # send recommended order to the planner
-            self.channel.sendRecommendOrderFromCommander2Planner(IDnum)
+            self.channel.sendRecommendOrderFromCommander2Planner(IDnum,xPos,yPos)
 
 
-    def receiveReport(self,xord,yord) :
+    def receiveReport(self,xord,yord,IDnum) :
         # pass order to vacuum
         self.channel.sendMoveOrderFromCommander2Vacuum(xord,yord,IDnum)
-        ##aVac.moveord(xord,yord);
             
         # resend request to tell planner that vacuum has been ordered
         # to new location because it did not go through the first

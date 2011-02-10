@@ -136,6 +136,11 @@ class Planner :
     def getChannel(self) :
         return(self.channel)
 
+    def setVacuumLocation(self,id,x,y) :
+        while(id>=len(self.vacuumlocation)) :
+            self.vacuumlocation.append(None)
+        self.vacuumlocation[id] = [x,y]
+
 
     def defineDistanceArray(self) :
 
@@ -211,20 +216,19 @@ class Planner :
 
 
 
-    def recommendOrder(self,id) :
+    def recommendOrder(self,id,xPos,yPos) :
         # decide on recommended order for a vacuum
         if not self.getWorking() :
             return([])
 
+        #print("recommend order: {0} {1} {2}".format(id,xPos,yPos))
         if(len(self.vacuumlocation)>id) :
-            pos = self.vacuumlocation[id]
+            self.setVacuumLocation(id,xPos,yPos)
         else :
             return
             
         A=self.worldview
-        x=pos[0]
-        y=pos[1]
-        distance = self.Z[x][y]
+        distance = self.Z[xPos][yPos]
         A = self.worldview
         
         A[distance>self.vacuumRange] = -1;  # out of range
@@ -241,8 +245,7 @@ class Planner :
         xord = I/self.getNumber()
         yord = I%self.getNumber()
 
-        self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord)
-        return
+        self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord,id)
     
 
 

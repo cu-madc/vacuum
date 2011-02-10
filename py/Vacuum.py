@@ -177,11 +177,10 @@ class Vacuum :
     def moveord(self,xord,yord) :
         # update que for new location to clean
         self.queue.append([xord,yord])
-        print("Queue: {0}".format(self.queue))
 
         
         
-    def timeStep(self,src,evnt) :
+    def timeStep(self) :
         #vacuum action on each world time increment
         if (not self.isWorking) :
             # not functioning
@@ -205,7 +204,7 @@ class Vacuum :
 
                 
             elif ((self.status==3) and (len(self.queue)==0)) :
-                # nothing in que
+                # nothing in queue
                 self.channel.sendReportFromVacuum2Commander(self.xPos,self.yPos,self.status,self.getID());
                 #getReport(self.commander,a,self.xPos,self.yPos,self.status); # report to commander that vac is waiting
 
@@ -213,7 +212,7 @@ class Vacuum :
             elif (self.status==3) :
                 # next job is in the queue
                 pos = self.queue.pop(0)
-                self.moveandclean(pos[0],pos[1]);
+                self.moveAndClean(pos[0],pos[1]);
 
                 
             elif (self.status==4) :

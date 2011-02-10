@@ -114,8 +114,10 @@ class Channel:
     def getPlanner(self) :
         return(self.planner)
 
-    def addVacuum(self,vacuum) :
-        self.vacuumArray.append(vacuum)
+    def addVacuum(self,vacuum,id) :
+        while(id>=len(self.vacuumArray)) :
+            self.vacuumArray.append(None)
+        self.vacuumArray[id] = vacuum
 
     def setWorld(self,value) :
         self.world = value
@@ -129,22 +131,22 @@ class Channel:
         return(False)
     
 
-    def sendVacuumReportFromCommander2Planner(self,xPos,yPos) :
+    def sendVacuumReportFromCommander2Planner(self,xPos,yPos,IDnum) :
         if(self.sendMessage()) :
-            self.commander.receiveReport(xPos,yPos)
+            self.commander.receiveReport(xPos,yPos,IDnum)
 
-    def sendRecommendOrderFromCommander2Planner(self,vacuumID) :
+    def sendRecommendOrderFromCommander2Planner(self,vacuumID,xPos,yPos) :
         if(self.sendMessage()) :
-            self.planner.recommendOrder(vacuumID)
+            self.planner.recommendOrder(vacuumID,xPos,yPos)
 
-    def sendRecommendOrderFromPlanner2Commander(self,xPos,yPos) :
+    def sendRecommendOrderFromPlanner2Commander(self,xPos,yPos,IDnum) :
         if(self.sendMessage()) :
-            self.commander.receiveReport(xPos,yPos)
+            self.commander.receiveReport(xPos,yPos,IDnum)
 
-    def sendMoveOrderFromCommander2Vacuum(self,xord,yord,vacummID) :
+    def sendMoveOrderFromCommander2Vacuum(self,xord,yord,vacuumID) :
         if(self.sendMessage()) :
-            if(vacummID < len(self.vacuumArray)) :
-                self.vacuumArray[vacummID].moveord(xord,yord)
+            if(vacuumID < len(self.vacuumArray)) :
+                self.vacuumArray[vacuumID].moveord(xord,yord)
 
     def sendMeasuredFromPlanner2Sensor(self) :
         if(self.sendMessage()) :
@@ -156,7 +158,7 @@ class Channel:
 
     def sendMoveOrderFromCommander2Planner(self,xord,yord,IDnum) :
         if(self.sendMessage()) :
-            planner.receiveOrder(IDnum,xord,yord)
+            self.planner.receiveOrder(IDnum,xord,yord)
     
 
     def send(self,target,aMethod,*varargin) :
