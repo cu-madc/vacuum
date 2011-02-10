@@ -95,7 +95,7 @@ class  WorldView (Frame) :
 
     def draw(self,vacuumArray,levels,limits=False) :
         # produce standard three frame graphic
-
+        self.canvas.delete(ALL)
         dim = levels.shape
         minVal = amin(levels)
         maxVal = amax(levels)

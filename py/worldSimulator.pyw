@@ -75,11 +75,11 @@ from Vacuum import Vacuum
 
 
 # Set the rate and size for dirtfall
-r = 0.5
-s = 10.0
+r = 1.8
+s = 12.0
 
 # Set the rate constant and size for rain
-v         = .1
+v         = .2
 cloudsize = 20
 
 # Create the world and get the gridsize
@@ -88,7 +88,7 @@ N = W.getNumber()
 
 # create and set the sensor
 
-sensor = SensorArray(.2,W)
+sensor = SensorArray(.4,W)
 W.setSensor(sensor)
 
 # channel setup
@@ -132,9 +132,11 @@ S1=vacArray[1].repairs;
 H = []
 R = []
 W.draw()
-for i in range(1000) :
+skip = 10;
+for i in range(10000) :
     W.inc()
-    W.draw()
+    if(i%skip==0) :
+       W.draw()
     H.append(sum(sum(W.A)))
     R.append(sum(W.Moisture>0))
     
