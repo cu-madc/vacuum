@@ -106,18 +106,23 @@ class  GraphicalWorld (World,Tk) :
         legendFrame = Frame(self.frame)
         legendFrame.pack(side=LEFT,expand=YES)
         Label(legendFrame,text="Legend").pack(side=TOP)
-        self.legend = Canvas(legendFrame,width=20,height=200)
+        self.legend = Canvas(legendFrame,width=80,height=200)
         self.legend.pack(side=TOP,expand=YES)
         self.makeLegend(0.0,1.0);
 
 
     def makeLegend(self,lower,upper) :
+        self.legend.delete(ALL)
         color = FalseColor(lower,upper)
         for scale in range(255) :
-            self.legend.create_rectangle(0,200*scale/255,
-                                         20,200*(scale+1)/255.0,
-                                         fill=color.calcColor(1.0-float(scale)/255.0),
+            self.legend.create_rectangle(65,200*scale/255,
+                                         80,200*(scale+1)/255.0,
+                                         fill=color.calcColor(upper-float(scale)/255.0*(upper-lower)),
                                          outline="")
+            
+        self.legend.create_text(30,190,text="{0:8.1E}".format(lower),justify=LEFT)
+        self.legend.create_text(30,100,text="{0:8.1E}".format((upper+lower)*0.5),justify=LEFT)
+        self.legend.create_text(30, 10,text="{0:8.1E}".format(upper),justify=LEFT)
 
 
     def draw(self) :
@@ -134,8 +139,9 @@ class  GraphicalWorld (World,Tk) :
         self.sensorView.draw(self.vacuumArray,self.getSensor().getArray(),[low,high])
         self.plannerView.draw(self.vacuumArray,plannerArray,[low,high])
 
-        # Update the view of the time
+        # Update the view of the time and the legend
         self.timeLabel.config(text="t= {0}".format(self.time))
+        self.makeLegend(low,high)
 
         self.update()
         #time.sleep(1.0)
