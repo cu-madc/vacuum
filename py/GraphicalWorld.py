@@ -115,8 +115,8 @@ class  GraphicalWorld (World,Tk) :
         color = FalseColor(lower,upper)
         for scale in range(255) :
             self.legend.create_rectangle(0,200*scale/255,
-                                         20,200*(scale+1)/255,
-                                         fill=color.calcColor(float(scale)/255.0),
+                                         20,200*(scale+1)/255.0,
+                                         fill=color.calcColor(1.0-float(scale)/255.0),
                                          outline="")
 
 
