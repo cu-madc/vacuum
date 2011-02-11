@@ -178,6 +178,8 @@ class  GraphicalWorld (World,Tk) :
         self.cloudSizeValueEntry = Entry(self.entryFrame,textvariable=self.cloudSizeValue,width=7)
         self.cloudSizeValueEntry.pack(side=LEFT,expand=NO)
 
+        Button(self,text="Start",command=self.start).pack(side=TOP)
+
     def makeLegend(self,lower,upper) :
         self.legend.delete(ALL)
         color = FalseColor(lower,upper)
