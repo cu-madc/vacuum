@@ -81,35 +81,102 @@ class  GraphicalWorld (World,Tk) :
         self.frame.pack(side=TOP,expand=YES,fill=BOTH)
         self.setupMenu()
         self.setupWindow()
+        self.setupOptionsEntry()
 
 
 
     def setupMenu(self) :
-        self.menuBar = Frame(self.frame,relief=RAISED,borderwidth=2)
-        self.menuBar.pack(side=TOP,expand=YES)
-        
+        #self.menuBar = Frame(self.frame,relief=RAISED,borderwidth=2)
+        #self.menuBar.pack(side=TOP,expand=YES)
+        self.menuBar = Menu(self)
+        self.config(menu=self.menuBar)
+
+        self.fileMenu = Menu(self.menuBar)
+        self.fileMenu.add_command(label="Start",command=self.start)
+        self.fileMenu.add_command(label="Quit",command=self.quit)
+        self.menuBar.add_cascade(label="File",menu=self.fileMenu)
+
+
+    def quit(self) :
+        exit(0)
+
+    def start(self) :
+        N = int(self.NValue.get())
+        r = float(self.rValue.get())
+
+        self.intializeVariables(r,self.s,self.v,self.cloudsize)
+
+        H = []
+        R = []
+        self.draw()
+        skip = 10;
+        for i in range(N) :
+            self.inc()
+            if(i%skip==0) :
+                self.draw()
+                H.append(sum(sum(self.A)))
+                R.append(sum(self.Moisture>0))
+    
+        print("Mean of H: {0}".format(mean(H)))
 
 
     def setupWindow(self) :
-        self.timeLabel = Label(self.frame,text="t=0")
+        self.worldView = Frame(self.frame)
+        self.worldView.pack(side=TOP,expand=YES)
+
+        self.timeLabel = Label(self.worldView,text="t=0")
         self.timeLabel.pack(side=TOP,expand=YES)
         
-        self.realView = WorldView(self.frame,self,"Real")
+        self.realView = WorldView(self.worldView,self,"Real")
         self.realView.pack(side=LEFT,expand=YES,fill=BOTH)
 
-        self.sensorView = WorldView(self.frame,self,"Sensor")
+        self.sensorView = WorldView(self.worldView,self,"Sensor")
         self.sensorView.pack(side=LEFT,expand=YES,fill=BOTH)
 
-        self.plannerView = WorldView(self.frame,self,"Planner")
+        self.plannerView = WorldView(self.worldView,self,"Planner")
         self.plannerView.pack(side=LEFT,expand=YES,fill=BOTH)
 
-        legendFrame = Frame(self.frame)
+        legendFrame = Frame(self.worldView)
         legendFrame.pack(side=LEFT,expand=YES)
         Label(legendFrame,text="Legend").pack(side=TOP)
         self.legend = Canvas(legendFrame,width=80,height=200)
         self.legend.pack(side=TOP,expand=YES)
         self.makeLegend(0.0,1.0);
 
+
+    def setupOptionsEntry(self) :
+        self.entryFrame = Frame(self)
+        self.entryFrame.pack(side=TOP,expand=YES)
+
+        self.NValue = StringVar()
+        self.NValue.set("10000")
+        Label(self.entryFrame,text="N=").pack(side=LEFT,padx=5)
+        self.NValueEntry = Entry(self.entryFrame,textvariable=self.NValue,width=7)
+        self.NValueEntry.pack(side=LEFT,expand=NO)
+
+        self.rValue = StringVar()
+        self.rValue.set(str(self.r))
+        Label(self.entryFrame,text="r=").pack(side=LEFT,padx=5)
+        self.rValueEntry = Entry(self.entryFrame,textvariable=self.rValue,width=7)
+        self.rValueEntry.pack(side=LEFT,expand=NO)
+
+        self.sValue = StringVar()
+        self.sValue.set(str(self.s))
+        Label(self.entryFrame,text="s=").pack(side=LEFT,padx=5)
+        self.sValueEntry = Entry(self.entryFrame,textvariable=self.sValue,width=7)
+        self.sValueEntry.pack(side=LEFT,expand=NO)
+
+        self.vValue = StringVar()
+        self.vValue.set(str(self.v))
+        Label(self.entryFrame,text="v=").pack(side=LEFT,padx=5)
+        self.vValueEntry = Entry(self.entryFrame,textvariable=self.vValue,width=7)
+        self.vValueEntry.pack(side=LEFT,expand=NO)
+
+        self.cloudSizeValue = StringVar()
+        self.cloudSizeValue.set(str(self.cloudsize))
+        Label(self.entryFrame,text="cloud size=").pack(side=LEFT,padx=5)
+        self.cloudSizeValueEntry = Entry(self.entryFrame,textvariable=self.cloudSizeValue,width=7)
+        self.cloudSizeValueEntry.pack(side=LEFT,expand=NO)
 
     def makeLegend(self,lower,upper) :
         self.legend.delete(ALL)

@@ -122,7 +122,7 @@ for i in range(numVacs) :
 command.setNumberVacuums(len(vacArray))
 
 
-
+W.mainloop()
 
 # testing (??)
 S=vacArray[1].missions;
