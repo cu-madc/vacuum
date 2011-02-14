@@ -72,10 +72,8 @@ class Vacuum :
             
         self.xPos   = 0
         self.yPos   = 0
-        self.status = 3                        # 1 - moving, 2-cleaning, 3-waiting, 4-repairing
-        self.timeDone=currentTime+ \
-                       random.randint(10);    # time it will be done with current operation
-
+        self.setStatus(3)                     # 1 - moving, 2-cleaning, 3-waiting, 4-repairing
+        self.initializeTime(currentTime)      # time it will be done with current operation
         self.setID(IDnum)
         self.range = 3                        # maximum distance that can be travelled 
         self.queue  = []
@@ -118,17 +116,22 @@ class Vacuum :
     def setID(self,value) :
         self.IDnum = value
 
+    def setStatus(self,value) :
+        self.status = value
+
     def registerWorld(self,W) :
         #make vacuum aware of its world and who is its commander
         self.world=W
 
 
-        
+
+    def initializeTime(self,currentTime) :
+        self.timeDone=currentTime+random.randint(10);
         
         
     def move(self,x,y) :
         # allow for movment of vacuum without cleaning
-        
+
         if (not self.isWorking):
             # not functioning
             return
@@ -149,6 +152,7 @@ class Vacuum :
         # note - this method will only be called if vacuum is working,
         # so no need to check status
         R=abs(self.xPos-x)+abs(self.yPos-y)   # proposed distance to move
+
         if (R <= self.range) :
             # move is not too far to achieve
             self.setPosition([x,y])
@@ -180,6 +184,8 @@ class Vacuum :
         
     def timeStep(self) :
         #vacuum action on each world time increment
+        #print("ID: {0} working: {1} pos: {2},{3}".format\
+        #     (self.getID(),self.isWorking,self.xPos,self.yPos))
         if (not self.isWorking) :
             # not functioning
             return

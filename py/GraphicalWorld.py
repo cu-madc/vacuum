@@ -102,9 +102,16 @@ class  GraphicalWorld (World,Tk) :
 
     def start(self) :
         N = int(self.NValue.get())
-        r = float(self.rValue.get())
+        self.r = float(self.rValue.get())
+        self.s = float(self.sValue.get())
+        self.v = float(self.vValue.get())
+        self.cloudSize = float(self.cloudSizeValue.get())
 
-        self.intializeVariables(r,self.s,self.v,self.cloudsize)
+        self.intializeVariables(self.r,self.s,self.v,self.cloudsize)
+        for vacuum in self.vacuumArray:
+            vacuum.setWorking(True)
+            vacuum.setStatus(3)
+            vacuum.initializeTime(0.0)
 
         H = []
         R = []
@@ -114,8 +121,9 @@ class  GraphicalWorld (World,Tk) :
             self.inc()
             if(i%skip==0) :
                 self.draw()
-                H.append(sum(sum(self.A)))
-                R.append(sum(self.Moisture>0))
+
+            H.append(sum(sum(self.A)))
+            R.append(sum(self.Moisture>0))
     
         print("Mean of H: {0}".format(mean(H)))
 
