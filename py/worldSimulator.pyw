@@ -123,6 +123,7 @@ command.setNumberVacuums(len(vacArray))
 
 
 W.mainloop()
+exit(0)
 
 # testing (??)
 S=vacArray[1].missions;
