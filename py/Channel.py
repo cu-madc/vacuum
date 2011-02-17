@@ -66,6 +66,10 @@ from World import World
 
 # The xml classes used to define the messages being passed.
 from XML.XMLParser import XMLParser
+from XML.XMLIncomingDIF import XMLIncomingDIF
+from XML.XMLMessageNetwork import XMLMessageNetwork
+
+
 
 class Channel:
     
