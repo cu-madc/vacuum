@@ -124,13 +124,17 @@ class  World :
         self.expenditure += value
 
     def addVacuum(self,vacuum) :
+        # routine to add a vacuum to the list of vacuums tracked by
+        # the world.
         self.vacuumArray.append(vacuum)
         vacuum.setID(len(self.vacuumArray)-1)
 
+        # Let the planner know where this vacuum is.
         pos = vacuum.getPosition()
         if(self.planner) :
             self.planner.setVacuumLocation(len(self.vacuumArray)-1,pos[0],pos[1])
 
+        # Let the channel know about this vacuum.
         if(self.channel) :
             self.channel.addVacuum(vacuum,len(self.vacuumArray)-1)
 
@@ -157,7 +161,7 @@ class  World :
 
 
     def inc(self) :
-        # single time step of simulated world
+        # Take a single time step of the simulated world
             
         # dustfall procedure -----
         t=self.time;               # start time

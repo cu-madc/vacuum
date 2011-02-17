@@ -80,13 +80,15 @@ class Planner :
         self.setNumber(N)
         self.vacuumRange = 3
 
+        # Initialize the matrices.
         self.worldview = zeros((N,N),dtype=float64);
         self.wetview = zeros((N,N),dtype=float64);
         self.viewPrecision = zeros((N,N),dtype=float64);
         
         self.errGrowth=errGrowth      # estimated growth in variance
         self.dirtRate=dirtRate        #
-        
+
+        # Define the other objects that need to be tracked.
         self.setWorld(world)
         self.setSensor(sensor)
         self.setChannel(None)
@@ -143,18 +145,33 @@ class Planner :
 
 
     def defineDistanceArray(self) :
+        # Define the array that keeps track of the distances between
+        # places in the world. This is used by the vacuums to
+        # determine how far two cells are from one another.
+
+        # This is a list of lists. The list is of the form
+        #   self.Z[i][j]
+        # This entry in the list contains an array which has the
+        # distance away each coresponding cell in the array is from
+        # cell (i,j).
 
         N = self.getNumber()
         self.Z = range(N)
         for i in range(N) :
             self.Z[i] = range(N)
             for j in range(self.getNumber()) :
+
+                # Figure out the distance each cell is from the cell
+                # given at row i and column j.
                 distance = zeros((N,N),dtype=int16);
 
                 for m in range(N) :
-                    for n in range(N) : 
+                    for n in range(N) :
+                        # Use a Manhatten distance away from cell i,j.
                         distance[m,n] = abs(m-i) + abs(n-j)
 
+                # Set the entry in the list to be the array just
+                # calculated.
                 self.Z[i][j] = distance
 
 

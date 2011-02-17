@@ -119,8 +119,8 @@ class  GraphicalWorld (World,Tk) :
         skip = 10;
         for i in range(N) :
             self.inc()
-            if(i%skip==0) :
-                self.draw()
+            #if(i%skip==0) :
+            self.draw()
 
             H.append(sum(sum(self.A)))
             R.append(sum(self.Moisture>0))
