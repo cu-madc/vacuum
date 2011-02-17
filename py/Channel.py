@@ -64,6 +64,9 @@ from numpy.linalg import *
 
 from World import World
 
+# The xml classes used to define the messages being passed.
+from XML.XMLParser import XMLParser
+
 class Channel:
     
     
