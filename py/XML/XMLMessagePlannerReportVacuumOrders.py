@@ -63,11 +63,12 @@
 # 
 
 from xml.dom.minidom import Document
-from XMLIncomingDIF import XMLIncomingDIF
+#from XMLIncomingDIF import XMLIncomingDIF
 from XMLParser import XMLParser
 
 
-class XMLMessagePlannerReportVacuumOrders (XMLIncomingDIF) :
+#class XMLMessagePlannerReportVacuumOrders (XMLIncomingDIF) :
+class XMLMessagePlannerReportVacuumOrders (XMLParser) :
 
 
     def __init__(self) :
@@ -142,6 +143,10 @@ class XMLMessagePlannerReportVacuumOrders (XMLIncomingDIF) :
         nameNode = self.doc.createElement("name")
         nameNode.appendChild(self.doc.createTextNode("Planner"))
         self.objectClassNode.appendChild(nameNode)
+
+        typeNode = self.doc.createElement("type")
+        typeNode.appendChild(self.doc.createTextNode("Vacuum Orders"))
+        self.objectClassNode.appendChild(typeNode)
 
         self.createDimensions()
 
@@ -321,17 +326,26 @@ class XMLMessagePlannerReportVacuumOrders (XMLIncomingDIF) :
 
 
 if (__name__ =='__main__') :
+    from XMLIncomingDIF import XMLIncomingDIF
+    
     network = XMLMessagePlannerReportVacuumOrders()
     network.setVacuumID(3)
     network.setPos(2,4)
     network.createRootNode()
-    print(network.xml2Char())
+    #print(network.xml2Char())
 
 
     network.setVacuumID(1)
-    network.setXPos(1)
+    network.setXPos(5)
     network.setYPos(2)
-    print(network.xml2Char())
+    #print(network.xml2Char())
 
     #root_node = network.root_node.cloneNode(True)
     #network.copyXMLTree(root_node)
+
+
+    dif = XMLIncomingDIF()
+    xmlString = network.xml2Char()
+    info = dif.determineXMLInformation(xmlString)
+    info.createRootNode()
+    print("theXML:\n{0}".format(info.xml2Char()))

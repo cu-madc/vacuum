@@ -65,8 +65,11 @@
 #include <string.h>
 
 from XMLParser import XMLParser
+from XMLMessagePlannerReportVacuumOrders import XMLMessagePlannerReportVacuumOrders
 
 class XMLIncomingDIF (XMLParser) :
+
+    DEBUG = False
 
     def __init__(self) :
         XMLParser.__init__(self)
@@ -100,6 +103,37 @@ class XMLIncomingDIF (XMLParser) :
 
         return(None)
 
+
+
+    def getObjectClassNameAndType(self) :
+        # Routine to determine the name and type associated with
+        # objectClass part of the xml file.
+        name = None
+        type = None
+
+	# Walk through the tree and find the object class node.
+        objectClass = self.walkObjectName(self.getBuffer(),"objectClass");
+
+	if(objectClass) :
+            # The object class node was found.
+            if(self.DEBUG):
+                print("\n\nobjectClass: {0}\n".format(objectClass))
+
+            for sibling in objectClass[3] :
+                # Go through each of the children and look for a name node.
+                if(self.DEBUG):
+                    print("This node name: {0}".format(sibling[0]))
+
+                if(sibling[0]=="name") :
+                     # Found the name node. Report the value for this node.
+                    name = sibling[2]
+
+                elif(sibling[0] == "type") :
+                    type = sibling[2]
+
+        #print("my buffer: {0}".format(self.getBuffer()))
+        return([name,type])
+
         
 
 
@@ -123,6 +157,39 @@ class XMLIncomingDIF (XMLParser) :
 
         # No match was found. Return null.
         return(None)
+
+
+
+    def determineXMLInformation(self,passedXML) :
+        self.parseXMLString(passedXML)
+        [name,type] = self.getObjectClassNameAndType()
+        incomingXML = None
+
+        if( (name=="Planner") and (type == "Vacuum Orders")) :
+            incomingXML = XMLMessagePlannerReportVacuumOrders()
+            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+            if(dimensions) :
+                vacuum = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","vacuumID")
+                xPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","xPos")
+                yPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","yPos")
+                #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
+
+                if(vacuum) :
+                    incomingXML.setVacuumID(vacuum[3][1][2])
+
+                if(xPos) :
+                    incomingXML.setXPos(xPos[3][1][2])
+
+                if(yPos) :
+                    incomingXML.setYPos(yPos[3][1][2])
+                    
+
+                if(self.DEBUG) :
+                    print("This data represents information from a planner from a commander with the orders for a vacuum")
+
+        return(incomingXML)
+
 
 
 

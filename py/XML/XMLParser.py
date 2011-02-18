@@ -70,7 +70,7 @@ class XMLParser (xml.sax.handler.ContentHandler):
 
     SIZE_READ_FILE_BUFFER =	131072
     SIZE_READ_DTD_BUFFER  = 262144
-    DEBUG = True
+    DEBUG = False
 
 
 
@@ -194,13 +194,19 @@ class XMLParser (xml.sax.handler.ContentHandler):
                 
 	self.currentName = previousElement[0]
 
-		
-    def parseXMLBuffer(self) :
-         # *
-	 # Parse the contents of the buffer and put them into an XML tree.
-	 #  
 
-	 pass
+    ## parseXMLString
+    #
+    # Parse the contents of an xml string and put them into an
+    # XML tree.
+    #  
+    def parseXMLString(self,xmlString) :
+	parser = xml.sax.make_parser(['IncrementalParser'])
+	parser.setContentHandler(self)
+	parser.reset()
+        parser.feed(xmlString)
+	parser.close()
+
 
 
 
@@ -239,7 +245,7 @@ class XMLParser (xml.sax.handler.ContentHandler):
 
 
         if(self.DEBUG) :
-            print("\nSearching for node name: {0} with contents {1} node pointer: ".format(name,contents,currentNode))
+            print("\nSearching for node name: {0} with contents {1} node pointer: {2}".format(name,contents,currentNode))
 
         if(currentNode==None) :
             return(None); #  The node passed in was null.
@@ -248,7 +254,7 @@ class XMLParser (xml.sax.handler.ContentHandler):
         for sibling in currentNode:
             #  Go through each of the children of the passed node.
 
-            print("   now checking node name: ".format(sibling[0]))
+            #print("   now checking node name: ".format(sibling[0]))
             if (sibling[0]==nodeName):
                 if (self.checkChildrenForNameAndContents(sibling[3],name,contents)):
                     return (sibling);
@@ -273,6 +279,9 @@ class XMLParser (xml.sax.handler.ContentHandler):
         # result is "true." Otherwise return "false."
         # 
 
+        if(not currentNode) :
+            return None
+        
         for sibling in currentNode:
 
             content = sibling[2];
@@ -294,10 +303,18 @@ class XMLParser (xml.sax.handler.ContentHandler):
     def getChildWithName(self,currentNode,name) :
         # Routine to walk through the children and return the node whose name
         # matches the value passed through.
-        # 
-        for sibling in currentNode:
-            if (sibling[0]==name):
-                return (sibling);
+        #
+        if(currentNode) :
+            for sibling in currentNode:
+                if (sibling[0]==name):
+                    return (sibling);
+
+                checkChildren = self.getChildWithName(sibling[3],name)
+                if(checkChildren) :
+                    #  A match was found. Return it.
+                    return(checkChildren);
+
+                
         return(None);
 
 
