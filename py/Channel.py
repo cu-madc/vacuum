@@ -136,11 +136,38 @@ class Channel:
         if(self.reliability>random.rand(1)[0]) :
             return(True)
         return(False)
+
+
+    ## receiveXMLReportParseAndDecide
+    #
+    # This is a generic routine. It receives an xml report and decides
+    # what it is and who it is for. It then calls the specific routine
+    # necessary to pass along the information.
+    def receiveXMLReportParseAndDecide(self,xml) :
+        pass
     
 
+    ## sendVacuumReportFromCommander2Planner
+    #
+    # Routine that takes a report from the commander that identifies a
+    # particular vacuum and converts it into XML and passes it along
+    # to the planner so it will know where the vacuum was sent.
+    #
     def sendVacuumReportFromCommander2Planner(self,xPos,yPos,IDnum) :
         if(self.sendMessage()) :
             self.commander.receiveReport(xPos,yPos,IDnum)
+
+
+    ## receiveVacuumReportFromCommander2Planner
+    #
+    # Routine that takes the report send from a commander that
+    # identifies a particular vauum and converts it into a form for
+    # the planner to use.
+    #
+    def receiveVacuumReportFromCommander2Planner(self,xPos,yPos,IDnum) :
+        self.commander.receiveReport(xPos,yPos,IDnum)
+
+
 
     def sendRecommendOrderFromCommander2Planner(self,vacuumID,xPos,yPos) :
         if(self.sendMessage()) :

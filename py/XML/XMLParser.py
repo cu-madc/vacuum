@@ -79,7 +79,8 @@ class XMLParser (xml.sax.handler.ContentHandler):
     # message and help the base object decide what variables should be
     # parsed from the message that is passed.
     EMPTY, CHECK_INCOMING, VACUUM_NETWORK, \
-	   VACUUM_STATE, CONTROLER_NETWORK = range(5)
+	   VACUUM_STATE, CONTROLER_NETWORK, \
+           MESSAGE_PLANNER_REPORT_VACUUM_ORDERS = range(6)
 	
 
 

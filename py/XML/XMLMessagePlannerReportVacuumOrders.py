@@ -1,12 +1,14 @@
 #!/usr/bin/python
 #
-#  XMLMessageNetwork.py
+#  XMLMessagePlannerReportVacuumOrders.py
 # 
-#   Created on: Jan 29, 2011
+#   Created on: 18 Feb, 2011
 #       Author: black
 # 
-#       Methods for the class that keeps track of the information specific
-#       to the network associated with a given vacumm.
+#       Methods for the class that keeps track of the information
+#       specific to the orders given to a vacuum by a commander. This
+#       information is to be sent to a planner so that the planner
+#       knows where the vacuum was sent.
 # 
 #  This material is based on research sponsored by DARPA under agreement
 #  number FA8750-10-2-0165. The U.S. Government is authorized to
@@ -65,17 +67,20 @@ from XMLIncomingDIF import XMLIncomingDIF
 from XMLParser import XMLParser
 
 
-class XMLMessageNetwork (XMLIncomingDIF) :
+class XMLMessagePlannerReportVacuumOrders (XMLIncomingDIF) :
 
 
     def __init__(self) :
-	self.setMyInformationType(self.VACUUM_NETWORK);
+	self.setMyInformationType(self.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
 	self.dimensionsNode = None
 	self.objectClassNode = None
-	self.networkIDNode = None
+	self.vacuumIDNode = None
 	self.probSuccessNode = None
-        self.networkID = 0
-	self.probSuccessfulTransmission = 1.0
+        self.xPosNode = None;
+        self.yPosNode = None;
+	self.vacuumID = -1
+        self.xPos = None
+        self.yPos = None
 
 
 
@@ -83,21 +88,29 @@ class XMLMessageNetwork (XMLIncomingDIF) :
         pass
 
 
-    def getNetworkID(self) :
-        return(self.networkID)
+    def getVacuumID(self) :
+        return(self.vacuumID)
 
 
-    def setNetworkID(self,value) :
-        self.networkID = value
-        self.updateNetworkIDNode()
+    def setVacuumID(self,value) :
+        self.vacuumID = value
+        self.updateVacuumIDNode()
 
-    def getProbSuccessfulTransmission(self) :
-        return(self.probSuccessfulTransmission)
+    def getPos(self) :
+        return([self.xPos,self.yPos])
 
 
-    def setProbSuccessfulTransmission(self,value) :
-        self.probSuccessfulTransmission = value
-        self.updateProbTransmission()
+    def setPos(self,x,y) :
+        self.setXPos(x)
+        self.setYPos(y)
+
+    def setXPos(self,x) :
+        self.xPos = x
+        self.updatePositionNodes()
+
+    def setYPos(self,y) :
+        self.yPos = y
+        self.updatePositionNodes()
 
 
     def createRootNode(self) :
@@ -127,7 +140,7 @@ class XMLMessageNetwork (XMLIncomingDIF) :
         node.appendChild(self.objectClassNode)
 
         nameNode = self.doc.createElement("name")
-        nameNode.appendChild(self.doc.createTextNode("vacuumNetwork"))
+        nameNode.appendChild(self.doc.createTextNode("Planner"))
         self.objectClassNode.appendChild(nameNode)
 
         self.createDimensions()
@@ -140,44 +153,45 @@ class XMLMessageNetwork (XMLIncomingDIF) :
 
         self.dimensionsNode = self.doc.createElement("dimensions")
         self.objectClassNode.appendChild(self.dimensionsNode)
-        self.setNetworkIDNode()
-        self.setProbSuccessNode()
-        
+        self.setVacuumIDNode()
+        self.setxPositionNode()
+        self.setyPositionNode()
         
 
 
-    def setNetworkIDNode(self) :
+    def setVacuumIDNode(self) :
         # Method to set the value of the id for this vacuum. It
         # indicates which vacumm this structure is associated
         # with. The value is then added to the xml tree under the
         # dimensions node.
 
-        self.networkIDNode = self.doc.createElement("dimension")
-        self.dimensionsNode.appendChild(self.networkIDNode)
+        self.vacuumIDNode = self.doc.createElement("dimension")
+        self.dimensionsNode.appendChild(self.vacuumIDNode)
 
         dimension = self.doc.createElement("name")
-        node = self.doc.createTextNode("networkID")
+        node = self.doc.createTextNode("vacuumID")
         dimension.appendChild(node)
-        self.networkIDNode.appendChild(dimension)
+        self.vacuumIDNode.appendChild(dimension)
 
         dimension = self.doc.createElement("value")
-        node = self.doc.createTextNode(str(self.getNetworkID()))
+        node = self.doc.createTextNode(str(self.getVacuumID()))
         dimension.appendChild(node)
-        self.networkIDNode.appendChild(dimension)
+        self.vacuumIDNode.appendChild(dimension)
 
 
 
-    def updateNetworkIDNode(self) :
+    def updateVacuumIDNode(self) :
         # Method to change the network ID node to reflect the current
         # value of the network id.
-        self.updateValue("networkID",self.getNetworkID())
+        self.updateValue("vacuumID",self.getVacuumID())
 
 
-    def updateProbTransmission(self) :
+    def updatePositionNodes(self) :
         # Method to change the network ID node to reflect the current
         # value of the network id.
-        self.updateValue("probabilitySuccessfulTransmission",
-                         self.getProbSuccessfulTransmission())
+        position = self.getPos()
+        self.updateValue("xPos",position[0])
+        self.updateValue("yPos",position[1])
 
 
     def updateValue(self,valueName,newValue) :
@@ -206,22 +220,43 @@ class XMLMessageNetwork (XMLIncomingDIF) :
 
 
 
-    def setProbSuccessNode(self) :
+    def setxPositionNode(self) :
         # Method to set the value of the prob. of a successful
         # transmission. 
 
-        self.probSuccessNode = self.doc.createElement("dimension")
-        self.dimensionsNode.appendChild(self.probSuccessNode)
+        self.xPosNode = self.doc.createElement("dimension")
+        self.dimensionsNode.appendChild(self.xPosNode)
 
         dimension = self.doc.createElement("name")
-        node = self.doc.createTextNode("probabilitySuccessfulTransmission")
+        node = self.doc.createTextNode("xPos")
         dimension.appendChild(node)
-        self.probSuccessNode.appendChild(dimension)
+        self.xPosNode.appendChild(dimension)
 
+        position = self.getPos()
         dimension = self.doc.createElement("value")
-        node = self.doc.createTextNode("{0:22.14E}".format(self.getProbSuccessfulTransmission()))
+        node = self.doc.createTextNode("{0}".format(position[0]))
         dimension.appendChild(node)
-        self.probSuccessNode.appendChild(dimension)
+        self.xPosNode.appendChild(dimension)
+
+
+    def setyPositionNode(self) :
+        # Method to set the value of the prob. of a successful
+        # transmission. 
+
+        self.yPosNode = self.doc.createElement("dimension")
+        self.dimensionsNode.appendChild(self.yPosNode)
+
+        dimension = self.doc.createElement("name")
+        node = self.doc.createTextNode("yPos")
+        dimension.appendChild(node)
+        self.yPosNode.appendChild(dimension)
+
+        position = self.getPos()
+        dimension = self.doc.createElement("value")
+        node = self.doc.createTextNode("{0}".format(position[1]))
+        dimension.appendChild(node)
+        self.yPosNode.appendChild(dimension)
+
 
 
 
@@ -229,10 +264,7 @@ class XMLMessageNetwork (XMLIncomingDIF) :
         # Copy the given parsed XML tree into the local tree. Also set
         # the relevant nodes that this class tracks from the tree.
 
-	#self.copyXMLTree(existingDocument)
         self.root_node = existingDocument.cloneNode(True)
-
-        #print("{0} {1} {2} {3} {4} {5} {6} {7} {8}".format(Document.ELEMENT_NODE, Document.ATTRIBUTE_NODE, Document.TEXT_NODE, Document.CDATA_SECTION_NODE, Document.ENTITY_NODE, Document.PROCESSING_INSTRUCTION_NODE, Document.COMMENT_NODE, Document.DOCUMENT_NODE, Document.DOCUMENT_TYPE_NODE, Document.NOTATION_NODE))
 
 	if(self.root_node) :
             nodes = self.root_node.getElementsByTagName("objectClass")
@@ -263,10 +295,13 @@ class XMLMessageNetwork (XMLIncomingDIF) :
                         #print("  Name: {0} Value: {1}".format(name,value))
                                 
                         if(name == "networkID") :
-                            self.setNetworkID(int(value))
+                            self.setVacuumID(int(value))
                             
-                        elif(name == "probabilitySuccessfulTransmission") :
-                            self.setProbSuccessfulTransmission(float(value))
+                        elif(name == "xPos") :
+                            self.setXPos(int(value))
+
+                        elif(name == "yPos") :
+                            self.setYPos(int(value))
 
                     #print("network: {0} - prob: {1}".format(
                     #    self.getNetworkID(),self.getProbSuccessfulTransmission()))
@@ -286,15 +321,16 @@ class XMLMessageNetwork (XMLIncomingDIF) :
 
 
 if (__name__ =='__main__') :
-    network = XMLMessageNetwork()
-    network.setNetworkID(3)
-    network.setProbSuccessfulTransmission(0.3)
+    network = XMLMessagePlannerReportVacuumOrders()
+    network.setVacuumID(3)
+    network.setPos(2,4)
     network.createRootNode()
     print(network.xml2Char())
 
 
-    network.setNetworkID(1)
-    network.setProbSuccessfulTransmission(0.22)
+    network.setVacuumID(1)
+    network.setXPos(1)
+    network.setYPos(2)
     print(network.xml2Char())
 
     #root_node = network.root_node.cloneNode(True)
