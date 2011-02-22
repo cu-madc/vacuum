@@ -160,10 +160,10 @@ class XMLMessageWorldStatus (XMLParser) :
                 self.arrayNode = self.doc.createElement("dimension")
                 self.dimensionsNode.appendChild(self.arrayNode)
 
-                dimension = self.doc.createElement("name")
-                node = self.doc.createTextNode("array")
-                dimension.appendChild(node)
-                self.arrayNode.appendChild(dimension)
+                #dimension = self.doc.createElement("element")
+                #node = self.doc.createTextNode("array")
+                #dimension.appendChild(node)
+                #self.arrayNode.appendChild(dimension)
 
                 dimension = self.doc.createElement("row")
                 node = self.doc.createTextNode(str(rowNum))
@@ -215,6 +215,33 @@ class XMLMessageWorldStatus (XMLParser) :
                                                 id.nodeValue = newValue
 
 
+    def setMatrixFromXML(self) :
+        # Method to pull out the matrix data from the XML tree.
+
+        if(self.dimensionsNode) :
+            nodes = self.dimensionsNode.getElementsByTagName("dimension")
+            if(nodes.length>0) :
+
+                for dimension in nodes :
+                    # Get the value of this leaf in the tree. This
+                    # should include a row number, a column number,
+                    # and the value of the matrix.
+                    row = dimension.getElementsByTagName("row");
+                    col = dimension.getElementsByTagName("column");
+                    value = dimension.getElementsByTagName("value");
+
+                    rowNum = int(self.getValueOfNode(row))
+                    colNum = int(self.getValueOfNode(col))
+                    arrayVal = float64(self.getValueOfNode(value))
+                    self.A[rowNum,colNum] = arrayVal
+                         
+
+    def getValueOfNode(self,node) :
+        for leaf in node :
+            for detail in leaf.childNodes:
+                if(detail.nodeType == Document.TEXT_NODE) :
+                    # This is the row to be used.
+                    return(detail.nodeValue)
 
 
 
@@ -279,4 +306,5 @@ if (__name__ =='__main__') :
     A = random.rand(1.0,5,5)[0]
     sensorData = XMLMessageWorldStatus(A)
     sensorData.createRootNode()
-    print("Array:\n{0}".format(sensorData.xml2Char()))
+    sensorData.setMatrixFromXML()
+    #print("Array:\n{0}".format(sensorData.xml2Char()))
