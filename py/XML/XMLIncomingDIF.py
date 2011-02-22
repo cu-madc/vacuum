@@ -81,6 +81,8 @@ from XMLMessageMoveOrderCommanderVacuum        import \
 from XMLMessageMoveOrderCommanderPlanner       import \
      XMLMessageMoveOrderCommanderPlanner
 
+from XMLMessageGetReportVacuumCommander import \
+     XMLMessageGetReportVacuumCommander
 
 
 class XMLIncomingDIF (XMLParser) :
@@ -298,6 +300,38 @@ class XMLIncomingDIF (XMLParser) :
                 if(yPos) :
                     incomingXML.setYPos(yPos[3][1][2])
                     
+
+                if(self.DEBUG) :
+                    print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
+
+
+        elif( (name=="Commander") and (type=="Get Report")) :
+            incomingXML = XMLMessageGetReportVacuumCommander()
+            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+            if(dimensions) :
+                vacuum = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","vacuumID")
+                xPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","xPos")
+                yPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","yPos")
+
+                status = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","status")
+
+                if(vacuum) :
+                    incomingXML.setVacuumID(vacuum[3][1][2])
+
+                if(xPos) :
+                    incomingXML.setXPos(xPos[3][1][2])
+
+                if(yPos) :
+                    incomingXML.setYPos(yPos[3][1][2])
+
+                if(status) :
+                    incomingXML.setStatus(status[3][1][2])
+
+                pos = incomingXML.getPos()
+                #print("id: {0} pos: {1},{2} Status: {3}".format(
+                #    incomingXML.getVacuumID(),pos[0],pos[1],incomingXML.getStatus()))
+                                
 
                 if(self.DEBUG) :
                     print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
