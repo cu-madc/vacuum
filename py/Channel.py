@@ -296,11 +296,6 @@ class Channel:
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
-    def sendMeasuredFromPlanner2Sensor(self) :
-        if(self.sendMessage()) :
-            return(self.sensor.measure())
-
-
 
 
     ## sendReportFromVacuum2Commander
@@ -333,8 +328,17 @@ class Channel:
             orders.createRootNode()
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
-    
 
+
+    def sendMeasuredFromPlanner2Sensor(self) :
+        if(self.sendMessage()) :
+            return(self.sensor.measure())
+
+
+
+    def sendWorldStatusToSensor(self,A) :
+        worldData = XMLMessageWorldStatus(A)
+        
 
 
 

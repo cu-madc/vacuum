@@ -178,7 +178,11 @@ class  World :
             tau=-log(random.rand(1.0)[0])/self.r ;     # time until next event
             t=t+tau;
             # end dustfall
-            
+
+
+        # Notify the Channel of the current status
+        self.channel.sendWorldStatusToSensor(self.A)
+        
         # drying
         self.Moisture[self.Moisture>0] -= 1;
             
