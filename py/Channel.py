@@ -71,6 +71,7 @@ from XML.XMLMessageNetwork import XMLMessageNetwork
 from XML.XMLMessagePlannerReportVacuumOrders import XMLMessagePlannerReportVacuumOrders
 from XML.XMLMessageRecommendOrderCommander2Planner import XMLMessageRecommendOrderCommander2Planner
 from XML.XMLMessageRecommendOrderPlanner2Commander import XMLMessageRecommendOrderPlanner2Commander
+from XML.XMLMessageMoveOrderCommanderVacuum import XMLMessageMoveOrderCommanderVacuum
 
 
 
@@ -171,6 +172,16 @@ class Channel:
             self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
 
 
+        elif(info.getMyInformationType() == XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
+            pos = info.getPos()
+            vacuumID = info.getVacuumID()
+            #print("sending report to commander for {0} - {1},{2}".format(
+            #    info.getVacuumID(),pos[0],pos[1]))
+
+            if(vacuumID < len(self.vacuumArray)) :
+                self.vacuumArray[vacuumID].moveord(pos[0],pos[1])
+
+
 
     ## sendVacuumReportFromCommander2Planner
     #
@@ -207,7 +218,7 @@ class Channel:
 
     ## sendRecommendOrderFromPlanner2Commander
     #
-    # Routine that takes a reccomendation order from the planner that
+    # Routine that takes a recomendation order from the planner that
     # identifies a particular vacuum and converts it into XML and
     # passes the XML tree on to the commander.
     def sendRecommendOrderFromPlanner2Commander(self,xPos,yPos,IDnum) :
@@ -221,10 +232,19 @@ class Channel:
 
 
 
-    def sendMoveOrderFromCommander2Vacuum(self,xord,yord,vacuumID) :
+    ## sendMoveOrderFromCommander2Vacuum
+    #
+    # Routine that takes an order from the commander and converts it
+    # into XML and passed the XML to the vacuum.
+    def sendMoveOrderFromCommander2Vacuum(self,xPos,yPos,vacuumID) :
         if(self.sendMessage()) :
-            if(vacuumID < len(self.vacuumArray)) :
-                self.vacuumArray[vacuumID].moveord(xord,yord)
+            #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
+            orders = XMLMessageMoveOrderCommanderVacuum()
+            orders.setVacuumID(vacuumID)
+            orders.setPos(xPos,yPos)
+            orders.createRootNode()
+            self.receiveXMLReportParseAndDecide(orders.xml2Char())
+
 
     def sendMeasuredFromPlanner2Sensor(self) :
         if(self.sendMessage()) :
@@ -239,33 +259,6 @@ class Channel:
             self.planner.receiveOrder(IDnum,xord,yord)
     
 
-    def send(self,target,aMethod,*varargin) :
-        # assumes method is for the world
-        
-        if self.getWorking() and (self.reliability>random.rand(1)[0]) :
-            aMethod(target,varargin)
-
-            
-
-        
-    def sendReceive(self,target,returnChannel,aMethod,*varargin) :
-        # implements methods that also return values via a channel
-
-        varargout = []
-        if self.getWorking() and (self.reliability>random.rand(1)[0]) :
-            varargout = aMethod(target,varargin)
-            if ((not returnChannel.getWorking()) or
-                 (returnChannel.reliability<random.rand(1)[0])) :
-                 # execute method but don't return result
-                 for i in range(len(varargin)) :
-                     varargout.append([])
-                 
-        else :
-            for i in range(len(varargin)) :
-                varargout.append([])
-
-        return(varargout)
-            
 
 
 
@@ -279,5 +272,3 @@ if (__name__ =='__main__') :
     def silly(a,*b) :
         print("type: {0}\n{1}".format(type(a),b))
 
-    channel1.send(world,silly,1,2,3)
-    channel1.sendReceive(world,channel2,silly,1,2,3)
