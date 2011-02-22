@@ -62,6 +62,9 @@
 # 
 # 
 
+from numpy import *
+from numpy.linalg import *
+
 from xml.dom.minidom import Document
 #from XMLIncomingDIF import XMLIncomingDIF
 from XMLParser import XMLParser
@@ -94,7 +97,7 @@ class XMLMessagePlannerReportVacuumOrders (XMLParser) :
 
 
     def setVacuumID(self,value) :
-        self.vacuumID = value
+        self.vacuumID = int(value)
         self.updateVacuumIDNode()
 
     def getPos(self) :
@@ -106,11 +109,11 @@ class XMLMessagePlannerReportVacuumOrders (XMLParser) :
         self.setYPos(y)
 
     def setXPos(self,x) :
-        self.xPos = x
+        self.xPos = int64(x)
         self.updatePositionNodes()
 
     def setYPos(self,y) :
-        self.yPos = y
+        self.yPos = int64(y)
         self.updatePositionNodes()
 
 
@@ -303,10 +306,10 @@ class XMLMessagePlannerReportVacuumOrders (XMLParser) :
                             self.setVacuumID(int(value))
                             
                         elif(name == "xPos") :
-                            self.setXPos(int(value))
+                            self.setXPos(int64(value))
 
                         elif(name == "yPos") :
-                            self.setYPos(int(value))
+                            self.setYPos(int64(value))
 
                     #print("network: {0} - prob: {1}".format(
                     #    self.getNetworkID(),self.getProbSuccessfulTransmission()))
