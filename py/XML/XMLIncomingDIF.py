@@ -66,6 +66,8 @@
 
 from XMLParser import XMLParser
 from XMLMessagePlannerReportVacuumOrders import XMLMessagePlannerReportVacuumOrders
+from XML.XMLMessageRecommendOrderCommander2Planner import XMLMessageRecommendOrderCommander2Planner
+
 
 class XMLIncomingDIF (XMLParser) :
 
@@ -187,6 +189,31 @@ class XMLIncomingDIF (XMLParser) :
 
                 if(self.DEBUG) :
                     print("This data represents information from a planner from a commander with the orders for a vacuum")
+
+
+        elif( (name=="Planner") and (type == "Vacuum Recommendation")) :
+            incomingXML = XMLMessageRecommendOrderCommander2Planner()
+            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+            if(dimensions) :
+                vacuum = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","vacuumID")
+                xPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","xPos")
+                yPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","yPos")
+                #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
+
+                if(vacuum) :
+                    incomingXML.setVacuumID(vacuum[3][1][2])
+
+                if(xPos) :
+                    incomingXML.setXPos(xPos[3][1][2])
+
+                if(yPos) :
+                    incomingXML.setYPos(yPos[3][1][2])
+                    
+
+                if(self.DEBUG) :
+                    print("This data represents information from a commander to a planner with the suggested orders for a vacuum")
+
 
         return(incomingXML)
 

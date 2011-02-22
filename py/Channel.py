@@ -69,6 +69,7 @@ from XML.XMLParser import XMLParser
 from XML.XMLIncomingDIF import XMLIncomingDIF
 from XML.XMLMessageNetwork import XMLMessageNetwork
 from XML.XMLMessagePlannerReportVacuumOrders import XMLMessagePlannerReportVacuumOrders
+from XML.XMLMessageRecommendOrderCommander2Planner import XMLMessageRecommendOrderCommander2Planner
 
 
 
@@ -144,8 +145,22 @@ class Channel:
     # This is a generic routine. It receives an xml report and decides
     # what it is and who it is for. It then calls the specific routine
     # necessary to pass along the information.
-    def receiveXMLReportParseAndDecide(self,xml) :
-        pass
+    def receiveXMLReportParseAndDecide(self,xmlString) :
+        dif = XMLIncomingDIF()
+        info = dif.determineXMLInformation(xmlString)
+
+        if(info.getMyInformationType() == XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
+            pos = info.getPos()
+            #print("sending report to commander for {0} - {1},{2}".format(
+            #    info.getVacuumID(),pos[0],pos[1]))
+            self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
+
+
+        elif(info.getMyInformationType() == XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
+            pos = info.getPos()
+            #print("sending report to planner for {0} - {1},{2}".format(
+            #    info.getVacuumID(),pos[0],pos[1]))
+            self.planner.recommendOrder(info.getVacuumID(),pos[0],pos[1])
     
 
     ## sendVacuumReportFromCommander2Planner
@@ -161,29 +176,20 @@ class Channel:
             network.setVacuumID(IDnum)
             network.setPos(xPos,yPos)
             network.createRootNode()
-            self.receiveVacuumReportFromCommander2Planner(network.xml2Char())
+            self.receiveXMLReportParseAndDecide(network.xml2Char())
 
-
-    ## receiveVacuumReportFromCommander2Planner
-    #
-    # Routine that takes the report send from a commander that
-    # identifies a particular vauum and converts it into a form for
-    # the planner to use.
-    #
-    def receiveVacuumReportFromCommander2Planner(self,xmlString) :
-        dif = XMLIncomingDIF()
-        info = dif.determineXMLInformation(xmlString)
-        if(info.getMyInformationType() == XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
-            pos = info.getPos()
-            #print("sending report to commander for {0} - {1},{2}".format(
-            #    info.getVacuumID(),pos[0],pos[1]))
-            self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
 
 
 
     def sendRecommendOrderFromCommander2Planner(self,vacuumID,xPos,yPos) :            
         if(self.sendMessage()) :
-            self.planner.recommendOrder(vacuumID,xPos,yPos)
+            #print("Sending to id: {0} pos: {1},{2}".format(vacuumID,xPos,yPos))
+            orders = XMLMessageRecommendOrderCommander2Planner()
+            orders.setVacuumID(vacuumID)
+            orders.setPos(xPos,yPos)
+            orders.createRootNode()
+            self.receiveXMLReportParseAndDecide(orders.xml2Char())
+            
 
     def sendRecommendOrderFromPlanner2Commander(self,xPos,yPos,IDnum) :
         if(self.sendMessage()) :

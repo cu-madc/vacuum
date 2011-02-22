@@ -80,7 +80,8 @@ class XMLParser (xml.sax.handler.ContentHandler):
     # parsed from the message that is passed.
     EMPTY, CHECK_INCOMING, VACUUM_NETWORK, \
 	   VACUUM_STATE, CONTROLER_NETWORK, \
-           MESSAGE_PLANNER_REPORT_VACUUM_ORDERS = range(6)
+           MESSAGE_PLANNER_REPORT_VACUUM_ORDERS, \
+           MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER = range(7)
 	
 
 
