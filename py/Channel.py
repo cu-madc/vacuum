@@ -165,7 +165,9 @@ class Channel:
         info = dif.determineXMLInformation(xmlString)
 
 
-        if(info.getMyInformationType() == XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
+        if(info.getMyInformationType() ==
+           XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
+            
             pos = info.getPos()
             #print("sending report to commander for {0} - {1},{2}".format(
             #    info.getVacuumID(),pos[0],pos[1]))
@@ -173,7 +175,9 @@ class Channel:
 
 
 
-        elif(info.getMyInformationType() == XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
+        elif(info.getMyInformationType() ==
+             XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
+            
             pos = info.getPos()
             #print("sending report to planner for {0} - {1},{2}".format(
             #    info.getVacuumID(),pos[0],pos[1]))
@@ -181,7 +185,9 @@ class Channel:
 
 
 
-        elif(info.getMyInformationType() == XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER) :
+        elif(info.getMyInformationType() ==
+             XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER) :
+            
             pos = info.getPos()
             #print("sending report to commander for {0} - {1},{2}".format(
             #    info.getVacuumID(),pos[0],pos[1]))
@@ -189,7 +195,9 @@ class Channel:
 
 
 
-        elif(info.getMyInformationType() == XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
+        elif(info.getMyInformationType() ==
+             XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
+            
             pos = info.getPos()
             vacuumID = info.getVacuumID()
             #print("sending report to vacuum for {0} - {1},{2}".format(
@@ -200,7 +208,9 @@ class Channel:
 
 
 
-        elif(info.getMyInformationType() == XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
+        elif(info.getMyInformationType() ==
+             XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
+            
             pos = info.getPos()
             #print("sending report to planner for {0} - {1},{2}".format(
             #    info.getVacuumID(),pos[0],pos[1]))
@@ -208,7 +218,9 @@ class Channel:
 
 
 
-        elif(info.getMyInformationType() == XMLParser.MESSAGE_GET_REPORT_VACUUM_COMMANDER) :
+        elif(info.getMyInformationType() ==
+             XMLParser.MESSAGE_GET_REPORT_VACUUM_COMMANDER) :
+            
             pos = info.getPos()
             #print("sending report to planner for {0} - {1},{2} - {3}".format(
             #    info.getVacuumID(),pos[0],pos[1],info.getStatus()))
