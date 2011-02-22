@@ -66,72 +66,21 @@ from numpy import *
 from numpy.linalg import *
 
 from xml.dom.minidom import Document
-#from XMLIncomingDIF import XMLIncomingDIF
+from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 from XMLParser import XMLParser
 
 
-#class XMLMessagePlannerReportVacuumOrders (XMLIncomingDIF) :
-class XMLMessagePlannerReportVacuumOrders (XMLParser) :
+class XMLMessagePlannerReportVacuumOrders (XMLMessageVacuumIDPosBase) :
 
 
     def __init__(self) :
 	self.setMyInformationType(self.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
-	self.dimensionsNode = None
-	self.objectClassNode = None
-	self.vacuumIDNode = None
-	self.probSuccessNode = None
-        self.xPosNode = None;
-        self.yPosNode = None;
-	self.vacuumID = -1
-        self.xPos = None
-        self.yPos = None
-
+        XMLMessageVacuumIDPosBase.__init__(self)
 
 
     def __del__(self) :
         pass
 
-
-    def getVacuumID(self) :
-        return(self.vacuumID)
-
-
-    def setVacuumID(self,value) :
-        self.vacuumID = int(value)
-        self.updateVacuumIDNode()
-
-    def getPos(self) :
-        return([self.xPos,self.yPos])
-
-
-    def setPos(self,x,y) :
-        self.setXPos(x)
-        self.setYPos(y)
-
-    def setXPos(self,x) :
-        self.xPos = int64(x)
-        self.updatePositionNodes()
-
-    def setYPos(self,y) :
-        self.yPos = int64(y)
-        self.updatePositionNodes()
-
-
-    def createRootNode(self) :
-	# Method to create the root node in the xml tree. Sets the
-        #  scheme information as well.
-        #
-
-	self.cleanUpDocument()
-        self.doc = Document()
-	self.root_node = self.doc.createElement("objectModel");
-        self.doc.appendChild(self.root_node)
-
-        self.root_node.setAttribute("xmlns","http://standards.ieee.org/IEEE1516-2010")
-        self.root_node.setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance")
-        self.root_node.setAttribute("xsi:schemaLocation","http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd")
-
-        self.createObjectClass()
 
 
     def createObjectClass(self) :
@@ -152,174 +101,6 @@ class XMLMessagePlannerReportVacuumOrders (XMLParser) :
         self.objectClassNode.appendChild(typeNode)
 
         self.createDimensions()
-
-
-    def createDimensions(self):
-        # Creates the dimensions node in the xml tree. It adds the
-        # objectClass node as a child of the dimensions node. Finally
-        # a "name" node is added as a child of the dimensions node.
-
-        self.dimensionsNode = self.doc.createElement("dimensions")
-        self.objectClassNode.appendChild(self.dimensionsNode)
-        self.setVacuumIDNode()
-        self.setxPositionNode()
-        self.setyPositionNode()
-        
-
-
-    def setVacuumIDNode(self) :
-        # Method to set the value of the id for this vacuum. It
-        # indicates which vacumm this structure is associated
-        # with. The value is then added to the xml tree under the
-        # dimensions node.
-
-        self.vacuumIDNode = self.doc.createElement("dimension")
-        self.dimensionsNode.appendChild(self.vacuumIDNode)
-
-        dimension = self.doc.createElement("name")
-        node = self.doc.createTextNode("vacuumID")
-        dimension.appendChild(node)
-        self.vacuumIDNode.appendChild(dimension)
-
-        dimension = self.doc.createElement("value")
-        node = self.doc.createTextNode(str(self.getVacuumID()))
-        dimension.appendChild(node)
-        self.vacuumIDNode.appendChild(dimension)
-
-
-
-    def updateVacuumIDNode(self) :
-        # Method to change the network ID node to reflect the current
-        # value of the network id.
-        self.updateValue("vacuumID",self.getVacuumID())
-
-
-    def updatePositionNodes(self) :
-        # Method to change the network ID node to reflect the current
-        # value of the network id.
-        position = self.getPos()
-        self.updateValue("xPos",position[0])
-        self.updateValue("yPos",position[1])
-
-
-    def updateValue(self,valueName,newValue) :
-        # Method to change the network ID node to reflect the current
-        # value of the network id.
-
-        if(self.dimensionsNode) :
-            nodes = self.dimensionsNode.getElementsByTagName("dimension")
-            if(nodes.length>0) :
-
-                for dimension in nodes :
-                    # Get the value of the network ID in the tree and set
-                    # it for this instance
-                    networks = dimension.getElementsByTagName("name");
-                    for network in networks:
-                        for detail in network.childNodes:
-                            if((detail.nodeType == Document.TEXT_NODE) and
-                               (detail.nodeValue == valueName)) :
-                                    # This dimension node is for the network id
-                                    values = dimension.getElementsByTagName("value");
-                                    for value in values:
-                                        for id in value.childNodes:
-                                            if(id.nodeType == Document.TEXT_NODE) :
-                                                id.nodeValue = newValue
-
-
-
-
-    def setxPositionNode(self) :
-        # Method to set the value of the prob. of a successful
-        # transmission. 
-
-        self.xPosNode = self.doc.createElement("dimension")
-        self.dimensionsNode.appendChild(self.xPosNode)
-
-        dimension = self.doc.createElement("name")
-        node = self.doc.createTextNode("xPos")
-        dimension.appendChild(node)
-        self.xPosNode.appendChild(dimension)
-
-        position = self.getPos()
-        dimension = self.doc.createElement("value")
-        node = self.doc.createTextNode("{0}".format(position[0]))
-        dimension.appendChild(node)
-        self.xPosNode.appendChild(dimension)
-
-
-    def setyPositionNode(self) :
-        # Method to set the value of the prob. of a successful
-        # transmission. 
-
-        self.yPosNode = self.doc.createElement("dimension")
-        self.dimensionsNode.appendChild(self.yPosNode)
-
-        dimension = self.doc.createElement("name")
-        node = self.doc.createTextNode("yPos")
-        dimension.appendChild(node)
-        self.yPosNode.appendChild(dimension)
-
-        position = self.getPos()
-        dimension = self.doc.createElement("value")
-        node = self.doc.createTextNode("{0}".format(position[1]))
-        dimension.appendChild(node)
-        self.yPosNode.appendChild(dimension)
-
-
-
-
-    def copyXMLTree(self,existingDocument) :
-        # Copy the given parsed XML tree into the local tree. Also set
-        # the relevant nodes that this class tracks from the tree.
-
-        self.root_node = existingDocument.cloneNode(True)
-
-	if(self.root_node) :
-            nodes = self.root_node.getElementsByTagName("objectClass")
-            if(nodes.length==1) :
-                self.objectClassNode = nodes.item(0)
-
-                nodes = self.root_node.getElementsByTagName("dimensions")
-                if(nodes.length==1) :
-                    self.dimensionsNode = nodes.item(0)
-
-                    # Get the value of the network ID in the tree and set
-                    # it for this instance
-                    nodes = self.dimensionsNode.getElementsByTagName("dimension");
-                    for node in nodes:
-
-                        name = None
-                        value = None
-                        for detail in node.childNodes:
-                            for child in detail.childNodes:
-                                if(child.nodeType == Document.TEXT_NODE) :
-                                    
-                                    if(detail.localName == "name") :
-                                        name = child.nodeValue
-
-                                    elif(detail.localName == "value") :
-                                        value = child.nodeValue
-
-                        #print("  Name: {0} Value: {1}".format(name,value))
-                                
-                        if(name == "networkID") :
-                            self.setVacuumID(int(value))
-                            
-                        elif(name == "xPos") :
-                            self.setXPos(int64(value))
-
-                        elif(name == "yPos") :
-                            self.setYPos(int64(value))
-
-                    #print("network: {0} - prob: {1}".format(
-                    #    self.getNetworkID(),self.getProbSuccessfulTransmission()))
-                        
-
-            else :
-                # Error - there is more than one object class node.
-                if(self.DEBUG) :
-                    print("Error - too many object class nodes.")
-                self.objectClassNode = None
 
 
                 

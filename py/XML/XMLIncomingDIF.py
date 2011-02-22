@@ -66,7 +66,7 @@
 
 from XMLParser import XMLParser
 from XMLMessagePlannerReportVacuumOrders import XMLMessagePlannerReportVacuumOrders
-from XML.XMLMessageRecommendOrderCommander2Planner import XMLMessageRecommendOrderCommander2Planner
+from XMLMessageRecommendOrderCommander2Planner import XMLMessageRecommendOrderCommander2Planner
 
 
 class XMLIncomingDIF (XMLParser) :
