@@ -70,6 +70,7 @@ from XML.XMLIncomingDIF import XMLIncomingDIF
 from XML.XMLMessageNetwork import XMLMessageNetwork
 from XML.XMLMessagePlannerReportVacuumOrders import XMLMessagePlannerReportVacuumOrders
 from XML.XMLMessageRecommendOrderCommander2Planner import XMLMessageRecommendOrderCommander2Planner
+from XML.XMLMessageRecommendOrderPlanner2Commander import XMLMessageRecommendOrderPlanner2Commander
 
 
 
@@ -161,7 +162,15 @@ class Channel:
             #print("sending report to planner for {0} - {1},{2}".format(
             #    info.getVacuumID(),pos[0],pos[1]))
             self.planner.recommendOrder(info.getVacuumID(),pos[0],pos[1])
-    
+
+
+        elif(info.getMyInformationType() == XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER) :
+            pos = info.getPos()
+            #print("sending report to commander for {0} - {1},{2}".format(
+            #    info.getVacuumID(),pos[0],pos[1]))
+            self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
+
+
 
     ## sendVacuumReportFromCommander2Planner
     #
@@ -181,6 +190,11 @@ class Channel:
 
 
 
+    ## sendRecommendOrderFromCommander2Planner
+    #
+    # Routine that takes a recommendation order from the commander
+    # that identifies a particular vacuum and converts it into XML and
+    # passes the XML tree on to the planner.
     def sendRecommendOrderFromCommander2Planner(self,vacuumID,xPos,yPos) :            
         if(self.sendMessage()) :
             #print("Sending to id: {0} pos: {1},{2}".format(vacuumID,xPos,yPos))
@@ -191,9 +205,21 @@ class Channel:
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
             
 
+    ## sendRecommendOrderFromPlanner2Commander
+    #
+    # Routine that takes a reccomendation order from the planner that
+    # identifies a particular vacuum and converts it into XML and
+    # passes the XML tree on to the commander.
     def sendRecommendOrderFromPlanner2Commander(self,xPos,yPos,IDnum) :
         if(self.sendMessage()) :
-            self.commander.receiveReport(xPos,yPos,IDnum)
+            #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
+            orders = XMLMessageRecommendOrderPlanner2Commander()
+            orders.setVacuumID(IDnum)
+            orders.setPos(xPos,yPos)
+            orders.createRootNode()
+            self.receiveXMLReportParseAndDecide(orders.xml2Char())
+
+
 
     def sendMoveOrderFromCommander2Vacuum(self,xord,yord,vacuumID) :
         if(self.sendMessage()) :

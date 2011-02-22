@@ -167,7 +167,7 @@ class  GraphicalWorld (World,Tk) :
 
         # Define the entry for the number of time steps.
         self.NValue = StringVar()
-        self.NValue.set("10000")
+        self.NValue.set("100")
         Label(self.entryFrame,text="N=").pack(side=LEFT,padx=5)
         self.NValueEntry = Entry(self.entryFrame,textvariable=self.NValue,width=7)
         self.NValueEntry.pack(side=LEFT,expand=NO)
