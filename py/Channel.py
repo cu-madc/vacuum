@@ -68,11 +68,21 @@ from World import World
 from XML.XMLParser import XMLParser
 from XML.XMLIncomingDIF import XMLIncomingDIF
 from XML.XMLMessageNetwork import XMLMessageNetwork
-from XML.XMLMessagePlannerReportVacuumOrders import XMLMessagePlannerReportVacuumOrders
-from XML.XMLMessageRecommendOrderCommander2Planner import XMLMessageRecommendOrderCommander2Planner
-from XML.XMLMessageRecommendOrderPlanner2Commander import XMLMessageRecommendOrderPlanner2Commander
-from XML.XMLMessageMoveOrderCommanderVacuum import XMLMessageMoveOrderCommanderVacuum
 
+from XML.XMLMessagePlannerReportVacuumOrders import \
+     XMLMessagePlannerReportVacuumOrders
+
+from XML.XMLMessageRecommendOrderCommander2Planner import \
+     XMLMessageRecommendOrderCommander2Planner
+
+from XML.XMLMessageRecommendOrderPlanner2Commander import \
+     XMLMessageRecommendOrderPlanner2Commander
+
+from XML.XMLMessageMoveOrderCommanderVacuum import \
+     XMLMessageMoveOrderCommanderVacuum
+
+from XML.XMLMessageMoveOrderCommanderPlanner import \
+     XMLMessageMoveOrderCommanderPlanner
 
 
 class Channel:
@@ -175,11 +185,18 @@ class Channel:
         elif(info.getMyInformationType() == XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
             pos = info.getPos()
             vacuumID = info.getVacuumID()
-            #print("sending report to commander for {0} - {1},{2}".format(
+            #print("sending report to vacuum for {0} - {1},{2}".format(
             #    info.getVacuumID(),pos[0],pos[1]))
 
             if(vacuumID < len(self.vacuumArray)) :
                 self.vacuumArray[vacuumID].moveord(pos[0],pos[1])
+
+
+        elif(info.getMyInformationType() == XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
+            pos = info.getPos()
+            #print("sending report to planner for {0} - {1},{2}".format(
+            #    info.getVacuumID(),pos[0],pos[1]))
+            self.planner.receiveOrder(info.getVacuumID(),pos[0],pos[1])
 
 
 
@@ -250,13 +267,25 @@ class Channel:
         if(self.sendMessage()) :
             return(self.sensor.measure())
 
+
     def sendReportFromVacuum2Commander(self,xPos,yPos,status,IDnum) :
         if(self.sendMessage()) :
             self.commander.getReport(xPos,yPos,status,IDnum)
 
-    def sendMoveOrderFromCommander2Planner(self,xord,yord,IDnum) :
+
+    ## sendMoveOrderFromCommander2Planner
+    #
+    # Routine to take a message from the commander that is an order to
+    # move a vacuum and relay it to the planner.
+    def sendMoveOrderFromCommander2Planner(self,xPos,yPos,IDnum) :
         if(self.sendMessage()) :
-            self.planner.receiveOrder(IDnum,xord,yord)
+            #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
+            orders = XMLMessageMoveOrderCommanderPlanner()
+            orders.setVacuumID(IDnum)
+            orders.setPos(xPos,yPos)
+            orders.createRootNode()
+            self.receiveXMLReportParseAndDecide(orders.xml2Char())
+
     
 
 

@@ -65,10 +65,21 @@
 #include <string.h>
 
 from XMLParser import XMLParser
-from XMLMessagePlannerReportVacuumOrders import XMLMessagePlannerReportVacuumOrders
-from XMLMessageRecommendOrderCommander2Planner import XMLMessageRecommendOrderCommander2Planner
-from XMLMessageRecommendOrderPlanner2Commander import XMLMessageRecommendOrderPlanner2Commander
-from XMLMessageMoveOrderCommanderVacuum import XMLMessageMoveOrderCommanderVacuum
+
+from XMLMessagePlannerReportVacuumOrders       import \
+     XMLMessagePlannerReportVacuumOrders
+
+from XMLMessageRecommendOrderCommander2Planner import \
+     XMLMessageRecommendOrderCommander2Planner
+
+from XMLMessageRecommendOrderPlanner2Commander import \
+     XMLMessageRecommendOrderPlanner2Commander
+
+from XMLMessageMoveOrderCommanderVacuum        import \
+     XMLMessageMoveOrderCommanderVacuum
+
+from XMLMessageMoveOrderCommanderPlanner       import \
+     XMLMessageMoveOrderCommanderPlanner
 
 
 
@@ -245,6 +256,31 @@ class XMLIncomingDIF (XMLParser) :
 
         elif( (name=="Vacuum") and (type=="Move Order")) :
             incomingXML = XMLMessageMoveOrderCommanderVacuum()
+            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+            if(dimensions) :
+                vacuum = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","vacuumID")
+                xPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","xPos")
+                yPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","yPos")
+                #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
+
+                if(vacuum) :
+                    incomingXML.setVacuumID(vacuum[3][1][2])
+
+                if(xPos) :
+                    incomingXML.setXPos(xPos[3][1][2])
+
+                if(yPos) :
+                    incomingXML.setYPos(yPos[3][1][2])
+                    
+
+                if(self.DEBUG) :
+                    print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
+
+
+
+        elif( (name=="Planner") and (type=="Move Order")) :
+            incomingXML = XMLMessageMoveOrderCommanderPlanner()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :
