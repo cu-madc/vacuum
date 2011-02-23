@@ -70,7 +70,7 @@ class XMLParser (xml.sax.handler.ContentHandler):
 
     SIZE_READ_FILE_BUFFER =	131072
     SIZE_READ_DTD_BUFFER  = 262144
-    DEBUG = True
+    DEBUG = False
 
 
 

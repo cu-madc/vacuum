@@ -74,7 +74,8 @@ class XMLMessageWorldStatus (XMLParser) :
 
     DEBUG = True
 
-    def __init__(self,A) :
+    def __init__(self,A=None) :
+
         self.setArray(A)
 	self.dimensionsNode = None
 	self.objectClassNode = None
@@ -156,26 +157,25 @@ class XMLMessageWorldStatus (XMLParser) :
         for row in self.A:
             colNum = 0
             for col in row:
-                
+
+                # Go through each entry in the array.
+                # Create a dimension element for each entry in the array.
                 self.arrayNode = self.doc.createElement("dimension")
                 self.dimensionsNode.appendChild(self.arrayNode)
 
-                #dimension = self.doc.createElement("element")
-                #node = self.doc.createTextNode("array")
-                #dimension.appendChild(node)
-                #self.arrayNode.appendChild(dimension)
-
+                # Specify which row this is coming from.
                 dimension = self.doc.createElement("row")
                 node = self.doc.createTextNode(str(rowNum))
                 dimension.appendChild(node)
                 self.arrayNode.appendChild(dimension)
 
+                # specify which column this is coming from.
                 dimension = self.doc.createElement("column")
                 node = self.doc.createTextNode(str(colNum))
                 dimension.appendChild(node)
                 self.arrayNode.appendChild(dimension)
 
-
+                # Specify the value in the array.
                 dimension = self.doc.createElement("value")
                 node = self.doc.createTextNode("{0:22.14E}".format(col))
                 dimension.appendChild(node)
@@ -185,6 +185,22 @@ class XMLMessageWorldStatus (XMLParser) :
 
 
             rowNum += 1
+
+        # Specify the number of rows in the array.
+        self.arrayNode = self.doc.createElement("dimension")
+        self.dimensionsNode.appendChild(self.arrayNode)
+        dimension = self.doc.createElement("NumberRows")
+        node = self.doc.createTextNode(str(rowNum))
+        dimension.appendChild(node)
+        self.arrayNode.appendChild(dimension)
+
+        # specify the number of columns in the array.
+        self.arrayNode = self.doc.createElement("dimension")
+        self.dimensionsNode.appendChild(self.arrayNode)
+        dimension = self.doc.createElement("NumberColumns")
+        node = self.doc.createTextNode(str(colNum))
+        dimension.appendChild(node)
+        self.arrayNode.appendChild(dimension)
 
 
 
@@ -219,7 +235,7 @@ class XMLMessageWorldStatus (XMLParser) :
         # Method to pull out the matrix data from the XML tree.
 
         if(self.dimensionsNode) :
-            nodes = self.dimensionsNode.getElementsByTagName("dimension")
+            nodes = self.dimensionsNode.getElementsByTagName("dimensions")
             if(nodes.length>0) :
 
                 for dimension in nodes :
@@ -234,7 +250,7 @@ class XMLMessageWorldStatus (XMLParser) :
                     colNum = int(self.getValueOfNode(col))
                     arrayVal = float64(self.getValueOfNode(value))
                     self.A[rowNum,colNum] = arrayVal
-                         
+
 
     def getValueOfNode(self,node) :
         for leaf in node :
@@ -242,6 +258,54 @@ class XMLMessageWorldStatus (XMLParser) :
                 if(detail.nodeType == Document.TEXT_NODE) :
                     # This is the row to be used.
                     return(detail.nodeValue)
+
+
+    def getMatrixFromArray(self) :
+
+        # Set the default value of the array.
+        A = None
+
+        # Get the start of the dimensions.
+        nodes = self.getChildWithName(self.getBuffer(),"dimensions")
+        if(nodes) :
+
+            # The dimensions was found. Determine the number of rows
+            # and columns.
+            columns = self.getChildWithName([nodes],"NumberColumns")
+            rows    = self.getChildWithName([nodes],"NumberRows")
+
+            if( rows and columns) :
+                # the rows and columns was found. Allocate the array.
+                numCols = int(columns[2]);
+                numRows = int(rows[2]);
+                A = zeros((numRows,numCols),dtype=float64)
+
+                # Go through the whole set of dimensions and get the
+                # coresponding entry in the array.
+                for dimension in nodes[3]:
+                    if(dimension[0] == "dimension") :
+
+                        thisRow = -1;
+                        thisCol = -1;
+                        thisVal = None;
+                        for leaf in dimension[3]:
+                            
+                            if(leaf[0] == "row") :
+                                thisRow = int(leaf[2])
+
+                            elif(leaf[0] == "column") :
+                                thisCol = int(leaf[2])
+
+                            elif(leaf[0] == "value") :
+                                thisVal = float64(leaf[2])
+                                
+                        if((thisRow>=0) and (thisCol>=0) and thisVal) :
+                            A[thisRow,thisCol] = thisVal
+
+
+        return(A)
+
+
 
 
 
@@ -303,8 +367,17 @@ class XMLMessageWorldStatus (XMLParser) :
 
 
 if (__name__ =='__main__') :
+    XMLParser.DEBUG = True
     A = random.rand(1.0,5,5)[0]
-    sensorData = XMLMessageWorldStatus(A)
-    sensorData.createRootNode()
-    sensorData.setMatrixFromXML()
-    #print("Array:\n{0}".format(sensorData.xml2Char()))
+    worldData = XMLMessageWorldStatus(A)
+    worldData.createRootNode()
+    worldData.setMatrixFromXML()
+    print("Array:\n{0}".format(worldData.xml2Char()))
+
+    sensorData = XMLMessageWorldStatus()
+    sensorData.parseXMLString(worldData.xml2Char())
+    B = sensorData.getMatrixFromArray()
+    print(A)
+    print(B)
+    #print("\n\n\nDimensions:\n{0}".format(node))
+
