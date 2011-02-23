@@ -84,6 +84,9 @@ from XMLMessageMoveOrderCommanderPlanner       import \
 from XMLMessageGetReportVacuumCommander import \
      XMLMessageGetReportVacuumCommander
 
+from XML.XMLMessageWorldStatus import \
+     XMLMessageWorldStatus
+
 
 class XMLIncomingDIF (XMLParser) :
 
@@ -336,6 +339,15 @@ class XMLIncomingDIF (XMLParser) :
                 if(self.DEBUG) :
                     print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
 
+
+
+        elif( (name=="Sensor") and (type=="World Status")) :
+            incomingXML = XMLMessageWorldStatus()
+
+            
+
+        if(incomingXML) :
+            incomingXML.setBuffer(self.getBuffer())
 
         return(incomingXML)
 

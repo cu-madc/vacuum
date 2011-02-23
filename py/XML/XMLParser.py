@@ -85,7 +85,8 @@ class XMLParser (xml.sax.handler.ContentHandler):
            MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER, \
            MESSAGE_MOVE_ORDER_COMMANDER_VACUUM, \
            MESSAGE_MOVE_ORDER_COMMANDER_PLANNER, \
-           MESSAGE_GET_REPORT_VACUUM_COMMANDER = range(11)
+           MESSAGE_GET_REPORT_VACUUM_COMMANDER, \
+           MESSAGE_WORLD_STATUS = range(12)
 	
 
 
@@ -124,6 +125,9 @@ class XMLParser (xml.sax.handler.ContentHandler):
     def getBuffer(self) :
         return self.XMLStack      #  returns the pointer to the buffer
 
+
+    def setBuffer(self,value) :
+        self.XMLStack = value
 	
     def getXMLDocument(self) :
         return self.doc           #  returns the pointer to the document.

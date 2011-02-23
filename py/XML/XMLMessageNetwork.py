@@ -69,6 +69,7 @@ class XMLMessageNetwork (XMLIncomingDIF) :
 
 
     def __init__(self) :
+	XMLIncomingDIF.__init__(self)
 	self.setMyInformationType(self.VACUUM_NETWORK);
 	self.dimensionsNode = None
 	self.objectClassNode = None

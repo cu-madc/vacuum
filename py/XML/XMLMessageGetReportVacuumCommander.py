@@ -71,8 +71,8 @@ class XMLMessageGetReportVacuumCommander (XMLMessageVacuumIDPosBase) :
 
 
     def __init__(self) :
-	self.setMyInformationType(self.MESSAGE_GET_REPORT_VACUUM_COMMANDER)
         XMLMessageVacuumIDPosBase.__init__(self)
+	self.setMyInformationType(self.MESSAGE_GET_REPORT_VACUUM_COMMANDER)
         self.status = None
 
 

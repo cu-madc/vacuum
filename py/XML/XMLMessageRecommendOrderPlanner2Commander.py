@@ -74,8 +74,8 @@ class XMLMessageRecommendOrderPlanner2Commander (XMLMessageVacuumIDPosBase) :
 
 
     def __init__(self) :
-	self.setMyInformationType(self.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
         XMLMessageVacuumIDPosBase.__init__(self)
+	self.setMyInformationType(self.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
 
 
 

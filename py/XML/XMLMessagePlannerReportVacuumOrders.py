@@ -74,8 +74,8 @@ class XMLMessagePlannerReportVacuumOrders (XMLMessageVacuumIDPosBase) :
 
 
     def __init__(self) :
-	self.setMyInformationType(self.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
         XMLMessageVacuumIDPosBase.__init__(self)
+	self.setMyInformationType(self.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
 
 
     def __del__(self) :

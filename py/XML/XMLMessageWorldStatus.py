@@ -72,10 +72,11 @@ from XMLParser import XMLParser
 
 class XMLMessageWorldStatus (XMLParser) :
 
-    DEBUG = True
+    DEBUG = False
 
     def __init__(self,A=None) :
-
+        XMLParser.__init__(self)
+        self.setMyInformationType(self.MESSAGE_WORLD_STATUS)
         self.setArray(A)
 	self.dimensionsNode = None
 	self.objectClassNode = None

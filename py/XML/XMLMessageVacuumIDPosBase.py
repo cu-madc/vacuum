@@ -74,6 +74,7 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
 
 
     def __init__(self) :
+        XMLParser.__init__(self)
 	self.dimensionsNode = None
 	self.objectClassNode = None
 	self.vacuumIDNode = None

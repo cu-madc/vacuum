@@ -102,12 +102,17 @@ class SensorArray :
     def getArray(self) :
         return(self.array)
 
+    def setArray(self,value) :
+        self.array = value
+
     def getWet(self) :
         return(self.Wet)
 
     def setWorld(self,value) :
         self.world = value
-        self.N = value.getNumber()
+
+        if(value) :
+            self.N = value.getNumber()
 
     #events %sense
     #    sense; % sensor taking action - triggers action in planner

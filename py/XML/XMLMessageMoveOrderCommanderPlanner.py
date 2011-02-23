@@ -74,8 +74,8 @@ class XMLMessageMoveOrderCommanderPlanner (XMLMessageVacuumIDPosBase) :
 
 
     def __init__(self) :
-	self.setMyInformationType(self.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
         XMLMessageVacuumIDPosBase.__init__(self)
+	self.setMyInformationType(self.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
 
 
 

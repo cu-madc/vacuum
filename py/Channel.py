@@ -87,6 +87,8 @@ from XML.XMLMessageMoveOrderCommanderPlanner import \
 from XML.XMLMessageGetReportVacuumCommander import \
      XMLMessageGetReportVacuumCommander
 
+from XML.XMLMessageWorldStatus import \
+     XMLMessageWorldStatus
 
 class Channel:
     
@@ -227,6 +229,8 @@ class Channel:
             self.commander.getReport(pos[0],pos[1],info.getStatus(),info.getVacuumID())
 
 
+        elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_STATUS) :
+            self.sensor.setArray(info.getMatrixFromArray())
     
 
 
@@ -338,7 +342,8 @@ class Channel:
 
     def sendWorldStatusToSensor(self,A) :
         worldData = XMLMessageWorldStatus(A)
-        
+        worldData.createRootNode()
+        self.receiveXMLReportParseAndDecide(worldData.xml2Char())
 
 
 
