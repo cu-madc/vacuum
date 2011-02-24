@@ -128,19 +128,18 @@ class SensorArray :
         dirtLevel=None
         wetted=None
         if (self.world and self.isWorking):
-            actualdata=self.world.getArray()     #get real world values
+            #actualdata=self.world.getArray()     #get real world values
 
             #adjust for noise
             #print(actualdata)
-            self.array=actualdata*(
+            noisyView =self.array*(
                 1.0+2.0*self.accuracy*(random.rand(self.N*self.N).reshape(self.N,self.N)-0.5))
             #print(self.array)
          
-            dirtLevel=self.array;
             self.Wet=(self.world.Moisture>0);
             wetted=self.Wet;
 
-            return([dirtLevel,wetted])
+            return([noisyView,wetted])
 
         return(None)
 
