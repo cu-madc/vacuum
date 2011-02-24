@@ -84,6 +84,12 @@ class  GraphicalWorld (World,Tk) :
         self.setupOptionsEntry()
 
 
+    def setSensor(self,sensor) :
+        self.sensor = sensor
+
+    def getSensor(self) :
+        return(self.sensor)
+
 
     def setupMenu(self) :
         # Add a menu bar that gives the user some basic options.

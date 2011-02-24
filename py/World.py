@@ -138,12 +138,6 @@ class  World :
         if(self.channel) :
             self.channel.addVacuum(vacuum,len(self.vacuumArray)-1)
 
-    def setSensor(self,sensor) :
-        self.sensor = sensor
-
-    def getSensor(self) :
-        return(self.sensor)
-
     def setPlanner(self,planner) :
         self.planner = planner
 
