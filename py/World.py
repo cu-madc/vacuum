@@ -204,6 +204,9 @@ class  World :
             t=t+tau;
             # end rainfall
 
+
+        self.channel.sendWorldWetnessToSensor(self.Moisture)
+        
         if(self.planner) :
             self.planner.updateView()
 

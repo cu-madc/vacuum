@@ -86,7 +86,8 @@ class XMLParser (xml.sax.handler.ContentHandler):
            MESSAGE_MOVE_ORDER_COMMANDER_VACUUM, \
            MESSAGE_MOVE_ORDER_COMMANDER_PLANNER, \
            MESSAGE_GET_REPORT_VACUUM_COMMANDER, \
-           MESSAGE_WORLD_STATUS = range(12)
+           MESSAGE_WORLD_STATUS, \
+           MESSAGE_WORLD_WETNESS = range(13)
 	
 
 

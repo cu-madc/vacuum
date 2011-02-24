@@ -88,7 +88,7 @@ N = W.getNumber()
 
 # create and set the sensor
 
-sensor = SensorArray(.4,W)
+sensor = SensorArray(.4)
 W.setSensor(sensor)
 
 # channel setup

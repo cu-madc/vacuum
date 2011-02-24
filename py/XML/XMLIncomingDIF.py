@@ -87,6 +87,8 @@ from XMLMessageGetReportVacuumCommander import \
 from XML.XMLMessageWorldStatus import \
      XMLMessageWorldStatus
 
+from XML.XMLMessageWorldWetness import \
+     XMLMessageWorldWetness
 
 class XMLIncomingDIF (XMLParser) :
 
@@ -343,6 +345,10 @@ class XMLIncomingDIF (XMLParser) :
 
         elif( (name=="Sensor") and (type=="World Status")) :
             incomingXML = XMLMessageWorldStatus()
+
+
+        elif( (name=="Sensor") and (type=="World Wetness")) :
+            incomingXML = XMLMessageWorldWetness()
 
             
 

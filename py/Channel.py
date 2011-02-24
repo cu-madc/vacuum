@@ -90,6 +90,9 @@ from XML.XMLMessageGetReportVacuumCommander import \
 from XML.XMLMessageWorldStatus import \
      XMLMessageWorldStatus
 
+from XML.XMLMessageWorldWetness import \
+     XMLMessageWorldWetness
+
 class Channel:
     
     
@@ -233,6 +236,9 @@ class Channel:
             self.sensor.setArray(info.getMatrixFromArray())
     
 
+        elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_WETNESS) :
+            self.sensor.setWet(info.getMatrixFromArray())
+
 
 
     ## sendVacuumReportFromCommander2Planner
@@ -344,6 +350,12 @@ class Channel:
         worldData = XMLMessageWorldStatus(A)
         worldData.createRootNode()
         self.receiveXMLReportParseAndDecide(worldData.xml2Char())
+
+
+    def sendWorldWetnessToSensor(self,Moisture):
+        worldWetness = XMLMessageWorldWetness(Moisture)
+        worldWetness.createRootNode()
+        self.receiveXMLReportParseAndDecide(worldWetness.xml2Char())
 
 
 
