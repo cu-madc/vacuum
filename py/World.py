@@ -200,9 +200,7 @@ class  World :
 
 
         self.channel.sendWorldWetnessToSensor(self.Moisture)
-        
-        if(self.planner) :
-            self.planner.updateView()
+        self.channel.sendPlannerUpdateRequest()
 
         for vacuum in self.vacuumArray:
             vacuum.timeStep()

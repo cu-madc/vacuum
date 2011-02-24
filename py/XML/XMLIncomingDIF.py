@@ -90,6 +90,9 @@ from XML.XMLMessageWorldStatus import \
 from XML.XMLMessageWorldWetness import \
      XMLMessageWorldWetness
 
+from XMLMessageUpdateWorldPlanner import \
+     XMLMessageUpdateWorldPlanner
+
 class XMLIncomingDIF (XMLParser) :
 
     DEBUG = False
@@ -350,7 +353,9 @@ class XMLIncomingDIF (XMLParser) :
         elif( (name=="Sensor") and (type=="World Wetness")) :
             incomingXML = XMLMessageWorldWetness()
 
-            
+
+        elif( (name=="Planner") and (type=="Update")) :
+            incomingXML = XMLMessageUpdateWorldPlanner()
 
         if(incomingXML) :
             incomingXML.setBuffer(self.getBuffer())
