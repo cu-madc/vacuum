@@ -152,6 +152,7 @@ class XMLMessageArray (XMLParser) :
         # dimensions node.
 
         rowNum = 0
+        #print(self.A)
         for row in self.A:
             colNum = 0
             for col in row:
@@ -175,7 +176,15 @@ class XMLMessageArray (XMLParser) :
 
                 # Specify the value in the array.
                 dimension = self.doc.createElement("value")
-                node = self.doc.createTextNode("{0:22.14E}".format(col))
+                # This is a cheap hack. Need to properly treat the
+                # boolean arrays. Question - how to do it? *TODO*
+                if(type(col)==bool_) :
+                    if(col) :
+                        node = self.doc.createTextNode("1.0")
+                    else:
+                        node = self.doc.createTextNode("0.0")
+                else:
+                    node = self.doc.createTextNode("{0:22.14E}".format(col))
                 dimension.appendChild(node)
                 self.arrayNode.appendChild(dimension)
 

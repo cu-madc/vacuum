@@ -82,6 +82,7 @@ class Planner :
 
         # Initialize the matrices.
         self.worldview = zeros((N,N),dtype=float64);
+        self.dirtLevels = []
         self.wetview = zeros((N,N),dtype=float64);
         self.viewPrecision = zeros((N,N),dtype=float64);
         
@@ -129,6 +130,12 @@ class Planner :
     def getWorldView(self) :
         return(self.worldview)
 
+    def getDirtLevels(self):
+        return(self.dirtLevels)
+
+    def setDirtLevels(self,value):
+        self.dirtLevels = value
+        
     def getArray(self) :
         return(self.worldview)
 
@@ -137,6 +144,12 @@ class Planner :
 
     def getChannel(self) :
         return(self.channel)
+
+    def getWet(self):
+        return(self.wetview)
+
+    def setWet(self,value) :
+        self.wetview = value
 
     def setVacuumLocation(self,id,x,y) :
         while(id>=len(self.vacuumlocation)) :
@@ -186,27 +199,20 @@ class Planner :
         tau_0=self.viewPrecision;          # matrix
             
         # get data from sensor, if available
-        levels = self.channel.sendMeasuredFromPlanner2Sensor()
-        if(levels) :
-            dirtLevel = levels[0]
-            wetted    = levels[1]
-
-        else :
-            return
+        self.channel.sendMeasuredFromPlanner2Sensor()
             
         # update levels based on sensor information
         # (Bayesian update - see wikipedia page for now)
-        if len(dirtLevel) == 0 :
+        if len(self.dirtLevels) == 0 :
             # no data available  
             self.worldview=mu_0; # adjust dirt ONLY FOR DYNAMICS
         else :
             # data available 
             # bayes update on dirt  
             tau=3./((self.sensor.accuracy**2)*self.sensor.array+1.0);  # Uniform error/assumes exact information from sensor (??)
-            mu=dirtLevel;
+            mu=self.dirtLevels;
             self.worldview=(tau_0*mu_0+tau*mu)/(tau_0+tau);            # update assuming normal
             self.viewPrecision=tau+tau_0;
-            self.wetview=wetted;  # when sensor data available, accept as valid
             # see http://en.wikipedia.org/wiki/Conjugate_prior for details.
 
             

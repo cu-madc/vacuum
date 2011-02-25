@@ -1,11 +1,12 @@
 #!/usr/bin/python
 #
-#  SensorArray.py
+#  XMLMessageUpdatePlannerSensor.py
 # 
-#   Created on: 2 Feb, 2011
-#       Author: Skufka - adapted by black
+#   Created on: 25 Feb, 2011
+#       Author: black
 # 
-#       class definition for the Sensor Array object.
+#       Methods for the class that the Planner uses to tell the Sensor
+#       to send the updates of itself.
 # 
 #  This material is based on research sponsored by DARPA under agreement
 #  number FA8750-10-2-0165. The U.S. Government is authorized to
@@ -57,90 +58,76 @@
 # 
 # 
 # 
-#
-
+# 
 
 from numpy import *
 from numpy.linalg import *
 
+from xml.dom.minidom import Document
+from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
+from XMLParser import XMLParser
 
 
-class SensorArray :
-
-    def __init__(self,accuracy=0.0) :
-        # constructor (accuracy of measurement)
-        self.accuracy=accuracy-float(int(accuracy))  #force to be within constraints
-
-        self.N = 5
-        self.array = zeros((self.N,self.N),dtype=float64) # array of values for dirt levels
-        self.Wet = zeros((self.N,self.N),dtype=float64)   # array of values for dirt levels
-
-        self.setWorking(True)
-
-        self.channel = 0                               # handle to channel to planner
+class XMLMessageUpdatePlannerSensor (XMLMessageVacuumIDPosBase) :
 
 
-    def setWorking(self,value) :
-        self.isWorking = value
-
-    def getWorking(self):
-        return(self.isWorking)
-        
-
-    def getChannel(self) :
-        return(self.channel)
-
-    def setChannel(self,value) :
-        self.channel = value
-
-    def getArray(self) :
-        return(self.array)
-
-    def setArray(self,value) :
-        self.array = value
-
-    def getWet(self) :
-        return(self.Wet)
-
-    def setWet(self,value) :
-        self.Wet = value
+    def __init__(self) :
+        XMLMessageVacuumIDPosBase.__init__(self)
+	self.setMyInformationType(self.MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR)
 
 
 
-    
-    
-    def measure(self) :
-        # measure the world and return data
+    def __del__(self) :
+        pass
 
-        dirtLevel=None
-        wetted=None
-        if (self.isWorking):
-            #actualdata=self.world.getArray()     #get real world values
 
-            #adjust for noise
-            #print(actualdata)
-            noisyView =self.array*(
-                1.0+2.0*self.accuracy*(random.rand(self.N*self.N).reshape(self.N,self.N)-0.5))
-            #print(self.array)
-            self.channel.sendStatusSensor2Planner(noisyView)
-         
-            self.Wet = self.Wet>0;
-            wetted=self.Wet;
-            self.channel.sendWorldWetnessToSensor(wetted)
 
-            
-            #return([noisyView,wetted])
+    def createObjectClass(self) :
+        # Creates the node that contains the object class definition
+        # and all of its children.
+        node = self.doc.createElement("objects")
+        self.root_node.appendChild(node)
 
-        return(None)
+        self.objectClassNode = self.doc.createElement("objectClass")
+        node.appendChild(self.objectClassNode)
+
+        nameNode = self.doc.createElement("name")
+        nameNode.appendChild(self.doc.createTextNode("Sensor"))
+        self.objectClassNode.appendChild(nameNode)
+
+        typeNode = self.doc.createElement("type")
+        typeNode.appendChild(self.doc.createTextNode("Send Planner Update"))
+        self.objectClassNode.appendChild(typeNode)
+
+        self.createDimensions()
+
+
 
 
 
 
 
 if (__name__ =='__main__') :
-    world = World()
-    world.randomDust()
-    sensor = SensorArray(0.2,world)
-    sensor.measure()
-    #print(sensor.array)
+    from XMLIncomingDIF import XMLIncomingDIF
+    
+    network = XMLMessageMoveOrderCommanderPlanner()
+    network.setVacuumID(3)
+    network.setPos(2,4)
+    network.createRootNode()
+    #print(network.xml2Char())
 
+
+    network.setVacuumID(1)
+    network.setXPos(5)
+    network.setYPos(2)
+    #print(network.xml2Char())
+
+    #root_node = network.root_node.cloneNode(True)
+    #network.copyXMLTree(root_node)
+
+
+    dif = XMLIncomingDIF()
+    xmlString = network.xml2Char()
+    info = dif.determineXMLInformation(xmlString)
+    info.createRootNode()
+    print("theXML:\n{0}".format(info.xml2Char()))

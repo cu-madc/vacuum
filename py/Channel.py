@@ -96,6 +96,18 @@ from XML.XMLMessageWorldWetness import \
 from XML.XMLMessageUpdateWorldPlanner import \
      XMLMessageUpdateWorldPlanner
 
+from XML.XMLMessageUpdatePlannerSensor import \
+     XMLMessageUpdatePlannerSensor
+
+from XML.XMLMessageSensorWetness import \
+     XMLMessageSensorWetness
+
+from XML.XMLMessageSensorWetness import \
+     XMLMessageSensorWetness
+
+from XML.XMLMessageSensorStatus import \
+     XMLMessageSensorStatus
+
 class Channel:
     
     
@@ -239,12 +251,30 @@ class Channel:
             self.sensor.setArray(info.getMatrixFromArray())
     
 
+
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_WETNESS) :
             self.sensor.setWet(info.getMatrixFromArray())
 
 
+
         elif(info.getMyInformationType() == XMLParser.MESSAGE_UPDATE_WORLD_PLANNER) :
             self.planner.updateView()
+
+
+
+        elif(info.getMyInformationType() == XMLParser.MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR) :
+            self.sensor.measure()
+
+
+
+        elif(info.getMyInformationType() == XMLParser.MESSAGE_STATUS_SENSOR_PLANNER) :
+            self.planner.setDirtLevels(info.getMatrixFromArray())
+
+
+
+        elif(info.getMyInformationType() == XMLParser.MESSAGE_WETNESS_SENSOR_PLANNER) :
+            self.planner.setWet(info.getMatrixFromArray())
+
 
 
     ## sendVacuumReportFromCommander2Planner
@@ -347,9 +377,15 @@ class Channel:
 
 
     def sendMeasuredFromPlanner2Sensor(self) :
-        if(self.sendMessage()) :
-            return(self.sensor.measure())
+        sensorData = XMLMessageUpdatePlannerSensor()
+        sensorData.createRootNode()
+        self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
+
+    def sendStatusSensor2Planner(self,noisyView) :
+        sensorData = XMLMessageSensorStatus(noisyView)
+        sensorData.createRootNode()
+        self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
     def sendWorldStatusToSensor(self,A) :

@@ -1,11 +1,14 @@
 #!/usr/bin/python
 #
-#  SensorArray.py
+#  XMLMessageSensorStatus.py
 # 
-#   Created on: 2 Feb, 2011
-#       Author: Skufka - adapted by black
+#   Created on: 25 Feb, 2011
+#       Author: black
 # 
-#       class definition for the Sensor Array object.
+#       Methods for the class that keeps track of the data
+#       representing the sensor's view of the world's status. This creates and maintains
+#       the xml file representing an array with information about the
+#       different parts of the world.
 # 
 #  This material is based on research sponsored by DARPA under agreement
 #  number FA8750-10-2-0165. The U.S. Government is authorized to
@@ -57,90 +60,54 @@
 # 
 # 
 # 
-#
-
+# 
 
 from numpy import *
 from numpy.linalg import *
 
+from xml.dom.minidom import Document
+from XMLMessageArray import XMLMessageArray
 
 
-class SensorArray :
+class XMLMessageSensorStatus (XMLMessageArray) :
 
-    def __init__(self,accuracy=0.0) :
-        # constructor (accuracy of measurement)
-        self.accuracy=accuracy-float(int(accuracy))  #force to be within constraints
+    DEBUG = False
 
-        self.N = 5
-        self.array = zeros((self.N,self.N),dtype=float64) # array of values for dirt levels
-        self.Wet = zeros((self.N,self.N),dtype=float64)   # array of values for dirt levels
-
-        self.setWorking(True)
-
-        self.channel = 0                               # handle to channel to planner
+    def __init__(self,A=None) :
+        XMLMessageArray.__init__(self,A)
+        self.setMyInformationType(self.MESSAGE_STATUS_SENSOR_PLANNER)
 
 
-    def setWorking(self,value) :
-        self.isWorking = value
 
-    def getWorking(self):
-        return(self.isWorking)
+    def __del__(self) :
+        pass
+
+
+
+    def createObjectClass(self) :
+        # Creates the node that contains the object class definition
+        # and all of its children.
+        self.createObjectClassNodes("Planner","Sensor Status")
         
 
-    def getChannel(self) :
-        return(self.channel)
-
-    def setChannel(self,value) :
-        self.channel = value
-
-    def getArray(self) :
-        return(self.array)
-
-    def setArray(self,value) :
-        self.array = value
-
-    def getWet(self) :
-        return(self.Wet)
-
-    def setWet(self,value) :
-        self.Wet = value
 
 
 
-    
-    
-    def measure(self) :
-        # measure the world and return data
-
-        dirtLevel=None
-        wetted=None
-        if (self.isWorking):
-            #actualdata=self.world.getArray()     #get real world values
-
-            #adjust for noise
-            #print(actualdata)
-            noisyView =self.array*(
-                1.0+2.0*self.accuracy*(random.rand(self.N*self.N).reshape(self.N,self.N)-0.5))
-            #print(self.array)
-            self.channel.sendStatusSensor2Planner(noisyView)
-         
-            self.Wet = self.Wet>0;
-            wetted=self.Wet;
-            self.channel.sendWorldWetnessToSensor(wetted)
-
-            
-            #return([noisyView,wetted])
-
-        return(None)
-
-
-
+                
 
 
 if (__name__ =='__main__') :
-    world = World()
-    world.randomDust()
-    sensor = SensorArray(0.2,world)
-    sensor.measure()
-    #print(sensor.array)
+    XMLMessageWorldStatus.DEBUG = True
+    A = random.rand(1.0,5,5)[0]
+    worldData = XMLMessageWorldStatus(A)
+    worldData.createRootNode()
+    worldData.setMatrixFromXML()
+    print("Array:\n{0}".format(worldData.xml2Char()))
+
+    sensorData = XMLMessageWorldStatus()
+    sensorData.parseXMLString(worldData.xml2Char())
+    B = sensorData.getMatrixFromArray()
+    print(A)
+    print(B)
+    #print("\n\n\nDimensions:\n{0}".format(node))
 
