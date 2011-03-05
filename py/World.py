@@ -74,7 +74,6 @@ class  World :
     
         self.N=5                   # %size of grid
         self.vacuumArray = []      # array of object handles
-        self.sensor = None         # data as recorded on sensor
         self.planner = None        # handle to planning processor
         self.channel = None        # handle to the channel for sending info.
         self.expenditure = 0.0     # cummulative funds expended since last reset

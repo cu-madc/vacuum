@@ -69,16 +69,16 @@ from SensorArray import SensorArray
 class Planner :
 
 
-    def __init__(self,errGrowth,dirtRate,sensor,world) :
+    def __init__(self,errGrowth,dirtRate,accuracy,N) :
         
         # define the
         #     variance growth parameter,
         #     average dirt fall,
         #     handle to sensor,
         #     handle to array of vacuums)
-        N = world.getNumber()
         self.setNumber(N)
         self.vacuumRange = 3
+        self.setAccuracy(accuracy)
 
         # Initialize the matrices.
         self.worldview = zeros((N,N),dtype=float64);
@@ -90,8 +90,6 @@ class Planner :
         self.dirtRate=dirtRate        #
 
         # Define the other objects that need to be tracked.
-        self.setWorld(world)
-        self.setSensor(sensor)
         self.setChannel(None)
 
         self.setWorking(True)
@@ -108,24 +106,18 @@ class Planner :
 
     def getNumber(self) :
         return(self.N)
+
+    def setAccuracy(self,value) :
+        self.sensorAccuracy = value
+
+    def getAccuracy(self) :
+        return(self.sensorAccuracy)
     
     def setWorking(self,value) :
         self.isWorking = value
 
     def getWorking(self) :
         return(self.isWorking)
-
-    def setSensor(self,value) :
-        self.sensor = value
-
-    def getSensor(self) :
-        return(self.sensor)
-
-    def setWorld(self,value) :
-        self.world = value
-
-    def getWorld(self) :
-        return(self.world)
 
     def getWorldView(self) :
         return(self.worldview)
@@ -209,7 +201,7 @@ class Planner :
         else :
             # data available 
             # bayes update on dirt  
-            tau=3./((self.sensor.accuracy**2)*self.sensor.array+1.0);  # Uniform error/assumes exact information from sensor (??)
+            tau=3./((self.sensorAccuracy**2)*self.dirtLevels+1.0);  # Uniform error/assumes exact information from sensor (??) - THIS IS NOISY SHOULD IT BE TRUE????
             mu=self.dirtLevels;
             self.worldview=(tau_0*mu_0+tau*mu)/(tau_0+tau);            # update assuming normal
             self.viewPrecision=tau+tau_0;

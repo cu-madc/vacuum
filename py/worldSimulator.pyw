@@ -88,7 +88,8 @@ N = W.getNumber()
 
 # create and set the sensor
 
-sensor = SensorArray(.4)
+accuracy = 0.4
+sensor = SensorArray(accuracy)
 W.setSensor(sensor)
 
 # channel setup
@@ -96,7 +97,7 @@ chan = Channel(W);   # TODO register the channel to the world
 
 
 # create the commander and planner
-plan=Planner(r*s/float(N*N),r*s/float(N*N),sensor,W);
+plan=Planner(r*s/float(N*N),r*s/float(N*N),accuracy,N);
 chan.setPlanner(plan)
 plan.setChannel(chan)
 W.setPlanner(plan)
