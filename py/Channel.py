@@ -111,6 +111,9 @@ from XML.XMLMessageSensorStatus import \
 from XML.XMLMessageVaccumMovedReportToPlanner import \
      XMLMessageVaccumMovedReportToPlanner
 
+from XML.XMLMessageWorldVacuumCurrentTime import \
+     XMLMessageWorldVacuumCurrentTime
+
 class Channel:
     
     
@@ -231,6 +234,17 @@ class Channel:
             if(vacuumID < len(self.vacuumArray)) :
                 self.vacuumArray[vacuumID].moveord(pos[0],pos[1])
 
+
+        elif(info.getMyInformationType() ==
+             XMLParser.MESSAGE_WORLD_VACUUM_CURRENT_TIME) :
+            
+            time = info.getTime()
+            vacuumID = info.getVacuumID()
+            #print("sending report to vacuum for {0} - {1},{2}".format(
+            #    info.getVacuumID(),pos[0],pos[1]))
+
+            if(vacuumID < len(self.vacuumArray)) :
+                self.vacuumArray[vacuumID].timeStep(time)
 
 
         elif(info.getMyInformationType() ==
@@ -427,6 +441,13 @@ class Channel:
         update.createRootNode()
         self.receiveXMLReportParseAndDecide(update.xml2Char())
 
+
+    def sendVacuumWorldTime(self,T,id) :
+        newTime = XMLMessageWorldVacuumCurrentTime(T)
+        newTime.setVacuumID(id)
+        newTime.createRootNode()
+        #print(newTime.xml2Char())
+        self.receiveXMLReportParseAndDecide(newTime.xml2Char())
 
 
 if (__name__ =='__main__') :

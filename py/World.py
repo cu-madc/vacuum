@@ -193,8 +193,11 @@ class  World :
         self.channel.sendWorldWetnessToSensor(self.Moisture)
         self.channel.sendPlannerUpdateRequest()
 
+        id = 0
         for vacuum in self.vacuumArray:
-            vacuum.timeStep()
+            self.channel.sendVacuumWorldTime(T,id)
+            id += 1
+            #vacuum.timeStep(T)
             
         self.time=T;
 

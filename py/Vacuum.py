@@ -189,7 +189,7 @@ class Vacuum :
         self.queue.append([xord,yord])
         
         
-    def timeStep(self) :
+    def timeStep(self,time) :
         #vacuum action on each world time increment
         #print("ID: {0} working: {1} pos: {2},{3}".format\
         #     (self.getID(),self.isWorking,self.xPos,self.yPos))
@@ -198,10 +198,10 @@ class Vacuum :
             return
             
 
-        t=self.world.time;
+        self.time=time;
         #print("time: {0} status: {1} queue: {2} ".format(t,self.status,self.queue))
             
-        if (t>=self.timeDone) :
+        if (self.time>=self.timeDone) :
             # Vacuum operation is complete
             if (self.status==2) :
                 #just finished cleaning
@@ -230,7 +230,7 @@ class Vacuum :
                 #repairs complete
                 #start cleaning sequence
                 self.status=2;          
-                self.timeDone=t+self.timeToClean;
+                self.timeDone=self.time+self.timeToClean;
                     
 
             else :
@@ -238,7 +238,7 @@ class Vacuum :
                 if ((self.status==2) and (self.world.Moisture(self.xPos,self.yPos)>0)) :
                     # region still wet
                     # assume world will dry, then 8 more time units to complete cleaning
-                    self.timeDone=t+self.timeToClean 
+                    self.timeDone=self.time+self.timeToClean 
                     
             
     
