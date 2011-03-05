@@ -82,6 +82,7 @@ class  GraphicalWorld (World,Tk) :
         self.setupMenu()
         self.setupWindow()
         self.setupOptionsEntry()
+        self.vacuumArray = []      # array of object handles
 
 
     def setSensor(self,sensor) :
@@ -96,7 +97,13 @@ class  GraphicalWorld (World,Tk) :
     def getPlanner(self) :
         return(self.planner)
 
+    def addVacuum(self,vacuum) :
+        # routine to add a vacuum to the list of vacuums tracked by
+        # the world.
+        self.vacuumArray.append(vacuum)
 
+    def getVacuums(self) :
+        return(self.vacuumArray)
 
     def setupMenu(self) :
         # Add a menu bar that gives the user some basic options.

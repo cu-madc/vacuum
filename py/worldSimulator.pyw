@@ -117,6 +117,9 @@ for i in range(numVacs) :
     vacuum.setChannel(chan)
     vacuum.registerWorld(W)
     vacArray.append(vacuum)
+    pos = vacuum.getPosition()
+    chan.addVacuum(vacuum,i,pos[0],pos[1])
+    W.incrementVacuumCount()
     W.addVacuum(vacuum)
 
 

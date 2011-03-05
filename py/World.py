@@ -73,10 +73,10 @@ class  World :
         self.time = 0
     
         self.N=5                   # %size of grid
-        self.vacuumArray = []      # array of object handles
         self.sensor = None         # data as recorded on sensor
         self.channel = None        # handle to the channel for sending info.
         self.expenditure = 0.0     # cummulative funds expended since last reset
+        self.numberVacuums = 0     # No vacuums assigned yet.
         self.intializeVariables(r,s,v,cloudsize)
 
     
@@ -122,22 +122,9 @@ class  World :
     def addExpenditure(self,value) :
         self.expenditure += value
 
-    def addVacuum(self,vacuum) :
-        # routine to add a vacuum to the list of vacuums tracked by
-        # the world.
-        self.vacuumArray.append(vacuum)
-        vacuum.setID(len(self.vacuumArray)-1)
-
-        # Let the planner know where this vacuum is.
-        pos = vacuum.getPosition()
-
-        # Let the channel know about this vacuum.
-        if(self.channel) :
-            self.channel.addVacuum(vacuum,len(self.vacuumArray)-1,pos[0],pos[1])
-
-    def getVacuums(self) :
-        return(self.vacuumArray)
-
+    def incrementVacuumCount(self):
+        self.numberVacuums += 1;
+        
     def setChannel(self,value) :
         self.channel = value
 
@@ -193,11 +180,8 @@ class  World :
         self.channel.sendWorldWetnessToSensor(self.Moisture)
         self.channel.sendPlannerUpdateRequest()
 
-        id = 0
-        for vacuum in self.vacuumArray:
-            self.channel.sendVacuumWorldTime(T,id)
-            id += 1
-            #vacuum.timeStep(T)
+        for vacuum in range(self.numberVacuums):
+            self.channel.sendVacuumWorldTime(T,vacuum)
             
         self.time=T;
 

@@ -170,13 +170,13 @@ class Vacuum :
             if (self.world.Moisture[x,y] > 0 ) :
                 # location is wet
                 # repairs required before cleaning
-                self.timeDone=self.world.time+self.timeToRepair 
+                self.timeDone=self.time+self.timeToRepair 
                 self.status=4;
                 self.world.addExpenditure(self.repairCost);
                 self.repairs += 1;
                 
             else :
-                self.timeDone=self.world.time+self.timeToClean;
+                self.timeDone=self.time+self.timeToClean;
                 self.status=2;
 
             
