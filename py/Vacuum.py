@@ -102,6 +102,9 @@ class Vacuum :
 
     def setChannel(self,value) :
         self.channel = value
+        if(self.channel) :
+            pos = self.getPosition()
+            self.channel.sendPlannerVacuumMovedPosition(self.IDnum,pos[0],pos[1])
 
     def getPosition(self) :
         return([self.xPos,self.yPos])
@@ -159,6 +162,10 @@ class Vacuum :
             self.odometer += R
             self.missions += 1
             self.world.addExpenditure(self.moveCost)
+
+            # Let the planner know that I have moved.
+            #print("Moving vacuum {0}".format(self.IDnum))
+            self.channel.sendPlannerVacuumMovedPosition(self.IDnum,x,y)
             
             if (self.world.Moisture[x,y] > 0 ) :
                 # location is wet
@@ -173,7 +180,7 @@ class Vacuum :
                 self.status=2;
 
             
-            self.queue=[]; # reset que
+            self.queue=[]; # reset queue
 
 
            
@@ -191,7 +198,8 @@ class Vacuum :
             return
             
 
-        t=self.world.time; 
+        t=self.world.time;
+        #print("time: {0} status: {1} queue: {2} ".format(t,self.status,self.queue))
             
         if (t>=self.timeDone) :
             # Vacuum operation is complete

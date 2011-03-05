@@ -74,7 +74,7 @@ class  World :
     
         self.N=5                   # %size of grid
         self.vacuumArray = []      # array of object handles
-        self.planner = None        # handle to planning processor
+        self.sensor = None         # data as recorded on sensor
         self.channel = None        # handle to the channel for sending info.
         self.expenditure = 0.0     # cummulative funds expended since last reset
         self.intializeVariables(r,s,v,cloudsize)
@@ -130,18 +130,10 @@ class  World :
 
         # Let the planner know where this vacuum is.
         pos = vacuum.getPosition()
-        if(self.planner) :
-            self.planner.setVacuumLocation(len(self.vacuumArray)-1,pos[0],pos[1])
 
         # Let the channel know about this vacuum.
         if(self.channel) :
-            self.channel.addVacuum(vacuum,len(self.vacuumArray)-1)
-
-    def setPlanner(self,planner) :
-        self.planner = planner
-
-    def getPlanner(self) :
-        return(self.planner)
+            self.channel.addVacuum(vacuum,len(self.vacuumArray)-1,pos[0],pos[1])
 
     def getVacuums(self) :
         return(self.vacuumArray)

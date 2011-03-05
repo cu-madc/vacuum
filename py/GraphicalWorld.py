@@ -90,6 +90,13 @@ class  GraphicalWorld (World,Tk) :
     def getSensor(self) :
         return(self.sensor)
 
+    def setPlanner(self,planner) :
+        self.planner = planner
+
+    def getPlanner(self) :
+        return(self.planner)
+
+
 
     def setupMenu(self) :
         # Add a menu bar that gives the user some basic options.

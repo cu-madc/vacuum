@@ -108,6 +108,9 @@ from XML.XMLMessageSensorWetness import \
 from XML.XMLMessageSensorStatus import \
      XMLMessageSensorStatus
 
+from XML.XMLMessageVaccumMovedReportToPlanner import \
+     XMLMessageVaccumMovedReportToPlanner
+
 class Channel:
     
     
@@ -158,10 +161,11 @@ class Channel:
     def getPlanner(self) :
         return(self.planner)
 
-    def addVacuum(self,vacuum,id) :
+    def addVacuum(self,vacuum,id,xpos,ypos) :
         while(id>=len(self.vacuumArray)) :
             self.vacuumArray.append(None)
         self.vacuumArray[id] = vacuum
+        self.sendPlannerVacuumMovedPosition(id,xpos,ypos)
 
     def setWorld(self,value) :
         self.world = value
@@ -183,6 +187,7 @@ class Channel:
     def receiveXMLReportParseAndDecide(self,xmlString) :
         dif = XMLIncomingDIF()
         info = dif.determineXMLInformation(xmlString)
+        #print("Got information: {0}".format(info.getMyInformationType()))
 
 
         if(info.getMyInformationType() ==
@@ -235,6 +240,15 @@ class Channel:
             #print("sending report to planner for {0} - {1},{2}".format(
             #    info.getVacuumID(),pos[0],pos[1]))
             self.planner.receiveOrder(info.getVacuumID(),pos[0],pos[1])
+
+
+        elif(info.getMyInformationType() ==
+             XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER) :
+            
+            pos = info.getPos()
+            #print("sending vacuum position to planner for {0} - {1},{2}".format(
+            #    info.getVacuumID(),pos[0],pos[1]))
+            self.planner.setVacuumLocation(info.getVacuumID(),pos[0],pos[1])
 
 
 
@@ -402,6 +416,14 @@ class Channel:
 
     def sendPlannerUpdateRequest(self) :
         update = XMLMessageUpdateWorldPlanner()
+        update.createRootNode()
+        self.receiveXMLReportParseAndDecide(update.xml2Char())
+
+
+    def sendPlannerVacuumMovedPosition(self,idnum,xpos,ypos) :
+        update = XMLMessageVaccumMovedReportToPlanner()
+        update.setVacuumID(idnum)
+        update.setPos(xpos,ypos)
         update.createRootNode()
         self.receiveXMLReportParseAndDecide(update.xml2Char())
 

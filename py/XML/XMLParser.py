@@ -91,7 +91,8 @@ class XMLParser (xml.sax.handler.ContentHandler):
            MESSAGE_UPDATE_WORLD_PLANNER, \
            MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR, \
            MESSAGE_STATUS_SENSOR_PLANNER, \
-           MESSAGE_WETNESS_SENSOR_PLANNER = range(17)
+           MESSAGE_WETNESS_SENSOR_PLANNER, \
+           MESSAGE_VACUUM_NEW_POSITION_PLANNER = range(18)
 	
 
 

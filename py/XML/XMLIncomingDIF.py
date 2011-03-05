@@ -102,6 +102,9 @@ from XMLMessageSensorStatus import \
 from XMLMessageSensorWetness import \
      XMLMessageSensorWetness
 
+from XMLMessageVaccumMovedReportToPlanner import \
+     XMLMessageVaccumMovedReportToPlanner
+
 class XMLIncomingDIF (XMLParser) :
 
     DEBUG = False
@@ -205,9 +208,12 @@ class XMLIncomingDIF (XMLParser) :
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","vacuumID")
-                xPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","xPos")
-                yPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","yPos")
+                vacuum = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","vacuumID")
+                xPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","xPos")
+                yPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","yPos")
                 #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
 
                 if(vacuum) :
@@ -229,9 +235,12 @@ class XMLIncomingDIF (XMLParser) :
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","vacuumID")
-                xPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","xPos")
-                yPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","yPos")
+                vacuum = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","vacuumID")
+                xPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","xPos")
+                yPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","yPos")
                 #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
 
                 if(vacuum) :
@@ -253,9 +262,12 @@ class XMLIncomingDIF (XMLParser) :
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","vacuumID")
-                xPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","xPos")
-                yPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","yPos")
+                vacuum = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","vacuumID")
+                xPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","xPos")
+                yPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","yPos")
                 #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
 
                 if(vacuum) :
@@ -278,9 +290,12 @@ class XMLIncomingDIF (XMLParser) :
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","vacuumID")
-                xPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","xPos")
-                yPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","yPos")
+                vacuum = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","vacuumID")
+                xPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","xPos")
+                yPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","yPos")
                 #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
 
                 if(vacuum) :
@@ -303,9 +318,12 @@ class XMLIncomingDIF (XMLParser) :
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","vacuumID")
-                xPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","xPos")
-                yPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","yPos")
+                vacuum = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","vacuumID")
+                xPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","xPos")
+                yPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","yPos")
                 #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
 
                 if(vacuum) :
@@ -327,11 +345,15 @@ class XMLIncomingDIF (XMLParser) :
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","vacuumID")
-                xPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","xPos")
-                yPos = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","yPos")
+                vacuum = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","vacuumID")
+                xPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","xPos")
+                yPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","yPos")
 
-                status = self.walkObjectChildrenByNameContents(dimensions[3],"dimension","name","status")
+                status = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","status")
 
                 if(vacuum) :
                     incomingXML.setVacuumID(vacuum[3][1][2])
@@ -377,6 +399,29 @@ class XMLIncomingDIF (XMLParser) :
 
         elif( (name=="Planner") and (type=="Sensor Wetness")) :
             incomingXML = XMLMessageSensorWetness()
+
+        elif( (name=="Planner") and (type=="New Vaccum Location")) :
+            incomingXML = XMLMessageVaccumMovedReportToPlanner()
+            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+            if(dimensions) :
+                vacuum = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","vacuumID")
+                xPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","xPos")
+                yPos = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","yPos")
+                #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
+
+                if(vacuum) :
+                    incomingXML.setVacuumID(vacuum[3][1][2])
+
+                if(xPos) :
+                    incomingXML.setXPos(xPos[3][1][2])
+
+                if(yPos) :
+                    incomingXML.setYPos(yPos[3][1][2])
+
 
 
         if(incomingXML) :
