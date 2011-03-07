@@ -206,7 +206,7 @@ class Vacuum :
             if (self.status==2) :
                 #just finished cleaning
                 # update world that location has been cleaned
-                self.world.clean(self.xPos,self.yPos) 
+                self.channel.sendWorldCleanedGrid(self.IDnum,self.xPos,self.yPos)
                 self.status=3                         # waiting new instruction
 
                 # report that cleaning complete, recieve new instruction

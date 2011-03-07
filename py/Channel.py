@@ -117,6 +117,9 @@ from XML.XMLMessageWorldVacuumCurrentTime import \
 from XML.XMLMessageVacuumAddExpenditureWorld import \
      XMLMessageVacuumAddExpenditureWorld
 
+from XML.XMLMessageVacuumCleanWorld import \
+     XMLMessageVacuumCleanWorld
+
 class Channel:
     
     
@@ -236,6 +239,17 @@ class Channel:
 
             if(vacuumID < len(self.vacuumArray)) :
                 self.vacuumArray[vacuumID].moveord(pos[0],pos[1])
+
+
+        elif(info.getMyInformationType() ==
+             XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID) :
+
+            pos = info.getPos()
+            vacuumID = info.getVacuumID()
+            #print("sending cleaning report to world from vacuum for {0} - {1},{2}".format(
+            #    info.getVacuumID(),pos[0],pos[1]))
+
+            self.world.clean(pos[0],pos[1])
 
 
         elif(info.getMyInformationType() ==
@@ -472,6 +486,14 @@ class Channel:
         newExpenditure.createRootNode()
         #print(newExpenditure.xml2Char())
         self.receiveXMLReportParseAndDecide(newExpenditure.xml2Char())
+
+
+    def sendWorldCleanedGrid(self,idnum,xpos,ypos) :
+        update = XMLMessageVacuumCleanWorld()
+        update.setVacuumID(idnum)
+        update.setPos(xpos,ypos)
+        update.createRootNode()
+        self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
 

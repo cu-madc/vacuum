@@ -94,7 +94,8 @@ class XMLParser (xml.sax.handler.ContentHandler):
            MESSAGE_WETNESS_SENSOR_PLANNER, \
            MESSAGE_VACUUM_NEW_POSITION_PLANNER, \
            MESSAGE_WORLD_VACUUM_CURRENT_TIME, \
-           MESSAGE_VACUUM_WORLD_ADD_EXPENDITURE = range(20)
+           MESSAGE_VACUUM_WORLD_ADD_EXPENDITURE, \
+           MESSAGE_VACUUM_WORLD_CLEAN_GRID = range(21)
 	
 
 
