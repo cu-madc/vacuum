@@ -143,7 +143,7 @@ class Vacuum :
         ordered_distance=abs(self.xPos-x)+abs(self.yPos-y)
         if (ordered_distance <= self.range) :
             self.setPosition([x,y]);
-            self.world.addExpenditure(self.moveCost);     # update funds expended
+            self.channel.sendVacuumWorldExpenditure(self.moveCost,self.IDnum)
             self.timeDone += 1;
             self.status=1;
 
@@ -161,7 +161,7 @@ class Vacuum :
             self.setPosition([x,y])
             self.odometer += R
             self.missions += 1
-            self.world.addExpenditure(self.moveCost)
+            self.channel.sendVacuumWorldExpenditure(self.moveCost,self.IDnum)
 
             # Let the planner know that I have moved.
             #print("Moving vacuum {0}".format(self.IDnum))
@@ -172,7 +172,7 @@ class Vacuum :
                 # repairs required before cleaning
                 self.timeDone=self.time+self.timeToRepair 
                 self.status=4;
-                self.world.addExpenditure(self.repairCost);
+                self.channel.sendVacuumWorldExpenditure(self.repairCost,self.IDnum)
                 self.repairs += 1;
                 
             else :

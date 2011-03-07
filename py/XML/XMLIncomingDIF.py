@@ -108,6 +108,9 @@ from XMLMessageVaccumMovedReportToPlanner import \
 from XMLMessageWorldVacuumCurrentTime import \
      XMLMessageWorldVacuumCurrentTime
 
+from XMLMessageVacuumAddExpenditureWorld import \
+     XMLMessageVacuumAddExpenditureWorld
+
 class XMLIncomingDIF (XMLParser) :
 
     DEBUG = False
@@ -442,6 +445,24 @@ class XMLIncomingDIF (XMLParser) :
 
                 if(time) :
                     incomingXML.setTime(time[3][1][2])
+
+
+        elif( (name=="World") and (type=="Add Expenditure")) :
+            incomingXML = XMLMessageVacuumAddExpenditureWorld()
+            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+            if(dimensions) :
+                vacuum = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","vacuumID")
+                expenditure = self.walkObjectChildrenByNameContents(
+                    dimensions[3],"dimension","name","expenditure")
+                #print("{0}\n{1}".format(vacuum,expenditure))
+
+                if(vacuum) :
+                    incomingXML.setVacuumID(vacuum[3][1][2])
+
+                if(expenditure) :
+                    incomingXML.setExpenditure(expenditure[3][1][2])
 
 
 

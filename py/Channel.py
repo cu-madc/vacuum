@@ -114,6 +114,9 @@ from XML.XMLMessageVaccumMovedReportToPlanner import \
 from XML.XMLMessageWorldVacuumCurrentTime import \
      XMLMessageWorldVacuumCurrentTime
 
+from XML.XMLMessageVacuumAddExpenditureWorld import \
+     XMLMessageVacuumAddExpenditureWorld
+
 class Channel:
     
     
@@ -248,6 +251,17 @@ class Channel:
 
 
         elif(info.getMyInformationType() ==
+             XMLParser.MESSAGE_VACUUM_WORLD_ADD_EXPENDITURE) :
+
+            expenditure = info.getExpenditure()
+            vacuumID = info.getVacuumID()
+            #print("sending expenditure report to world for {0} - {1}".format(
+            #    info.getVacuumID(),expenditure))
+
+            self.world.addExpenditure(expenditure)
+
+
+        elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
             
             pos = info.getPos()
@@ -302,6 +316,8 @@ class Channel:
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WETNESS_SENSOR_PLANNER) :
             self.planner.setWet(info.getMatrixFromArray())
+
+
 
 
 
@@ -448,6 +464,15 @@ class Channel:
         newTime.createRootNode()
         #print(newTime.xml2Char())
         self.receiveXMLReportParseAndDecide(newTime.xml2Char())
+
+
+    def sendVacuumWorldExpenditure(self,expenditure,id) :
+        newExpenditure = XMLMessageVacuumAddExpenditureWorld(expenditure)
+        newExpenditure.setVacuumID(id)
+        newExpenditure.createRootNode()
+        #print(newExpenditure.xml2Char())
+        self.receiveXMLReportParseAndDecide(newExpenditure.xml2Char())
+
 
 
 if (__name__ =='__main__') :
