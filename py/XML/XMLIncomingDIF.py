@@ -73,8 +73,8 @@ from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 #from XMLMessageRecommendOrderCommander2Planner import \
 #     XMLMessageRecommendOrderCommander2Planner
 
-from XMLMessageRecommendOrderPlanner2Commander import \
-     XMLMessageRecommendOrderPlanner2Commander
+#from XMLMessageRecommendOrderPlanner2Commander import \
+#     XMLMessageRecommendOrderPlanner2Commander
 
 from XMLMessageMoveOrderCommanderVacuum        import \
      XMLMessageMoveOrderCommanderVacuum
@@ -275,7 +275,8 @@ class XMLIncomingDIF (XMLParser) :
 
 
         elif( (name=="Commander") and (type=="Vacuum Recommendation")) :
-            incomingXML = XMLMessageRecommendOrderPlanner2Commander()
+            #incomingXML = XMLMessageRecommendOrderPlanner2Commander()
+            incomingXML = XMLMessageVacuumIDPosBase()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :
@@ -301,6 +302,7 @@ class XMLIncomingDIF (XMLParser) :
                     print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
 
 
+            incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
 
         elif( (name=="World") and (type=="Clean Grid")) :
             incomingXML = XMLMessageVacuumCleanWorld()
