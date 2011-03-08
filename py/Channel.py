@@ -121,7 +121,8 @@ from XML.XMLMessageVacuumCleanWorld import \
      XMLMessageVacuumCleanWorld
 
 class Channel:
-    
+
+    sendOverTCP = False
     
     
     def __init__(self,world=None,vacuums=[],sensor=None,planner=None,commander=None) :
@@ -342,12 +343,17 @@ class Channel:
     # to the planner so it will know where the vacuum was sent.
     #
     def sendVacuumReportFromCommander2Planner(self,xPos,yPos,IDnum) :
-        if(self.sendMessage()) :
-            #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
-            network = XMLMessagePlannerReportVacuumOrders()
-            network.setVacuumID(IDnum)
-            network.setPos(xPos,yPos)
-            network.createRootNode()
+        
+        #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
+        network = XMLMessagePlannerReportVacuumOrders()
+        network.setVacuumID(IDnum)
+        network.setPos(xPos,yPos)
+        network.createRootNode()
+
+        if(self.sendOverTCP) :
+            # Pass the messageover the simulation network
+            pass
+        elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(network.xml2Char())
 
 
@@ -359,12 +365,17 @@ class Channel:
     # that identifies a particular vacuum and converts it into XML and
     # passes the XML tree on to the planner.
     def sendRecommendOrderFromCommander2Planner(self,vacuumID,xPos,yPos) :            
-        if(self.sendMessage()) :
-            #print("Sending to id: {0} pos: {1},{2}".format(vacuumID,xPos,yPos))
-            orders = XMLMessageRecommendOrderCommander2Planner()
-            orders.setVacuumID(vacuumID)
-            orders.setPos(xPos,yPos)
-            orders.createRootNode()
+        
+        #print("Sending to id: {0} pos: {1},{2}".format(vacuumID,xPos,yPos))
+        orders = XMLMessageRecommendOrderCommander2Planner()
+        orders.setVacuumID(vacuumID)
+        orders.setPos(xPos,yPos)
+        orders.createRootNode()
+
+        if(self.sendOverTCP) :
+            # Pass the message over the simulation network
+            pass
+        elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
             
 
@@ -375,12 +386,17 @@ class Channel:
     # identifies a particular vacuum and converts it into XML and
     # passes the XML tree on to the commander.
     def sendRecommendOrderFromPlanner2Commander(self,xPos,yPos,IDnum) :
-        if(self.sendMessage()) :
-            #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
-            orders = XMLMessageRecommendOrderPlanner2Commander()
-            orders.setVacuumID(IDnum)
-            orders.setPos(xPos,yPos)
-            orders.createRootNode()
+        
+        #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
+        orders = XMLMessageRecommendOrderPlanner2Commander()
+        orders.setVacuumID(IDnum)
+        orders.setPos(xPos,yPos)
+        orders.createRootNode()
+
+        if(self.sendOverTCP) :
+            # Send the message over the simulation network
+            pass
+        elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
@@ -391,12 +407,17 @@ class Channel:
     # Routine that takes an order from the commander and converts it
     # into XML and passed the XML to the vacuum.
     def sendMoveOrderFromCommander2Vacuum(self,xPos,yPos,vacuumID) :
-        if(self.sendMessage()) :
-            #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
-            orders = XMLMessageMoveOrderCommanderVacuum()
-            orders.setVacuumID(vacuumID)
-            orders.setPos(xPos,yPos)
-            orders.createRootNode()
+        
+        #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
+        orders = XMLMessageMoveOrderCommanderVacuum()
+        orders.setVacuumID(vacuumID)
+        orders.setPos(xPos,yPos)
+        orders.createRootNode()
+
+        if(self.sendOverTCP) :
+            # Send the message over the simulation network
+            pass
+        elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
@@ -407,14 +428,19 @@ class Channel:
     # Routine to take a message from the vacuum that is a report for
     # the commander. This routine relays that report to the commander.
     def sendReportFromVacuum2Commander(self,xPos,yPos,status,IDnum) :
-        if(self.sendMessage()) :
-            #print("Sending status to id: {0} pos: {1},{2} - {3}".format(
-            #    IDnum,xPos,yPos,status))
-            report = XMLMessageGetReportVacuumCommander()
-            report.setVacuumID(IDnum)
-            report.setPos(xPos,yPos)
-            report.setStatus(status)
-            report.createRootNode()
+        
+        #print("Sending status to id: {0} pos: {1},{2} - {3}".format(
+        #    IDnum,xPos,yPos,status))
+        report = XMLMessageGetReportVacuumCommander()
+        report.setVacuumID(IDnum)
+        report.setPos(xPos,yPos)
+        report.setStatus(status)
+        report.createRootNode()
+
+        if(self.sendOverTCP) :
+            # Send the message over the simulation network.
+            pass
+        elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(report.xml2Char())
 
 
@@ -424,12 +450,17 @@ class Channel:
     # Routine to take a message from the commander that is an order to
     # move a vacuum and relay it to the planner.
     def sendMoveOrderFromCommander2Planner(self,xPos,yPos,IDnum) :
-        if(self.sendMessage()) :
-            #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
-            orders = XMLMessageMoveOrderCommanderPlanner()
-            orders.setVacuumID(IDnum)
-            orders.setPos(xPos,yPos)
-            orders.createRootNode()
+        
+        #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
+        orders = XMLMessageMoveOrderCommanderPlanner()
+        orders.setVacuumID(IDnum)
+        orders.setPos(xPos,yPos)
+        orders.createRootNode()
+
+        if(self.sendOverTCP) :
+            # Send the message on the simulation plane.
+            pass
+        elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
@@ -437,31 +468,56 @@ class Channel:
     def sendMeasuredFromPlanner2Sensor(self) :
         sensorData = XMLMessageUpdatePlannerSensor()
         sensorData.createRootNode()
-        self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
+
+        if(self.sendOverTCP) :
+            # Send the message on the back plane
+            pass
+        else :
+            self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
     def sendStatusSensor2Planner(self,noisyView) :
         sensorData = XMLMessageSensorStatus(noisyView)
         sensorData.createRootNode()
-        self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
+
+        if(self.sendOverTCP) :
+            # Send the message on the back plane.
+            pass
+        else :
+            self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
     def sendWorldStatusToSensor(self,A) :
         worldData = XMLMessageWorldStatus(A)
         worldData.createRootNode()
-        self.receiveXMLReportParseAndDecide(worldData.xml2Char())
+
+        if(self.sendOverTCP) :
+            # Send the message on the back plane.
+            pass
+        else :
+            self.receiveXMLReportParseAndDecide(worldData.xml2Char())
 
 
     def sendWorldWetnessToSensor(self,Moisture):
         worldWetness = XMLMessageWorldWetness(Moisture)
         worldWetness.createRootNode()
-        self.receiveXMLReportParseAndDecide(worldWetness.xml2Char())
+
+        if(self.sendOverTCP) :
+            # Send the message on the back plane.
+            pass
+        else :
+            self.receiveXMLReportParseAndDecide(worldWetness.xml2Char())
 
 
     def sendPlannerUpdateRequest(self) :
         update = XMLMessageUpdateWorldPlanner()
         update.createRootNode()
-        self.receiveXMLReportParseAndDecide(update.xml2Char())
+
+        if(self.sendOverTCP) :
+            # Send the message on the back plane.
+            pass
+        else :
+            self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
     def sendPlannerVacuumMovedPosition(self,idnum,xpos,ypos) :
@@ -469,7 +525,12 @@ class Channel:
         update.setVacuumID(idnum)
         update.setPos(xpos,ypos)
         update.createRootNode()
-        self.receiveXMLReportParseAndDecide(update.xml2Char())
+
+        if(self.sendOverTCP) :
+            # Send the message on the back plane.
+            pass
+        else :
+            self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
     def sendVacuumWorldTime(self,T,id,wetness) :
@@ -477,7 +538,12 @@ class Channel:
         newTime.setVacuumID(id)
         newTime.createRootNode()
         #print(newTime.xml2Char())
-        self.receiveXMLReportParseAndDecide(newTime.xml2Char())
+
+        if(self.sendOverTCP) :
+            # Send the message on the back plane.
+            pass
+        else :
+            self.receiveXMLReportParseAndDecide(newTime.xml2Char())
 
 
     def sendVacuumWorldExpenditure(self,expenditure,id) :
@@ -485,7 +551,12 @@ class Channel:
         newExpenditure.setVacuumID(id)
         newExpenditure.createRootNode()
         #print(newExpenditure.xml2Char())
-        self.receiveXMLReportParseAndDecide(newExpenditure.xml2Char())
+
+        if(self.sendOverTCP) :
+            # Send the message on the back plane.
+            pass
+        else :
+            self.receiveXMLReportParseAndDecide(newExpenditure.xml2Char())
 
 
     def sendWorldCleanedGrid(self,idnum,xpos,ypos) :
@@ -493,7 +564,12 @@ class Channel:
         update.setVacuumID(idnum)
         update.setPos(xpos,ypos)
         update.createRootNode()
-        self.receiveXMLReportParseAndDecide(update.xml2Char())
+
+        if(self.sendOverTCP) :
+            # Send the message on the back plane
+            pass
+        else :
+            self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
 

@@ -62,7 +62,6 @@
 from numpy import *
 from numpy.linalg import *
 
-from World import World
 
 class Vacuum : 
     # robot vaccum object
@@ -254,6 +253,7 @@ class Vacuum :
     
     
 if (__name__ =='__main__') :
+    from World import World
     world = World()
     world.inc()
 
