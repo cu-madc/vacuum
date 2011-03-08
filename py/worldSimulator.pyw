@@ -115,7 +115,6 @@ vacArray = []
 for i in range(numVacs) :
     vacuum = Vacuum(i,1.0)
     vacuum.setChannel(chan)
-    vacuum.registerWorld(W)
     vacArray.append(vacuum)
     pos = vacuum.getPosition()
     chan.addVacuum(vacuum,i,pos[0],pos[1])

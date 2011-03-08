@@ -130,9 +130,6 @@ class Vacuum :
     def setStatus(self,value) :
         self.status = value
 
-    def registerWorld(self,W) :
-        #make vacuum aware of its world and who is its commander
-        self.world=W
 
 
 
@@ -261,7 +258,6 @@ if (__name__ =='__main__') :
     world.inc()
 
     vacuum = Vacuum(1,0.0)
-    vacuum.registerWorld(world)
     vacuum.move(1,1)
     vacuum.moveAndClean(1,1)
     vacuum.moveord(1,1)
