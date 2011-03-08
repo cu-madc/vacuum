@@ -90,6 +90,8 @@ class Vacuum :
         
         self.time = 0;
 
+        self.Moisture = None
+
 
     def setWorking(self,value) :
         self.isWorking = value
@@ -105,6 +107,12 @@ class Vacuum :
         if(self.channel) :
             pos = self.getPosition()
             self.channel.sendPlannerVacuumMovedPosition(self.IDnum,pos[0],pos[1])
+
+    def setWetness(self,wet) :
+        self.Moisture = wet
+
+    def getWetness(self) :
+        return(self.Moisture)
 
     def getPosition(self) :
         return([self.xPos,self.yPos])
@@ -167,7 +175,9 @@ class Vacuum :
             #print("Moving vacuum {0}".format(self.IDnum))
             self.channel.sendPlannerVacuumMovedPosition(self.IDnum,x,y)
             
-            if (self.world.Moisture[x,y] > 0 ) :
+            
+            if ((type(self.Moisture) is ndarray) and (self.Moisture[x,y] > 0 )) :
+
                 # location is wet
                 # repairs required before cleaning
                 self.timeDone=self.time+self.timeToRepair 
@@ -189,10 +199,13 @@ class Vacuum :
         self.queue.append([xord,yord])
         
         
-    def timeStep(self,time) :
+    def timeStep(self,time,wetness) :
         #vacuum action on each world time increment
-        #print("ID: {0} working: {1} pos: {2},{3}".format\
-        #     (self.getID(),self.isWorking,self.xPos,self.yPos))
+        #print("ID: {0} Time: {1} working: {2} pos: {3},{4} wetness:\n{5}".format\
+        #     (self.getID(),time,self.isWorking,self.xPos,self.yPos,wetness))
+
+        self.setWetness(wetness)
+
         if (not self.isWorking) :
             # not functioning
             return
@@ -233,9 +246,9 @@ class Vacuum :
                 self.timeDone=self.time+self.timeToClean;
                     
 
-            else :
+            elif (self.Moisture):
                 # vacuum is still doing something
-                if ((self.status==2) and (self.world.Moisture(self.xPos,self.yPos)>0)) :
+                if ((self.status==2) and (self.Moisture(self.xPos,self.yPos)>0)) :
                     # region still wet
                     # assume world will dry, then 8 more time units to complete cleaning
                     self.timeDone=self.time+self.timeToClean 

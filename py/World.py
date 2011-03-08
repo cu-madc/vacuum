@@ -181,7 +181,7 @@ class  World :
         self.channel.sendPlannerUpdateRequest()
 
         for vacuum in range(self.numberVacuums):
-            self.channel.sendVacuumWorldTime(T,vacuum)
+            self.channel.sendVacuumWorldTime(T,vacuum,self.Moisture)
             
         self.time=T;
 

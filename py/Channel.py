@@ -261,7 +261,7 @@ class Channel:
             #    info.getVacuumID(),pos[0],pos[1]))
 
             if(vacuumID < len(self.vacuumArray)) :
-                self.vacuumArray[vacuumID].timeStep(time)
+                self.vacuumArray[vacuumID].timeStep(time,info.getMatrixFromArray())
 
 
         elif(info.getMyInformationType() ==
@@ -472,8 +472,8 @@ class Channel:
         self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
-    def sendVacuumWorldTime(self,T,id) :
-        newTime = XMLMessageWorldVacuumCurrentTime(T)
+    def sendVacuumWorldTime(self,T,id,wetness) :
+        newTime = XMLMessageWorldVacuumCurrentTime(T,wetness)
         newTime.setVacuumID(id)
         newTime.createRootNode()
         #print(newTime.xml2Char())

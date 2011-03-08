@@ -66,16 +66,17 @@ from numpy import *
 from numpy.linalg import *
 
 from xml.dom.minidom import Document
-from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
-from XMLParser import XMLParser
+from XMLMessageArray import XMLMessageArray
+#rom XMLParser import XMLParser
 
 
-class XMLMessageWorldVacuumCurrentTime (XMLMessageVacuumIDPosBase) :
+class XMLMessageWorldVacuumCurrentTime (XMLMessageArray) :
 
 
-    def __init__(self,time=0.0) :
-        XMLMessageVacuumIDPosBase.__init__(self)
+    def __init__(self,time=0.0,A=None) :
+        XMLMessageArray.__init__(self,A)
 	self.setMyInformationType(self.MESSAGE_WORLD_VACUUM_CURRENT_TIME)
+        self.vacuumID = -1
         self.setTime(time)
 
 
@@ -92,24 +93,46 @@ class XMLMessageWorldVacuumCurrentTime (XMLMessageVacuumIDPosBase) :
         self.time = int(value)
 
 
+    def getVacuumID(self) :
+        return(self.vacuumID)
+
+
+    def setVacuumID(self,value) :
+        self.vacuumID = int(value)
+        self.updateVacuumIDNode()
+
+
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        node = self.doc.createElement("objects")
-        self.root_node.appendChild(node)
+        self.createObjectClassNodes("Vacuum","World Time")
 
-        self.objectClassNode = self.doc.createElement("objectClass")
-        node.appendChild(self.objectClassNode)
 
-        nameNode = self.doc.createElement("name")
-        nameNode.appendChild(self.doc.createTextNode("Vacuum"))
-        self.objectClassNode.appendChild(nameNode)
+    def updateVacuumIDNode(self) :
+        # Method to change the network ID node to reflect the current
+        # value of the network id.
+        self.updateValue("vacuumID",self.getVacuumID())
 
-        typeNode = self.doc.createElement("type")
-        typeNode.appendChild(self.doc.createTextNode("World Time"))
-        self.objectClassNode.appendChild(typeNode)
 
-        self.createDimensions()
+
+    def setVacuumIDNode(self) :
+        # Method to set the value of the id for this vacuum. It
+        # indicates which vacumm this structure is associated
+        # with. The value is then added to the xml tree under the
+        # dimensions node.
+
+        self.vacuumIDNode = self.doc.createElement("dimension")
+        self.dimensionsNode.appendChild(self.vacuumIDNode)
+
+        dimension = self.doc.createElement("name")
+        node = self.doc.createTextNode("vacuumID")
+        dimension.appendChild(node)
+        self.vacuumIDNode.appendChild(dimension)
+
+        dimension = self.doc.createElement("value")
+        node = self.doc.createTextNode(str(self.getVacuumID()))
+        dimension.appendChild(node)
+        self.vacuumIDNode.appendChild(dimension)
 
 
     def setTimeNode(self) :
@@ -140,8 +163,7 @@ class XMLMessageWorldVacuumCurrentTime (XMLMessageVacuumIDPosBase) :
         # This overrides the one in the base class because the
         # positions are not needed.
 
-        self.dimensionsNode = self.doc.createElement("dimensions")
-        self.objectClassNode.appendChild(self.dimensionsNode)
+        XMLMessageArray.createDimensions(self)
         self.setVacuumIDNode()
         self.setTimeNode()
 
