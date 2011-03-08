@@ -69,8 +69,8 @@ from XML.XMLParser import XMLParser
 from XML.XMLIncomingDIF import XMLIncomingDIF
 from XML.XMLMessageNetwork import XMLMessageNetwork
 
-from XML.XMLMessagePlannerReportVacuumOrders import \
-     XMLMessagePlannerReportVacuumOrders
+#from XML.XMLMessagePlannerReportVacuumOrders import \
+#     XMLMessagePlannerReportVacuumOrders
 
 #from XML.XMLMessageRecommendOrderCommander2Planner import \
 #     XMLMessageRecommendOrderCommander2Planner
@@ -361,10 +361,12 @@ class Channel:
     def sendVacuumReportFromCommander2Planner(self,xPos,yPos,IDnum) :
         
         #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
-        network = XMLMessagePlannerReportVacuumOrders()
+        #network = XMLMessagePlannerReportVacuumOrders()
+        network = XMLMessageVacuumIDPosBase()
         network.setVacuumID(IDnum)
         network.setPos(xPos,yPos)
         network.createRootNode()
+        network.specifyInformationType(XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
 
         if(self.sendOverTCP) :
             # Pass the messageover the simulation network

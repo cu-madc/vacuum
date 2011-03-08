@@ -142,6 +142,10 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
         if(informationType==self.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
             self.createObjectClassElements("Planner","Vacuum Recommendation")
 
+        elif(informationType==self.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
+            self.createObjectClassElements("Planner","Vacuum Orders")
+            
+
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.

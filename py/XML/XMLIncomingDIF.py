@@ -67,8 +67,8 @@
 from XMLParser import XMLParser
 from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 
-from XMLMessagePlannerReportVacuumOrders       import \
-     XMLMessagePlannerReportVacuumOrders
+#from XMLMessagePlannerReportVacuumOrders       import \
+#     XMLMessagePlannerReportVacuumOrders
 
 #from XMLMessageRecommendOrderCommander2Planner import \
 #     XMLMessageRecommendOrderCommander2Planner
@@ -214,7 +214,8 @@ class XMLIncomingDIF (XMLParser) :
         incomingXML = None
 
         if( (name=="Planner") and (type == "Vacuum Orders")) :
-            incomingXML = XMLMessagePlannerReportVacuumOrders()
+            #incomingXML = XMLMessagePlannerReportVacuumOrders()
+            incomingXML = XMLMessageVacuumIDPosBase()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :
@@ -239,11 +240,13 @@ class XMLIncomingDIF (XMLParser) :
                 if(self.DEBUG) :
                     print("This data represents information from a planner from a commander with the orders for a vacuum")
 
+            incomingXML.specifyInformationType(XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
+
+
 
         elif( (name=="Planner") and (type == "Vacuum Recommendation")) :
             #incomingXML = XMLMessageRecommendOrderCommander2Planner()
             incomingXML = XMLMessageVacuumIDPosBase()
-            incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :
@@ -267,6 +270,8 @@ class XMLIncomingDIF (XMLParser) :
 
                 if(self.DEBUG) :
                     print("This data represents information from a commander to a planner with the suggested orders for a vacuum")
+
+            incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
 
 
         elif( (name=="Commander") and (type=="Vacuum Recommendation")) :
