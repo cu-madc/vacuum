@@ -65,12 +65,13 @@
 #include <string.h>
 
 from XMLParser import XMLParser
+from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 
 from XMLMessagePlannerReportVacuumOrders       import \
      XMLMessagePlannerReportVacuumOrders
 
-from XMLMessageRecommendOrderCommander2Planner import \
-     XMLMessageRecommendOrderCommander2Planner
+#from XMLMessageRecommendOrderCommander2Planner import \
+#     XMLMessageRecommendOrderCommander2Planner
 
 from XMLMessageRecommendOrderPlanner2Commander import \
      XMLMessageRecommendOrderPlanner2Commander
@@ -240,7 +241,9 @@ class XMLIncomingDIF (XMLParser) :
 
 
         elif( (name=="Planner") and (type == "Vacuum Recommendation")) :
-            incomingXML = XMLMessageRecommendOrderCommander2Planner()
+            #incomingXML = XMLMessageRecommendOrderCommander2Planner()
+            incomingXML = XMLMessageVacuumIDPosBase()
+            incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :

@@ -72,8 +72,10 @@ from XML.XMLMessageNetwork import XMLMessageNetwork
 from XML.XMLMessagePlannerReportVacuumOrders import \
      XMLMessagePlannerReportVacuumOrders
 
-from XML.XMLMessageRecommendOrderCommander2Planner import \
-     XMLMessageRecommendOrderCommander2Planner
+#from XML.XMLMessageRecommendOrderCommander2Planner import \
+#     XMLMessageRecommendOrderCommander2Planner
+
+from XML.XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 
 from XML.XMLMessageRecommendOrderPlanner2Commander import \
      XMLMessageRecommendOrderPlanner2Commander
@@ -381,10 +383,13 @@ class Channel:
     def sendRecommendOrderFromCommander2Planner(self,vacuumID,xPos,yPos) :            
         
         #print("Sending to id: {0} pos: {1},{2}".format(vacuumID,xPos,yPos))
-        orders = XMLMessageRecommendOrderCommander2Planner()
+        #orders = XMLMessageRecommendOrderCommander2Planner()
+        orders = XMLMessageVacuumIDPosBase()
         orders.setVacuumID(vacuumID)
         orders.setPos(xPos,yPos)
         orders.createRootNode()
+        orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
+        
 
         if(self.sendOverTCP) :
             # Pass the message over the simulation network

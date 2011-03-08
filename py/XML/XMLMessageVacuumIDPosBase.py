@@ -134,6 +134,43 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
 
 
 
+
+    def specifyInformationType(self,informationType) :
+        # routine to specify what kind of information is being held in this object.
+        self.setMyInformationType(informationType)
+
+        if(informationType==self.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
+            self.createObjectClassElements("Planner","Vacuum Recommendation")
+
+    def createObjectClass(self) :
+        # Creates the node that contains the object class definition
+        # and all of its children.
+        pass
+
+
+    def createObjectClassElements(self,name,type) :
+        # Creates the node that contains the object class definition
+        # and all of its children.
+        if(not self.root_node) :
+            self.createRootNode()
+            
+        node = self.doc.createElement("objects")
+        self.root_node.appendChild(node)
+
+        self.objectClassNode = self.doc.createElement("objectClass")
+        node.appendChild(self.objectClassNode)
+
+        nameNode = self.doc.createElement("name")
+        nameNode.appendChild(self.doc.createTextNode(name))
+        self.objectClassNode.appendChild(nameNode)
+
+        typeNode = self.doc.createElement("type")
+        typeNode.appendChild(self.doc.createTextNode(type))
+        self.objectClassNode.appendChild(typeNode)
+
+        self.createDimensions()
+
+
     def createDimensions(self):
         # Creates the dimensions node in the xml tree. It adds the
         # objectClass node as a child of the dimensions node. Finally
