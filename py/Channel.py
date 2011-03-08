@@ -203,30 +203,33 @@ class Channel:
         if(info.getMyInformationType() ==
            XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
             
-            pos = info.getPos()
-            #print("sending report to commander for {0} - {1},{2}".format(
-            #    info.getVacuumID(),pos[0],pos[1]))
-            self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
+            if(self.commander) :
+                pos = info.getPos()
+                #print("sending report to commander for {0} - {1},{2}".format(
+                #    info.getVacuumID(),pos[0],pos[1]))
+                self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
 
 
 
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
-            
-            pos = info.getPos()
-            #print("sending report to planner for {0} - {1},{2}".format(
-            #    info.getVacuumID(),pos[0],pos[1]))
-            self.planner.recommendOrder(info.getVacuumID(),pos[0],pos[1])
+
+            if(self.commander) :
+                pos = info.getPos()
+                #print("sending report to planner for {0} - {1},{2}".format(
+                #    info.getVacuumID(),pos[0],pos[1]))
+                self.planner.recommendOrder(info.getVacuumID(),pos[0],pos[1])
 
 
 
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER) :
             
-            pos = info.getPos()
-            #print("sending report to commander for {0} - {1},{2}".format(
-            #    info.getVacuumID(),pos[0],pos[1]))
-            self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
+            if(self.commander) :
+                pos = info.getPos()
+                #print("sending report to commander for {0} - {1},{2}".format(
+                #    info.getVacuumID(),pos[0],pos[1]))
+                self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
 
 
 
@@ -245,12 +248,13 @@ class Channel:
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID) :
 
-            pos = info.getPos()
-            vacuumID = info.getVacuumID()
-            #print("sending cleaning report to world from vacuum for {0} - {1},{2}".format(
-            #    info.getVacuumID(),pos[0],pos[1]))
+            if(self.world) :
+                pos = info.getPos()
+                vacuumID = info.getVacuumID()
+               #print("sending cleaning report to world from vacuum for {0} - {1},{2}".format(
+               #    info.getVacuumID(),pos[0],pos[1]))
 
-            self.world.clean(pos[0],pos[1])
+                self.world.clean(pos[0],pos[1])
 
 
         elif(info.getMyInformationType() ==
@@ -268,69 +272,79 @@ class Channel:
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_VACUUM_WORLD_ADD_EXPENDITURE) :
 
-            expenditure = info.getExpenditure()
-            vacuumID = info.getVacuumID()
-            #print("sending expenditure report to world for {0} - {1}".format(
-            #    info.getVacuumID(),expenditure))
+            if(self.world) :
+                expenditure = info.getExpenditure()
+                vacuumID = info.getVacuumID()
+                #print("sending expenditure report to world for {0} - {1}".format(
+                #    info.getVacuumID(),expenditure))
 
-            self.world.addExpenditure(expenditure)
+                self.world.addExpenditure(expenditure)
 
 
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
             
-            pos = info.getPos()
-            #print("sending report to planner for {0} - {1},{2}".format(
-            #    info.getVacuumID(),pos[0],pos[1]))
-            self.planner.receiveOrder(info.getVacuumID(),pos[0],pos[1])
+            if(self.planner) :
+                pos = info.getPos()
+                #print("sending report to planner for {0} - {1},{2}".format(
+                #    info.getVacuumID(),pos[0],pos[1]))
+                self.planner.receiveOrder(info.getVacuumID(),pos[0],pos[1])
 
 
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER) :
             
-            pos = info.getPos()
-            #print("sending vacuum position to planner for {0} - {1},{2}".format(
-            #    info.getVacuumID(),pos[0],pos[1]))
-            self.planner.setVacuumLocation(info.getVacuumID(),pos[0],pos[1])
+            if(self.planner) :
+                pos = info.getPos()
+                #print("sending vacuum position to planner for {0} - {1},{2}".format(
+                #    info.getVacuumID(),pos[0],pos[1]))
+                self.planner.setVacuumLocation(info.getVacuumID(),pos[0],pos[1])
 
 
 
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_GET_REPORT_VACUUM_COMMANDER) :
             
-            pos = info.getPos()
-            #print("sending report to planner for {0} - {1},{2} - {3}".format(
-            #    info.getVacuumID(),pos[0],pos[1],info.getStatus()))
-            self.commander.getReport(pos[0],pos[1],info.getStatus(),info.getVacuumID())
+            if(self.commander) :
+                pos = info.getPos()
+                #print("sending report to planner for {0} - {1},{2} - {3}".format(
+                #    info.getVacuumID(),pos[0],pos[1],info.getStatus()))
+                self.commander.getReport(pos[0],pos[1],info.getStatus(),info.getVacuumID())
 
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_STATUS) :
-            self.sensor.setArray(info.getMatrixFromArray())
+            if(self.sensor) :
+                self.sensor.setArray(info.getMatrixFromArray())
     
 
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_WETNESS) :
-            self.sensor.setWet(info.getMatrixFromArray())
+            if(self.sensor) :
+                self.sensor.setWet(info.getMatrixFromArray())
 
 
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_UPDATE_WORLD_PLANNER) :
-            self.planner.updateView()
+            if(self.planner):
+                self.planner.updateView()
 
 
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR) :
-            self.sensor.measure()
+            if(self.sensor) :
+                self.sensor.measure()
 
 
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_STATUS_SENSOR_PLANNER) :
-            self.planner.setDirtLevels(info.getMatrixFromArray())
+            if(self.planner) :
+                self.planner.setDirtLevels(info.getMatrixFromArray())
 
 
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WETNESS_SENSOR_PLANNER) :
-            self.planner.setWet(info.getMatrixFromArray())
+            if(self.planner) :
+                self.planner.setWet(info.getMatrixFromArray())
 
 
 
@@ -471,6 +485,7 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Send the message on the back plane
+            # Question: should it really be on the back plane?
             pass
         else :
             self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
@@ -482,6 +497,7 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Send the message on the back plane.
+            # Question: should it really be on the back plane?
             pass
         else :
             self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
@@ -515,6 +531,7 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Send the message on the back plane.
+            # Question: should this really be on the back plane?
             pass
         else :
             self.receiveXMLReportParseAndDecide(update.xml2Char())
@@ -528,6 +545,7 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Send the message on the back plane.
+            # Question: should this really be on the back plane?
             pass
         else :
             self.receiveXMLReportParseAndDecide(update.xml2Char())
