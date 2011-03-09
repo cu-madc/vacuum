@@ -188,13 +188,24 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
+    ## determineXMLInformation(self,passedXML)
+    #
+    #  Method that takes information in the form of the parsed XML
+    #  tree and decides what kind of information it contains. It then
+    #  creates the appropriate object to hold the information and
+    #  returns it.
     def determineXMLInformation(self,passedXML) :
         self.parseXMLString(passedXML)
         [name,type] = self.getObjectClassNameAndType()
         incomingXML = None
 
+
+
         if( (name=="Planner") and (type == "Vacuum Orders")) :
-            #incomingXML = XMLMessagePlannerReportVacuumOrders()
+            # This is a message to be sent to a planner that contains
+            # the orders to a vacuum from the commander. Define the
+            # vacuum and its position.
+            
             incomingXML = XMLMessageVacuumIDPosBase()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
@@ -225,7 +236,10 @@ class XMLIncomingDIF (XMLParser) :
 
 
         elif( (name=="Planner") and (type == "Vacuum Recommendation")) :
-            #incomingXML = XMLMessageRecommendOrderCommander2Planner()
+            # This is a message from a commander sent to a planner to
+            # let the planner know the recommendation made for the
+            # movement of a vacuum. Define the vacuum and its
+            # position.
             incomingXML = XMLMessageVacuumIDPosBase()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
@@ -254,8 +268,12 @@ class XMLIncomingDIF (XMLParser) :
             incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
 
 
+
+
         elif( (name=="Commander") and (type=="Vacuum Recommendation")) :
-            #incomingXML = XMLMessageRecommendOrderPlanner2Commander()
+            # This is a message from Planner to send the
+            # recommendation of a move to the commander. Define the
+            # vacuum and its position.
             incomingXML = XMLMessageVacuumIDPosBase()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
@@ -284,8 +302,11 @@ class XMLIncomingDIF (XMLParser) :
 
             incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
 
+
+
         elif( (name=="World") and (type=="Clean Grid")) :
-            #incomingXML = XMLMessageVacuumCleanWorld()
+            # This is the message from a Vacuum to send its location
+            # to the world. Define the vacuum and its position.
             incomingXML = XMLMessageVacuumIDPosBase()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
@@ -314,8 +335,13 @@ class XMLIncomingDIF (XMLParser) :
             incomingXML.specifyInformationType(XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID)
 
 
+
+
         elif( (name=="Vacuum") and (type=="Move Order")) :
-            #incomingXML = XMLMessageMoveOrderCommanderVacuum()
+            # This is a message send from a Commander to a Vacuum to
+            # give the vacuum the order to move. Define the vacuum and
+            # its future position.
+            
             incomingXML = XMLMessageVacuumIDPosBase()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
@@ -344,8 +370,13 @@ class XMLIncomingDIF (XMLParser) :
             incomingXML.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM)
 
 
+
+
         elif( (name=="Planner") and (type=="Move Order")) :
-            #incomingXML = XMLMessageMoveOrderCommanderPlanner()
+            # This is a message from the commander to the planner to
+            # let the planner know what order was sent. Define the
+            # vacuum and its position.
+            
             incomingXML = XMLMessageVacuumIDPosBase()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
@@ -373,7 +404,12 @@ class XMLIncomingDIF (XMLParser) :
 
             incomingXML.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
 
+
+
         elif( (name=="Commander") and (type=="Get Report")) :
+            # This is a message from the Vacuum to the commander to
+            # let the commander know the position and status of a
+            # vacuum. Need to define the position and status.
             incomingXML = XMLMessageGetReportVacuumCommander()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
@@ -410,31 +446,56 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
+
         elif( (name=="Sensor") and (type=="World Status")) :
+            # This is a message from the World to the Sensor to let it
+            # know the status of the world.
             incomingXML = XMLMessageWorldStatus()
 
 
+
         elif( (name=="Sensor") and (type=="World Wetness")) :
+            # This is a message from the world to the Sensor to let it
+            # know the wetness levels of the world.
             incomingXML = XMLMessageWorldWetness()
 
 
+
         elif( (name=="Planner") and (type=="Update")) :
+            # This is a message from the Sensor to the planner to let
+            # it know the status of the world.
             incomingXML = XMLMessageUpdateWorldPlanner()
 
 
+
         elif( (name=="Sensor") and (type=="Send Planner Update")) :
+            # This is a message from the planner to the sensor to
+            # request an update.
             incomingXML = XMLMessageUpdatePlannerSensor()
 
 
+
         elif( (name=="Planner") and (type=="Sensor Status")) :
+            # This is a message from the Sensor to the Planner to
+            # provide a status of the world as the Sensor currently
+            # understands it.
             incomingXML = XMLMessageSensorStatus()
 
 
+
         elif( (name=="Planner") and (type=="Sensor Wetness")) :
+            # This is message from the Sensor to the Planner to let
+            # the Planner know what the Sensor thinks is the current
+            # wetness levels of the world.
             incomingXML = XMLMessageSensorWetness()
 
+
+
         elif( (name=="Planner") and (type=="New Vacuum Location")) :
-            #incomingXML = XMLMessageVaccumMovedReportToPlanner()
+            # This is a message from the Vacuum to the planner to give
+            # the planner a report of its activities. Define the
+            # vacuum and its position.
+            
             incomingXML = XMLMessageVacuumIDPosBase()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
@@ -459,7 +520,12 @@ class XMLIncomingDIF (XMLParser) :
             incomingXML.specifyInformationType(XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER)
 
 
+
         elif( (name=="Vacuum") and (type=="World Time")) :
+            # This is a message from the world to the vacuum. It lets
+            # the vacuum know what the world time is. Set the vacuum's
+            # ID and the time.
+            
             incomingXML = XMLMessageWorldVacuumCurrentTime()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
@@ -478,6 +544,8 @@ class XMLIncomingDIF (XMLParser) :
 
 
         elif( (name=="World") and (type=="Add Expenditure")) :
+            # This is a message from a vacuum to the World. It sends
+            # an expenditure required for the vacuum.
             incomingXML = XMLMessageVacuumAddExpenditureWorld()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
@@ -498,6 +566,10 @@ class XMLIncomingDIF (XMLParser) :
 
 
         if(incomingXML) :
+            # If an incoming XML object was created then pass along
+            # the array object that was set. If no array object was
+            # set before calling this method then this will not do
+            # anything. It is caught in the set buffer method.
             incomingXML.setBuffer(self.getBuffer())
 
         return(incomingXML)
