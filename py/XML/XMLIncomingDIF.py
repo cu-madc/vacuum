@@ -112,8 +112,8 @@ from XMLMessageWorldVacuumCurrentTime import \
 from XMLMessageVacuumAddExpenditureWorld import \
      XMLMessageVacuumAddExpenditureWorld
 
-from XMLMessageVacuumCleanWorld import \
-     XMLMessageVacuumCleanWorld
+#from XMLMessageVacuumCleanWorld import \
+#     XMLMessageVacuumCleanWorld
 
 class XMLIncomingDIF (XMLParser) :
 
@@ -305,7 +305,8 @@ class XMLIncomingDIF (XMLParser) :
             incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
 
         elif( (name=="World") and (type=="Clean Grid")) :
-            incomingXML = XMLMessageVacuumCleanWorld()
+            #incomingXML = XMLMessageVacuumCleanWorld()
+            incomingXML = XMLMessageVacuumIDPosBase()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :
@@ -330,6 +331,7 @@ class XMLIncomingDIF (XMLParser) :
                 if(self.DEBUG) :
                     print("This data represents information from a vacuum to the world to indicate a spot is cleaned.")
 
+            incomingXML.specifyInformationType(XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID)
 
 
         elif( (name=="Vacuum") and (type=="Move Order")) :

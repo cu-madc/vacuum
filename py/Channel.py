@@ -119,8 +119,8 @@ from XML.XMLMessageWorldVacuumCurrentTime import \
 from XML.XMLMessageVacuumAddExpenditureWorld import \
      XMLMessageVacuumAddExpenditureWorld
 
-from XML.XMLMessageVacuumCleanWorld import \
-     XMLMessageVacuumCleanWorld
+#from XML.XMLMessageVacuumCleanWorld import \
+#     XMLMessageVacuumCleanWorld
 
 class Channel:
 
@@ -253,8 +253,8 @@ class Channel:
             if(self.world) :
                 pos = info.getPos()
                 vacuumID = info.getVacuumID()
-               #print("sending cleaning report to world from vacuum for {0} - {1},{2}".format(
-               #    info.getVacuumID(),pos[0],pos[1]))
+                #print("sending cleaning report to world from vacuum for {0} - {1},{2}".format(
+                #   info.getVacuumID(),pos[0],pos[1]))
 
                 self.world.clean(pos[0],pos[1])
 
@@ -593,10 +593,12 @@ class Channel:
 
 
     def sendWorldCleanedGrid(self,idnum,xpos,ypos) :
-        update = XMLMessageVacuumCleanWorld()
+        #update = XMLMessageVacuumCleanWorld()
+        update = XMLMessageVacuumIDPosBase()
         update.setVacuumID(idnum)
         update.setPos(xpos,ypos)
         update.createRootNode()
+        update.specifyInformationType(XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID)
 
         if(self.sendOverTCP) :
             # Send the message on the back plane

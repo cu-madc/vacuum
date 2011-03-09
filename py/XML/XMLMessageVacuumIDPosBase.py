@@ -157,6 +157,9 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
         elif(informationType==self.MESSAGE_VACUUM_NEW_POSITION_PLANNER) :
             self.createObjectClassElements("Planner","New Vacuum Location")
 
+        elif(informationType==self.MESSAGE_VACUUM_WORLD_CLEAN_GRID) :
+            self.createObjectClassElements("World","Clean Grid")
+
 
             
 
