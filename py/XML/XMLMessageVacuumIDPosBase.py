@@ -154,7 +154,8 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
         elif(informationType==self.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
             self.createObjectClassElements("Planner","Move Order")
 
-
+        elif(informationType==self.MESSAGE_VACUUM_NEW_POSITION_PLANNER) :
+            self.createObjectClassElements("Planner","New Vacuum Location")
 
 
             

@@ -110,8 +110,8 @@ from XML.XMLMessageSensorWetness import \
 from XML.XMLMessageSensorStatus import \
      XMLMessageSensorStatus
 
-from XML.XMLMessageVaccumMovedReportToPlanner import \
-     XMLMessageVaccumMovedReportToPlanner
+#from XML.XMLMessageVaccumMovedReportToPlanner import \
+#     XMLMessageVaccumMovedReportToPlanner
 
 from XML.XMLMessageWorldVacuumCurrentTime import \
      XMLMessageWorldVacuumCurrentTime
@@ -551,10 +551,12 @@ class Channel:
 
 
     def sendPlannerVacuumMovedPosition(self,idnum,xpos,ypos) :
-        update = XMLMessageVaccumMovedReportToPlanner()
+        #update = XMLMessageVaccumMovedReportToPlanner()
+        update = XMLMessageVacuumIDPosBase()
         update.setVacuumID(idnum)
         update.setPos(xpos,ypos)
         update.createRootNode()
+        update.specifyInformationType(XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER)
 
         if(self.sendOverTCP) :
             # Send the message on the back plane.

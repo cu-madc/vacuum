@@ -103,8 +103,8 @@ from XMLMessageSensorStatus import \
 from XMLMessageSensorWetness import \
      XMLMessageSensorWetness
 
-from XMLMessageVaccumMovedReportToPlanner import \
-     XMLMessageVaccumMovedReportToPlanner
+#from XMLMessageVaccumMovedReportToPlanner import \
+#     XMLMessageVaccumMovedReportToPlanner
 
 from XMLMessageWorldVacuumCurrentTime import \
      XMLMessageWorldVacuumCurrentTime
@@ -451,8 +451,9 @@ class XMLIncomingDIF (XMLParser) :
         elif( (name=="Planner") and (type=="Sensor Wetness")) :
             incomingXML = XMLMessageSensorWetness()
 
-        elif( (name=="Planner") and (type=="New Vaccum Location")) :
-            incomingXML = XMLMessageVaccumMovedReportToPlanner()
+        elif( (name=="Planner") and (type=="New Vacuum Location")) :
+            #incomingXML = XMLMessageVaccumMovedReportToPlanner()
+            incomingXML = XMLMessageVacuumIDPosBase()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :
@@ -472,6 +473,8 @@ class XMLIncomingDIF (XMLParser) :
 
                 if(yPos) :
                     incomingXML.setYPos(yPos[3][1][2])
+
+            incomingXML.specifyInformationType(XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER)
 
 
         elif( (name=="Vacuum") and (type=="World Time")) :
