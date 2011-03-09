@@ -148,6 +148,8 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
         elif(informationType==self.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER) :
             self.createObjectClassElements("Commander","Vacuum Recommendation")
 
+        elif(informationType==self.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
+            self.createObjectClassElements("Vacuum","Move Order")
 
             
 
