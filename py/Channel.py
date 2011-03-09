@@ -123,6 +123,12 @@ class Channel:
 
 
 
+    # Utility routines.
+    #
+    # These methods are used for setting the values of certain
+    # parameters and is primarily used for outside objects when it is
+    # necessary to make a change to a Channel object.
+    
     def setWorking(self,value) :
         self.isWorking = value
 
@@ -155,6 +161,8 @@ class Channel:
 
     def addVacuum(self,vacuum,id,xpos,ypos) :
         while(id>=len(self.vacuumArray)) :
+            # There are not enough vacuum objects defined. Create
+            # place holders.
             self.vacuumArray.append(None)
         self.vacuumArray[id] = vacuum
         self.sendPlannerVacuumMovedPosition(id,xpos,ypos)
@@ -165,10 +173,17 @@ class Channel:
     def getWorld(self) :
         return(self.world)
 
+
+    ## sendMessage(self)
+    #
+    # This generates a random number to determine if a message should
+    # be sent. It is used when the system is in debug mode, and we
+    # want to make some local runs under one process.
     def sendMessage(self) :
         if(self.reliability>random.rand(1)[0]) :
             return(True)
         return(False)
+
 
 
     ## receiveXMLReportParseAndDecide
@@ -296,36 +311,44 @@ class Channel:
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_STATUS) :
             if(self.sensor) :
+                # let the sensor know the world status.
                 self.sensor.setArray(info.getMatrixFromArray())
     
 
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_WETNESS) :
             if(self.sensor) :
+                # Let the sensor know the wetness levels of the world.
                 self.sensor.setWet(info.getMatrixFromArray())
 
 
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_UPDATE_WORLD_PLANNER) :
             if(self.planner):
+                # Request that the planner make an update to its view.
                 self.planner.updateView()
 
 
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR) :
             if(self.sensor) :
+                # Request that the sensor make a request to measure
+                # the world.
                 self.sensor.measure()
 
 
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_STATUS_SENSOR_PLANNER) :
             if(self.planner) :
+                # Send the planner what the sensor things the world status is.
                 self.planner.setDirtLevels(info.getMatrixFromArray())
 
 
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WETNESS_SENSOR_PLANNER) :
             if(self.planner) :
+                # Send the planner what the sensor things is the world
+                # wetness levels.
                 self.planner.setWet(info.getMatrixFromArray())
 
 
@@ -472,6 +495,10 @@ class Channel:
 
 
 
+    ## sendMeasuredFromPlanner2Sensor
+    #
+    # Routine to take a request from the planner to get information
+    # from the sensor and send it to the sensor.
     def sendMeasuredFromPlanner2Sensor(self) :
         sensorData = XMLMessageUpdatePlannerSensor()
         sensorData.createRootNode()
@@ -496,6 +523,9 @@ class Channel:
             self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
+    ## sendWorldStatusToSensor
+    #
+    # Routine to send the world's status to a sensor.
     def sendWorldStatusToSensor(self,A) :
         worldData = XMLMessageWorldStatus(A)
         worldData.createRootNode()
@@ -507,6 +537,10 @@ class Channel:
             self.receiveXMLReportParseAndDecide(worldData.xml2Char())
 
 
+
+    ## sendWorldWetnessToSensor
+    #
+    # Routine to send the world's wetness levels to a sensor.
     def sendWorldWetnessToSensor(self,Moisture):
         worldWetness = XMLMessageWorldWetness(Moisture)
         worldWetness.createRootNode()
@@ -518,6 +552,12 @@ class Channel:
             self.receiveXMLReportParseAndDecide(worldWetness.xml2Char())
 
 
+
+    ## sendPlannerUpdateRequest
+    #
+    # Routine to send a request for an update to the planner. This
+    # tells the planner that it needs to take whatever actions are
+    # necessary during a world time step.
     def sendPlannerUpdateRequest(self) :
         update = XMLMessageUpdateWorldPlanner()
         update.createRootNode()
@@ -530,6 +570,10 @@ class Channel:
             self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
+    ## sendPlannerVacuumMovedPosition
+    #
+    # Routine to send the new position of a vacuum. This comes from a
+    # vacuum.
     def sendPlannerVacuumMovedPosition(self,idnum,xpos,ypos) :
         #update = XMLMessageVaccumMovedReportToPlanner()
         update = XMLMessageVacuumIDPosBase()
@@ -546,6 +590,11 @@ class Channel:
             self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
+    ## sendVacuumWorldTime
+    #
+    # Routine to send the current world time from the world to a
+    # vacuum. This tells the vacuum that it needs to take whatever
+    # actions are appropriate for a given time step.
     def sendVacuumWorldTime(self,T,id,wetness) :
         newTime = XMLMessageWorldVacuumCurrentTime(T,wetness)
         newTime.setVacuumID(id)
@@ -559,6 +608,9 @@ class Channel:
             self.receiveXMLReportParseAndDecide(newTime.xml2Char())
 
 
+    ## sendVacuumWorldExpenditure
+    #
+    # Routine to send an expenditure from a vacuum to the world. 
     def sendVacuumWorldExpenditure(self,expenditure,id) :
         newExpenditure = XMLMessageVacuumAddExpenditureWorld(expenditure)
         newExpenditure.setVacuumID(id)
@@ -572,6 +624,10 @@ class Channel:
             self.receiveXMLReportParseAndDecide(newExpenditure.xml2Char())
 
 
+    ## sendWorldCleanedGrid
+    #
+    # Routine to let a vacuum send an update to the world to let it
+    # know that a grid area has been cleaned.
     def sendWorldCleanedGrid(self,idnum,xpos,ypos) :
         #update = XMLMessageVacuumCleanWorld()
         update = XMLMessageVacuumIDPosBase()
