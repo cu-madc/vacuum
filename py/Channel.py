@@ -81,10 +81,10 @@ from XML.XMLMessageNetwork import XMLMessageNetwork
 #from XML.XMLMessageMoveOrderCommanderVacuum import \
 #     XMLMessageMoveOrderCommanderVacuum
 
-from XML.XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
+#from XML.XMLMessageMoveOrderCommanderPlanner import \
+#     XMLMessageMoveOrderCommanderPlanner
 
-from XML.XMLMessageMoveOrderCommanderPlanner import \
-     XMLMessageMoveOrderCommanderPlanner
+from XML.XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 
 from XML.XMLMessageGetReportVacuumCommander import \
      XMLMessageGetReportVacuumCommander
@@ -477,10 +477,12 @@ class Channel:
     def sendMoveOrderFromCommander2Planner(self,xPos,yPos,IDnum) :
         
         #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
-        orders = XMLMessageMoveOrderCommanderPlanner()
+        #orders = XMLMessageMoveOrderCommanderPlanner()
+        orders = XMLMessageVacuumIDPosBase()
         orders.setVacuumID(IDnum)
         orders.setPos(xPos,yPos)
         orders.createRootNode()
+        orders.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
 
         if(self.sendOverTCP) :
             # Send the message on the simulation plane.

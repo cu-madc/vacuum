@@ -151,6 +151,12 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
         elif(informationType==self.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
             self.createObjectClassElements("Vacuum","Move Order")
 
+        elif(informationType==self.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
+            self.createObjectClassElements("Planner","Move Order")
+
+
+
+
             
 
     def createObjectClass(self) :

@@ -79,8 +79,8 @@ from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 #from XMLMessageMoveOrderCommanderVacuum        import \
 #     XMLMessageMoveOrderCommanderVacuum
 
-from XMLMessageMoveOrderCommanderPlanner       import \
-     XMLMessageMoveOrderCommanderPlanner
+#from XMLMessageMoveOrderCommanderPlanner       import \
+#     XMLMessageMoveOrderCommanderPlanner
 
 from XMLMessageGetReportVacuumCommander import \
      XMLMessageGetReportVacuumCommander
@@ -363,7 +363,8 @@ class XMLIncomingDIF (XMLParser) :
 
 
         elif( (name=="Planner") and (type=="Move Order")) :
-            incomingXML = XMLMessageMoveOrderCommanderPlanner()
+            #incomingXML = XMLMessageMoveOrderCommanderPlanner()
+            incomingXML = XMLMessageVacuumIDPosBase()
             dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
             if(dimensions) :
@@ -388,6 +389,7 @@ class XMLIncomingDIF (XMLParser) :
                 if(self.DEBUG) :
                     print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
 
+            incomingXML.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
 
         elif( (name=="Commander") and (type=="Get Report")) :
             incomingXML = XMLMessageGetReportVacuumCommander()
