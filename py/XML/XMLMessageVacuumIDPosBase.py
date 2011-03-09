@@ -86,10 +86,12 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
         self.yPos = None
 
 
-
     def __del__(self) :
         pass
 
+
+    # Utility functions used for outside routines to define internal
+    # parameters.
 
     def getVacuumID(self) :
         return(self.vacuumID)
@@ -116,10 +118,12 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
         self.updatePositionNodes()
 
 
+    ## createRootNode
+    # 
+    # Method to create the root node in the xml tree. Sets the
+    # scheme information as well.
+    #
     def createRootNode(self) :
-	# Method to create the root node in the xml tree. Sets the
-        #  scheme information as well.
-        #
 
 	self.cleanUpDocument()
         self.doc = Document()
@@ -135,8 +139,14 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
 
 
 
+    ## specifyInformationType
+    # 
+    # routine to specify what kind of information is being held in
+    # this object. It also specifies the elements of the tree that are
+    # used for other classes to determine what kind of information is
+    # held in the XML that is eventually produced.
     def specifyInformationType(self,informationType) :
-        # routine to specify what kind of information is being held in this object.
+        
         self.setMyInformationType(informationType)
 
         if(informationType==self.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
@@ -165,13 +175,17 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
 
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
-        # and all of its children.
+        # and all of its children. This is a no-op because if it is
+        # not defined in a child class nothing needs to happen.
         pass
 
 
+    ## createObjectClassElements
+    #
+    # Creates the node that contains the object class definition and
+    # all of its children.
+    #
     def createObjectClassElements(self,name,type) :
-        # Creates the node that contains the object class definition
-        # and all of its children.
         if(not self.root_node) :
             self.createRootNode()
             
@@ -192,10 +206,13 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
         self.createDimensions()
 
 
+
+    ## createDimensions
+    #
+    # Creates the dimensions node in the xml tree. It adds the
+    # objectClass node as a child of the dimensions node. Finally a
+    # "name" node is added as a child of the dimensions node.
     def createDimensions(self):
-        # Creates the dimensions node in the xml tree. It adds the
-        # objectClass node as a child of the dimensions node. Finally
-        # a "name" node is added as a child of the dimensions node.
 
         self.dimensionsNode = self.doc.createElement("dimensions")
         self.objectClassNode.appendChild(self.dimensionsNode)
@@ -205,11 +222,13 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
         
 
 
+    ## setVacuumIDNode
+    # 
+    # Method to set the value of the id for this vacuum. It
+    # indicates which vacumm this structure is associated
+    # with. The value is then added to the xml tree under the
+    # dimensions node.
     def setVacuumIDNode(self) :
-        # Method to set the value of the id for this vacuum. It
-        # indicates which vacumm this structure is associated
-        # with. The value is then added to the xml tree under the
-        # dimensions node.
 
         self.vacuumIDNode = self.doc.createElement("dimension")
         self.dimensionsNode.appendChild(self.vacuumIDNode)
@@ -226,23 +245,31 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
 
 
 
+    ## updateVacuumIDNode
+    # 
+    # Method to change the network ID node to reflect the current
+    # value of the network id.
     def updateVacuumIDNode(self) :
-        # Method to change the network ID node to reflect the current
-        # value of the network id.
         self.updateValue("vacuumID",self.getVacuumID())
 
 
+
+    ## updatePositionNodes
+    #
+    # Method to change the network ID node to reflect the current
+    # value of the network id.
     def updatePositionNodes(self) :
-        # Method to change the network ID node to reflect the current
-        # value of the network id.
         position = self.getPos()
         self.updateValue("xPos",position[0])
         self.updateValue("yPos",position[1])
 
 
+
+    ## updateValue(self,valueName,newValue)
+    # 
+    # Method to change the network ID node to reflect the current
+    # value of the network id.
     def updateValue(self,valueName,newValue) :
-        # Method to change the network ID node to reflect the current
-        # value of the network id.
 
         if(self.dimensionsNode) :
             nodes = self.dimensionsNode.getElementsByTagName("dimension")
@@ -266,9 +293,11 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
 
 
 
+    ## setxPositionNode
+    # 
+    # Method to set the value of the prob. of a successful
+    # transmission.
     def setxPositionNode(self) :
-        # Method to set the value of the prob. of a successful
-        # transmission. 
 
         self.xPosNode = self.doc.createElement("dimension")
         self.dimensionsNode.appendChild(self.xPosNode)
@@ -285,9 +314,12 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
         self.xPosNode.appendChild(dimension)
 
 
+
+    ## setyPositionNode
+    #
+    # Method to set the value of the prob. of a successful
+    # transmission.
     def setyPositionNode(self) :
-        # Method to set the value of the prob. of a successful
-        # transmission. 
 
         self.yPosNode = self.doc.createElement("dimension")
         self.dimensionsNode.appendChild(self.yPosNode)
@@ -306,9 +338,12 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
 
 
 
+
+    ## copyXMLTree
+    # 
+    # Copy the given parsed XML tree into the local tree. Also set
+    # the relevant nodes that this class tracks from the tree.
     def copyXMLTree(self,existingDocument) :
-        # Copy the given parsed XML tree into the local tree. Also set
-        # the relevant nodes that this class tracks from the tree.
 
         self.root_node = existingDocument.cloneNode(True)
 
