@@ -69,21 +69,6 @@ from XML.XMLParser import XMLParser
 from XML.XMLIncomingDIF import XMLIncomingDIF
 from XML.XMLMessageNetwork import XMLMessageNetwork
 
-#from XML.XMLMessagePlannerReportVacuumOrders import \
-#     XMLMessagePlannerReportVacuumOrders
-
-#from XML.XMLMessageRecommendOrderCommander2Planner import \
-#     XMLMessageRecommendOrderCommander2Planner
-
-#from XML.XMLMessageRecommendOrderPlanner2Commander import \
-#     XMLMessageRecommendOrderPlanner2Commander
-
-#from XML.XMLMessageMoveOrderCommanderVacuum import \
-#     XMLMessageMoveOrderCommanderVacuum
-
-#from XML.XMLMessageMoveOrderCommanderPlanner import \
-#     XMLMessageMoveOrderCommanderPlanner
-
 from XML.XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 
 from XML.XMLMessageGetReportVacuumCommander import \
@@ -110,17 +95,12 @@ from XML.XMLMessageSensorWetness import \
 from XML.XMLMessageSensorStatus import \
      XMLMessageSensorStatus
 
-#from XML.XMLMessageVaccumMovedReportToPlanner import \
-#     XMLMessageVaccumMovedReportToPlanner
-
 from XML.XMLMessageWorldVacuumCurrentTime import \
      XMLMessageWorldVacuumCurrentTime
 
 from XML.XMLMessageVacuumAddExpenditureWorld import \
      XMLMessageVacuumAddExpenditureWorld
 
-#from XML.XMLMessageVacuumCleanWorld import \
-#     XMLMessageVacuumCleanWorld
 
 class Channel:
 

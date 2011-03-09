@@ -67,21 +67,6 @@
 from XMLParser import XMLParser
 from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 
-#from XMLMessagePlannerReportVacuumOrders       import \
-#     XMLMessagePlannerReportVacuumOrders
-
-#from XMLMessageRecommendOrderCommander2Planner import \
-#     XMLMessageRecommendOrderCommander2Planner
-
-#from XMLMessageRecommendOrderPlanner2Commander import \
-#     XMLMessageRecommendOrderPlanner2Commander
-
-#from XMLMessageMoveOrderCommanderVacuum        import \
-#     XMLMessageMoveOrderCommanderVacuum
-
-#from XMLMessageMoveOrderCommanderPlanner       import \
-#     XMLMessageMoveOrderCommanderPlanner
-
 from XMLMessageGetReportVacuumCommander import \
      XMLMessageGetReportVacuumCommander
 
@@ -103,17 +88,12 @@ from XMLMessageSensorStatus import \
 from XMLMessageSensorWetness import \
      XMLMessageSensorWetness
 
-#from XMLMessageVaccumMovedReportToPlanner import \
-#     XMLMessageVaccumMovedReportToPlanner
-
 from XMLMessageWorldVacuumCurrentTime import \
      XMLMessageWorldVacuumCurrentTime
 
 from XMLMessageVacuumAddExpenditureWorld import \
      XMLMessageVacuumAddExpenditureWorld
 
-#from XMLMessageVacuumCleanWorld import \
-#     XMLMessageVacuumCleanWorld
 
 class XMLIncomingDIF (XMLParser) :
 
