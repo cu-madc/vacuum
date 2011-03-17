@@ -71,7 +71,6 @@ class Commander :
 
     def __init__(self,channel=None) : 
 
-        self.chanPlan = 0        # handle from channel to planner
         self.numberVacuums = 0   # Number of vacuums to track
         self.setWorking(True)
         self.setChannel(channel) # handle to planner
@@ -115,15 +114,10 @@ class Commander :
 
 
     def receiveReport(self,xord,yord,IDnum) :
-        # pass order to vacuum
+        # pass order to vacuum and the planner
         self.channel.sendMoveOrderFromCommander2Vacuum(xord,yord,IDnum)
-            
-        # resend request to tell planner that vacuum has been ordered
-        # to new location because it did not go through the first
-        # time.
-        
-        if xord :
-            self.channel.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
+        self.channel.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
+
 
 
 

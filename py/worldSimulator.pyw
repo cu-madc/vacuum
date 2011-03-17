@@ -88,7 +88,8 @@ N = W.getNumber()
 
 # create and set the sensor
 
-sensor = SensorArray(.4,W)
+accuracy = 0.4
+sensor = SensorArray(accuracy)
 W.setSensor(sensor)
 
 # channel setup
@@ -96,7 +97,7 @@ chan = Channel(W);   # TODO register the channel to the world
 
 
 # create the commander and planner
-plan=Planner(r*s/float(N*N),r*s/float(N*N),sensor,W);
+plan=Planner(r*s/float(N*N),r*s/float(N*N),accuracy,N);
 chan.setPlanner(plan)
 plan.setChannel(chan)
 W.setPlanner(plan)
@@ -114,8 +115,10 @@ vacArray = []
 for i in range(numVacs) :
     vacuum = Vacuum(i,1.0)
     vacuum.setChannel(chan)
-    vacuum.registerWorld(W)
     vacArray.append(vacuum)
+    pos = vacuum.getPosition()
+    chan.addVacuum(vacuum,i,pos[0],pos[1])
+    W.incrementVacuumCount()
     W.addVacuum(vacuum)
 
 
@@ -123,6 +126,7 @@ command.setNumberVacuums(len(vacArray))
 
 
 W.mainloop()
+exit(0)
 
 # testing (??)
 S=vacArray[1].missions;

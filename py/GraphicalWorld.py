@@ -82,15 +82,35 @@ class  GraphicalWorld (World,Tk) :
         self.setupMenu()
         self.setupWindow()
         self.setupOptionsEntry()
+        self.vacuumArray = []      # array of object handles
 
 
+    def setSensor(self,sensor) :
+        self.sensor = sensor
+
+    def getSensor(self) :
+        return(self.sensor)
+
+    def setPlanner(self,planner) :
+        self.planner = planner
+
+    def getPlanner(self) :
+        return(self.planner)
+
+    def addVacuum(self,vacuum) :
+        # routine to add a vacuum to the list of vacuums tracked by
+        # the world.
+        self.vacuumArray.append(vacuum)
+
+    def getVacuums(self) :
+        return(self.vacuumArray)
 
     def setupMenu(self) :
-        #self.menuBar = Frame(self.frame,relief=RAISED,borderwidth=2)
-        #self.menuBar.pack(side=TOP,expand=YES)
+        # Add a menu bar that gives the user some basic options.
         self.menuBar = Menu(self)
         self.config(menu=self.menuBar)
 
+        # Add a "file" submenu.
         self.fileMenu = Menu(self.menuBar)
         self.fileMenu.add_command(label="Start",command=self.start)
         self.fileMenu.add_command(label="Quit",command=self.quit)
@@ -102,9 +122,16 @@ class  GraphicalWorld (World,Tk) :
 
     def start(self) :
         N = int(self.NValue.get())
-        r = float(self.rValue.get())
+        self.r = float(self.rValue.get())
+        self.s = float(self.sValue.get())
+        self.v = float(self.vValue.get())
+        self.cloudSize = float(self.cloudSizeValue.get())
 
-        self.intializeVariables(r,self.s,self.v,self.cloudsize)
+        self.intializeVariables(self.r,self.s,self.v,self.cloudsize)
+        for vacuum in self.vacuumArray:
+            vacuum.setWorking(True)
+            vacuum.setStatus(3)
+            vacuum.initializeTime(0.0)
 
         H = []
         R = []
@@ -112,30 +139,38 @@ class  GraphicalWorld (World,Tk) :
         skip = 10;
         for i in range(N) :
             self.inc()
-            if(i%skip==0) :
-                self.draw()
-                H.append(sum(sum(self.A)))
-                R.append(sum(self.Moisture>0))
+            #if(i%skip==0) :
+            self.draw()
+
+            H.append(sum(sum(self.A)))
+            R.append(sum(self.Moisture>0))
     
         print("Mean of H: {0}".format(mean(H)))
 
 
     def setupWindow(self) :
+        # Define the frame that holds all of the world views.
         self.worldView = Frame(self.frame)
         self.worldView.pack(side=TOP,expand=YES)
 
+        # Define the label that displays the current time step.
         self.timeLabel = Label(self.worldView,text="t=0")
         self.timeLabel.pack(side=TOP,expand=YES)
-        
+
+        # Define the view for the world as seen by the "world" object.
         self.realView = WorldView(self.worldView,self,"Real")
         self.realView.pack(side=LEFT,expand=YES,fill=BOTH)
 
+        # Define the view of the world as seen by the sensor.
         self.sensorView = WorldView(self.worldView,self,"Sensor")
         self.sensorView.pack(side=LEFT,expand=YES,fill=BOTH)
 
+        # Define the view of the world as seen by the planner.
         self.plannerView = WorldView(self.worldView,self,"Planner")
         self.plannerView.pack(side=LEFT,expand=YES,fill=BOTH)
 
+        # Define the legend which displays the values with respect to
+        # the color coding.
         legendFrame = Frame(self.worldView)
         legendFrame.pack(side=LEFT,expand=YES)
         Label(legendFrame,text="Legend").pack(side=TOP)
@@ -145,50 +180,67 @@ class  GraphicalWorld (World,Tk) :
 
 
     def setupOptionsEntry(self) :
+        # Create the frame that holds the options that can be changed
+        # in the graphical view.
         self.entryFrame = Frame(self)
         self.entryFrame.pack(side=TOP,expand=YES)
 
+        # Define the entry for the number of time steps.
         self.NValue = StringVar()
-        self.NValue.set("10000")
+        self.NValue.set("100")
         Label(self.entryFrame,text="N=").pack(side=LEFT,padx=5)
         self.NValueEntry = Entry(self.entryFrame,textvariable=self.NValue,width=7)
         self.NValueEntry.pack(side=LEFT,expand=NO)
 
+        # Define the entry for the value of r
         self.rValue = StringVar()
         self.rValue.set(str(self.r))
         Label(self.entryFrame,text="r=").pack(side=LEFT,padx=5)
         self.rValueEntry = Entry(self.entryFrame,textvariable=self.rValue,width=7)
         self.rValueEntry.pack(side=LEFT,expand=NO)
 
+        # Define the entry for the value of s.
         self.sValue = StringVar()
         self.sValue.set(str(self.s))
         Label(self.entryFrame,text="s=").pack(side=LEFT,padx=5)
         self.sValueEntry = Entry(self.entryFrame,textvariable=self.sValue,width=7)
         self.sValueEntry.pack(side=LEFT,expand=NO)
 
+        # Define the entry for the value of v.
         self.vValue = StringVar()
         self.vValue.set(str(self.v))
         Label(self.entryFrame,text="v=").pack(side=LEFT,padx=5)
         self.vValueEntry = Entry(self.entryFrame,textvariable=self.vValue,width=7)
         self.vValueEntry.pack(side=LEFT,expand=NO)
 
+        # Define the entry for the value of the cloud size.
         self.cloudSizeValue = StringVar()
         self.cloudSizeValue.set(str(self.cloudsize))
         Label(self.entryFrame,text="cloud size=").pack(side=LEFT,padx=5)
         self.cloudSizeValueEntry = Entry(self.entryFrame,textvariable=self.cloudSizeValue,width=7)
         self.cloudSizeValueEntry.pack(side=LEFT,expand=NO)
 
+        # Define the button that will start the simulation when clicked.
         Button(self,text="Start",command=self.start).pack(side=TOP)
 
+
+
     def makeLegend(self,lower,upper) :
+        # Routine to show the color scale and associated values that
+        # are displayed in the world views.
+
+        # Delete the current view and define the colors to be displayed.
         self.legend.delete(ALL)
         color = FalseColor(lower,upper)
         for scale in range(255) :
+            # For each color go through and create a sliver of a
+            # rectangle with the given color.
             self.legend.create_rectangle(65,200*scale/255,
                                          80,200*(scale+1)/255.0,
                                          fill=color.calcColor(upper-float(scale)/255.0*(upper-lower)),
                                          outline="")
-            
+
+        # Display the values for the min, max, and middle values.
         self.legend.create_text(30,190,text="{0:8.1E}".format(lower),justify=LEFT)
         self.legend.create_text(30,100,text="{0:8.1E}".format((upper+lower)*0.5),justify=LEFT)
         self.legend.create_text(30, 10,text="{0:8.1E}".format(upper),justify=LEFT)

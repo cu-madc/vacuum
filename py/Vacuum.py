@@ -62,7 +62,6 @@
 from numpy import *
 from numpy.linalg import *
 
-from World import World
 
 class Vacuum : 
     # robot vaccum object
@@ -72,10 +71,8 @@ class Vacuum :
             
         self.xPos   = 0
         self.yPos   = 0
-        self.status = 3                        # 1 - moving, 2-cleaning, 3-waiting, 4-repairing
-        self.timeDone=currentTime+ \
-                       random.randint(10);    # time it will be done with current operation
-
+        self.setStatus(3)                     # 1 - moving, 2-cleaning, 3-waiting, 4-repairing
+        self.initializeTime(currentTime)      # time it will be done with current operation
         self.setID(IDnum)
         self.range = 3                        # maximum distance that can be travelled 
         self.queue  = []
@@ -92,6 +89,8 @@ class Vacuum :
         
         self.time = 0;
 
+        self.Moisture = None
+
 
     def setWorking(self,value) :
         self.isWorking = value
@@ -104,6 +103,15 @@ class Vacuum :
 
     def setChannel(self,value) :
         self.channel = value
+        if(self.channel) :
+            pos = self.getPosition()
+            self.channel.sendPlannerVacuumMovedPosition(self.IDnum,pos[0],pos[1])
+
+    def setWetness(self,wet) :
+        self.Moisture = wet
+
+    def getWetness(self) :
+        return(self.Moisture)
 
     def getPosition(self) :
         return([self.xPos,self.yPos])
@@ -118,17 +126,19 @@ class Vacuum :
     def setID(self,value) :
         self.IDnum = value
 
-    def registerWorld(self,W) :
-        #make vacuum aware of its world and who is its commander
-        self.world=W
+    def setStatus(self,value) :
+        self.status = value
 
 
-        
+
+
+    def initializeTime(self,currentTime) :
+        self.timeDone=currentTime+random.randint(10);
         
         
     def move(self,x,y) :
         # allow for movment of vacuum without cleaning
-        
+
         if (not self.isWorking):
             # not functioning
             return
@@ -137,7 +147,7 @@ class Vacuum :
         ordered_distance=abs(self.xPos-x)+abs(self.yPos-y)
         if (ordered_distance <= self.range) :
             self.setPosition([x,y]);
-            self.world.addExpenditure(self.moveCost);     # update funds expended
+            self.channel.sendVacuumWorldExpenditure(self.moveCost,self.IDnum)
             self.timeDone += 1;
             self.status=1;
 
@@ -149,27 +159,34 @@ class Vacuum :
         # note - this method will only be called if vacuum is working,
         # so no need to check status
         R=abs(self.xPos-x)+abs(self.yPos-y)   # proposed distance to move
+
         if (R <= self.range) :
             # move is not too far to achieve
             self.setPosition([x,y])
             self.odometer += R
             self.missions += 1
-            self.world.addExpenditure(self.moveCost)
+            self.channel.sendVacuumWorldExpenditure(self.moveCost,self.IDnum)
+
+            # Let the planner know that I have moved.
+            #print("Moving vacuum {0}".format(self.IDnum))
+            self.channel.sendPlannerVacuumMovedPosition(self.IDnum,x,y)
             
-            if (self.world.Moisture[x,y] > 0 ) :
+            
+            if ((type(self.Moisture) is ndarray) and (self.Moisture[x,y] > 0 )) :
+
                 # location is wet
                 # repairs required before cleaning
-                self.timeDone=self.world.time+self.timeToRepair 
+                self.timeDone=self.time+self.timeToRepair 
                 self.status=4;
-                self.world.addExpenditure(self.repairCost);
+                self.channel.sendVacuumWorldExpenditure(self.repairCost,self.IDnum)
                 self.repairs += 1;
                 
             else :
-                self.timeDone=self.world.time+self.timeToClean;
+                self.timeDone=self.time+self.timeToClean;
                 self.status=2;
 
             
-            self.queue=[]; # reset que
+            self.queue=[]; # reset queue
 
 
            
@@ -178,21 +195,27 @@ class Vacuum :
         self.queue.append([xord,yord])
         
         
-    def timeStep(self) :
+    def timeStep(self,time,wetness) :
         #vacuum action on each world time increment
+        #print("ID: {0} Time: {1} working: {2} pos: {3},{4} wetness:\n{5}".format\
+        #     (self.getID(),time,self.isWorking,self.xPos,self.yPos,wetness))
+
+        self.setWetness(wetness)
+
         if (not self.isWorking) :
             # not functioning
             return
             
 
-        t=self.world.time; 
+        self.time=time;
+        #print("time: {0} status: {1} queue: {2} ".format(t,self.status,self.queue))
             
-        if (t>=self.timeDone) :
+        if (self.time>=self.timeDone) :
             # Vacuum operation is complete
             if (self.status==2) :
                 #just finished cleaning
                 # update world that location has been cleaned
-                self.world.clean(self.xPos,self.yPos) 
+                self.channel.sendWorldCleanedGrid(self.IDnum,self.xPos,self.yPos)
                 self.status=3                         # waiting new instruction
 
                 # report that cleaning complete, recieve new instruction
@@ -216,25 +239,25 @@ class Vacuum :
                 #repairs complete
                 #start cleaning sequence
                 self.status=2;          
-                self.timeDone=t+self.timeToClean;
+                self.timeDone=self.time+self.timeToClean;
                     
 
-            else :
+            elif (self.Moisture):
                 # vacuum is still doing something
-                if ((self.status==2) and (self.world.Moisture(self.xPos,self.yPos)>0)) :
+                if ((self.status==2) and (self.Moisture(self.xPos,self.yPos)>0)) :
                     # region still wet
                     # assume world will dry, then 8 more time units to complete cleaning
-                    self.timeDone=t+self.timeToClean 
+                    self.timeDone=self.time+self.timeToClean 
                     
             
     
     
 if (__name__ =='__main__') :
+    from World import World
     world = World()
     world.inc()
 
     vacuum = Vacuum(1,0.0)
-    vacuum.registerWorld(world)
     vacuum.move(1,1)
     vacuum.moveAndClean(1,1)
     vacuum.moveord(1,1)

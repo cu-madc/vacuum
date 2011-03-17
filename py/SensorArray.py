@@ -63,21 +63,15 @@
 from numpy import *
 from numpy.linalg import *
 
-from World import World
 
 
 class SensorArray :
 
-    def __init__(self,accuracy=0.0,world=None) :
-        # constructor (accuracy of measurement, world object)
+    def __init__(self,accuracy=0.0) :
+        # constructor (accuracy of measurement)
         self.accuracy=accuracy-float(int(accuracy))  #force to be within constraints
 
-        if(world) :
-            self.setWorld(world)
-        else :
-            self.world = None
-            self.N = 1
-
+        self.N = 5
         self.array = zeros((self.N,self.N),dtype=float64) # array of values for dirt levels
         self.Wet = zeros((self.N,self.N),dtype=float64)   # array of values for dirt levels
 
@@ -102,17 +96,15 @@ class SensorArray :
     def getArray(self) :
         return(self.array)
 
+    def setArray(self,value) :
+        self.array = value
+
     def getWet(self) :
         return(self.Wet)
 
-    def setWorld(self,value) :
-        self.world = value
-        self.N = value.getNumber()
+    def setWet(self,value) :
+        self.Wet = value
 
-    #events %sense
-    #    sense; % sensor taking action - triggers action in planner
-    #end
-    
 
 
     
@@ -122,22 +114,26 @@ class SensorArray :
 
         dirtLevel=None
         wetted=None
-        if (self.world and self.isWorking):
-            actualdata=self.world.getArray()     #get real world values
+        if (self.isWorking):
+            #actualdata=self.world.getArray()     #get real world values
 
             #adjust for noise
             #print(actualdata)
-            self.array=actualdata*(
+            noisyView =self.array*(
                 1.0+2.0*self.accuracy*(random.rand(self.N*self.N).reshape(self.N,self.N)-0.5))
             #print(self.array)
+            self.channel.sendStatusSensor2Planner(noisyView)
          
-            dirtLevel=self.array;
-            self.Wet=(self.world.Moisture>0);
+            self.Wet = self.Wet>0;
             wetted=self.Wet;
+            self.channel.sendWorldWetnessToSensor(wetted)
 
-            return([dirtLevel,wetted])
+            
+            #return([noisyView,wetted])
 
         return(None)
+
+
 
 
 

@@ -69,26 +69,27 @@ from SensorArray import SensorArray
 class Planner :
 
 
-    def __init__(self,errGrowth,dirtRate,sensor,world) :
+    def __init__(self,errGrowth,dirtRate,accuracy,N) :
         
         # define the
         #     variance growth parameter,
         #     average dirt fall,
         #     handle to sensor,
         #     handle to array of vacuums)
-        N = world.getNumber()
         self.setNumber(N)
         self.vacuumRange = 3
+        self.setAccuracy(accuracy)
 
+        # Initialize the matrices.
         self.worldview = zeros((N,N),dtype=float64);
+        self.dirtLevels = []
         self.wetview = zeros((N,N),dtype=float64);
         self.viewPrecision = zeros((N,N),dtype=float64);
         
         self.errGrowth=errGrowth      # estimated growth in variance
         self.dirtRate=dirtRate        #
-        
-        self.setWorld(world)
-        self.setSensor(sensor)
+
+        # Define the other objects that need to be tracked.
         self.setChannel(None)
 
         self.setWorking(True)
@@ -105,6 +106,12 @@ class Planner :
 
     def getNumber(self) :
         return(self.N)
+
+    def setAccuracy(self,value) :
+        self.sensorAccuracy = value
+
+    def getAccuracy(self) :
+        return(self.sensorAccuracy)
     
     def setWorking(self,value) :
         self.isWorking = value
@@ -112,21 +119,15 @@ class Planner :
     def getWorking(self) :
         return(self.isWorking)
 
-    def setSensor(self,value) :
-        self.sensor = value
-
-    def getSensor(self) :
-        return(self.sensor)
-
-    def setWorld(self,value) :
-        self.world = value
-
-    def getWorld(self) :
-        return(self.world)
-
     def getWorldView(self) :
         return(self.worldview)
 
+    def getDirtLevels(self):
+        return(self.dirtLevels)
+
+    def setDirtLevels(self,value):
+        self.dirtLevels = value
+        
     def getArray(self) :
         return(self.worldview)
 
@@ -136,6 +137,12 @@ class Planner :
     def getChannel(self) :
         return(self.channel)
 
+    def getWet(self):
+        return(self.wetview)
+
+    def setWet(self,value) :
+        self.wetview = value
+
     def setVacuumLocation(self,id,x,y) :
         while(id>=len(self.vacuumlocation)) :
             self.vacuumlocation.append(None)
@@ -143,18 +150,33 @@ class Planner :
 
 
     def defineDistanceArray(self) :
+        # Define the array that keeps track of the distances between
+        # places in the world. This is used by the vacuums to
+        # determine how far two cells are from one another.
+
+        # This is a list of lists. The list is of the form
+        #   self.Z[i][j]
+        # This entry in the list contains an array which has the
+        # distance away each coresponding cell in the array is from
+        # cell (i,j).
 
         N = self.getNumber()
         self.Z = range(N)
         for i in range(N) :
             self.Z[i] = range(N)
             for j in range(self.getNumber()) :
+
+                # Figure out the distance each cell is from the cell
+                # given at row i and column j.
                 distance = zeros((N,N),dtype=int16);
 
                 for m in range(N) :
-                    for n in range(N) : 
+                    for n in range(N) :
+                        # Use a Manhatten distance away from cell i,j.
                         distance[m,n] = abs(m-i) + abs(n-j)
 
+                # Set the entry in the list to be the array just
+                # calculated.
                 self.Z[i][j] = distance
 
 
@@ -169,27 +191,20 @@ class Planner :
         tau_0=self.viewPrecision;          # matrix
             
         # get data from sensor, if available
-        levels = self.channel.sendMeasuredFromPlanner2Sensor()
-        if(levels) :
-            dirtLevel = levels[0]
-            wetted    = levels[1]
-
-        else :
-            return
+        self.channel.sendMeasuredFromPlanner2Sensor()
             
         # update levels based on sensor information
         # (Bayesian update - see wikipedia page for now)
-        if len(dirtLevel) == 0 :
+        if len(self.dirtLevels) == 0 :
             # no data available  
             self.worldview=mu_0; # adjust dirt ONLY FOR DYNAMICS
         else :
             # data available 
             # bayes update on dirt  
-            tau=3./((self.sensor.accuracy**2)*self.sensor.array+1.0);  # Uniform error/assumes exact information from sensor (??)
-            mu=dirtLevel;
+            tau=3./((self.sensorAccuracy**2)*self.dirtLevels+1.0);  # Uniform error/assumes exact information from sensor (??) - THIS IS NOISY SHOULD IT BE TRUE????
+            mu=self.dirtLevels;
             self.worldview=(tau_0*mu_0+tau*mu)/(tau_0+tau);            # update assuming normal
             self.viewPrecision=tau+tau_0;
-            self.wetview=wetted;  # when sensor data available, accept as valid
             # see http://en.wikipedia.org/wiki/Conjugate_prior for details.
 
             

@@ -73,11 +73,10 @@ class  World :
         self.time = 0
     
         self.N=5                   # %size of grid
-        self.vacuumArray = []      # array of object handles
         self.sensor = None         # data as recorded on sensor
-        self.planner = None        # handle to planning processor
         self.channel = None        # handle to the channel for sending info.
         self.expenditure = 0.0     # cummulative funds expended since last reset
+        self.numberVacuums = 0     # No vacuums assigned yet.
         self.intializeVariables(r,s,v,cloudsize)
 
     
@@ -123,32 +122,9 @@ class  World :
     def addExpenditure(self,value) :
         self.expenditure += value
 
-    def addVacuum(self,vacuum) :
-        self.vacuumArray.append(vacuum)
-        vacuum.setID(len(self.vacuumArray)-1)
-
-        pos = vacuum.getPosition()
-        if(self.planner) :
-            self.planner.setVacuumLocation(len(self.vacuumArray)-1,pos[0],pos[1])
-
-        if(self.channel) :
-            self.channel.addVacuum(vacuum,len(self.vacuumArray)-1)
-
-    def setSensor(self,sensor) :
-        self.sensor = sensor
-
-    def getSensor(self) :
-        return(self.sensor)
-
-    def setPlanner(self,planner) :
-        self.planner = planner
-
-    def getPlanner(self) :
-        return(self.planner)
-
-    def getVacuums(self) :
-        return(self.vacuumArray)
-
+    def incrementVacuumCount(self):
+        self.numberVacuums += 1;
+        
     def setChannel(self,value) :
         self.channel = value
 
@@ -157,7 +133,7 @@ class  World :
 
 
     def inc(self) :
-        # single time step of simulated world
+        # Take a single time step of the simulated world
             
         # dustfall procedure -----
         t=self.time;               # start time
@@ -174,7 +150,11 @@ class  World :
             tau=-log(random.rand(1.0)[0])/self.r ;     # time until next event
             t=t+tau;
             # end dustfall
-            
+
+
+        # Notify the Channel of the current status
+        self.channel.sendWorldStatusToSensor(self.A)
+        
         # drying
         self.Moisture[self.Moisture>0] -= 1;
             
@@ -196,11 +176,12 @@ class  World :
             t=t+tau;
             # end rainfall
 
-        if(self.planner) :
-            self.planner.updateView()
 
-        for vacuum in self.vacuumArray:
-            vacuum.timeStep()
+        self.channel.sendWorldWetnessToSensor(self.Moisture)
+        self.channel.sendPlannerUpdateRequest()
+
+        for vacuum in range(self.numberVacuums):
+            self.channel.sendVacuumWorldTime(T,vacuum,self.Moisture)
             
         self.time=T;
 
