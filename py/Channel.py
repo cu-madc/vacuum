@@ -55,7 +55,10 @@
 # 
 #  (license copied from http://www.opensource.org/licenses/bsd-license)
 # 
+#  ==========================================================================# 
 # 
+#  Helpful References:
+#    http://docs.python.org/library/socketserver.html
 # 
 #
 
@@ -125,8 +128,8 @@ from XML.XMLMessageVacuumCleanWorld import \
 class Channel:
 
     sendOverTCP = False # Send XML over TCP?  If not, uses local function calls
-    acceptIncomingConnections = False # Start servers to receive XML over TCP? 
-    SERVERS_DETAILS = (("localhost",9999)) # Array of servers to start
+    acceptIncomingConnections = True # Start servers to receive XML over TCP? 
+    SERVERS_DETAILS = [("localhost",9999)] # Array of servers to start [(host,port), ...]
     # Each server corresponds to a single simulated agent (commander, planner, etc.)
 
     def __init__(self,world=None,vacuums=[],sensor=None,planner=None,commander=None) :
@@ -143,28 +146,40 @@ class Channel:
         self.setPlanner(planner)
         self.setCommander(commander)
 
+        if (self.acceptIncomingConnections) :
+            from comm import *
+            import threading
+            import SocketServer
+            class MyTCPHandler(SocketServer.BaseRequestHandler):
+                # The RequestHandler class for our server.
+                # It is instantiated once per connection to the server, and must
+                # override the handle() method to implement communication to the
+                # client.
+                def handle(self):
+                    # self.request is the TCP socket connected to the client
+                    self.receiveXMLReportParseAndDecide(self,
+                                                        self.myComm.readChunk(self.request))
+            class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+                pass
+
+            # self.servers = []
+
+            # Create and activate server; will keep running until interrupted by Ctrl-C
+            for i in self.SERVERS_DETAILS :
+                server = ThreadedTCPServer((i[0], i[1]), MyTCPHandler)
+                # Start a thread with the server -- that thread will then start one
+                # more thread for each request
+                server_thread = threading.Thread(target=server.serve_forever)
+                # Exit the server thread when the main thread terminates
+                server_thread.setDaemon(True)
+                server_thread.start()
+                # self.servers.append(server)
+
         # initialize socket networking functionality, if going to be used
         if(self.sendOverTCP) :
             from comm import *    # import our variable-length string library
             import socket         # import socket network communication library
             self.myComm = Comm()  # instantiate variable-length string generator
-            if (self.acceptIncomingConnections) :
-                import SocketServer
-                class MyTCPHandler(SocketServer.BaseRequestHandler):
-                    """    The RequestHandler class for our server.
-                    It is instantiated once per connection to the server, and must
-                    override the handle() method to implement communication to the
-                    client.
-                    """
-                    def handle(self):
-                        # self.request is the TCP socket connected to the client
-                        self.receiveXMLReportParseAndDecide(self,self.myComm.readChunk(self.request))
-                # Create and activate server; will keep running until interrupted by Ctrl-C
-                self.servers = []
-                for i in self.SERVERS_DETAILS :
-                    server = SocketServer.TCPServer((i[0], i[1]), MyTCPHandler)
-                    server.serve_forever()
-                    self.servers.append(server)
             for i in self.vacuumHosts :
                 self.vacuumSockets = []
                 self.vacuumSockets.append(socket.socket())
