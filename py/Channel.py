@@ -147,9 +147,10 @@ class Channel:
         self.setCommander(commander)
 
         if (self.acceptIncomingConnections) :
-            from comm import *
+            from comm import Comm
             import threading
             import SocketServer
+            self.myComm = Comm()
             class MyTCPHandler(SocketServer.BaseRequestHandler):
                 # The RequestHandler class for our server.
                 # It is instantiated once per connection to the server, and must
@@ -157,16 +158,18 @@ class Channel:
                 # client.
                 def handle(self):
                     # self.request is the TCP socket connected to the client
-                    self.receiveXMLReportParseAndDecide(self,
-                                                        self.myComm.readChunk(self.request))
+                    self.server.myParent.receiveXMLReportParseAndDecide(self,
+                                                                        self.server.myParent.myComm.readChunk(self.request))
             class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
-                pass
+                def setParentClass(self,myParent):
+                    self.myParent = myParent
 
             # self.servers = []
 
             # Create and activate server; will keep running until interrupted by Ctrl-C
             for i in self.SERVERS_DETAILS :
                 server = ThreadedTCPServer((i[0], i[1]), MyTCPHandler)
+                server.setParentClass(self)
                 # Start a thread with the server -- that thread will then start one
                 # more thread for each request
                 server_thread = threading.Thread(target=server.serve_forever)
@@ -177,7 +180,7 @@ class Channel:
 
         # initialize socket networking functionality, if going to be used
         if(self.sendOverTCP) :
-            from comm import *    # import our variable-length string library
+            from comm import Comm    # import our variable-length string library
             import socket         # import socket network communication library
             self.myComm = Comm()  # instantiate variable-length string generator
             for i in self.vacuumHosts :
