@@ -128,6 +128,7 @@ from XML.XMLMessageVacuumCleanWorld import \
 class Channel:
 
     sendOverTCP = False # Send XML over TCP?  If not, uses local function calls
+    sendBackplaneOverTCP = False # Send backplane data over TCP? If not, use local calls
     acceptIncomingConnections = True # Start servers to receive XML over TCP? 
     SERVERS_DETAILS = [("localhost",9999)] # Array of servers to start [(host,port), ...]
     # Each server corresponds to a single simulated agent (commander, planner, etc.)
@@ -183,15 +184,20 @@ class Channel:
             from comm import Comm    # import our variable-length string library
             import socket         # import socket network communication library
             self.myComm = Comm()  # instantiate variable-length string generator
-            for i in self.vacuumHosts :
-                self.vacuumSockets = []
-                self.vacuumSockets.append(socket.socket())
-            if (self.sensorHost != None) :
-                self.sensorSocket = socket.socket()
-            if (self.plannerHost != None) :
-                self.plannerSocket = socket.socket()
-            if (self.commanderHost != None) :
-                self.commanderSocket = socket.socket() 
+            class socketClass:
+                def __init__(self):
+                    Commander2Vacuums = None
+                    Commander2Planner = None
+                    Planner2Commander = None
+                    Vacuums2Commander = None
+            class hostDataClass:
+                def __init__(self):
+                    Commander2Vacuums = None
+                    Commander2Planner = None
+                    Planner2Commander = None
+                    Vacuums2Commander = None
+            sockets = socketClass()
+            hosts = hostDataClass()
 
     if (sendOverTCP):
         # the following function is called each time we wish to send a communication 
@@ -209,6 +215,24 @@ class Channel:
         def sendMessageOverSocket(self,s,hostTuple,message) :
             ensureSocketConnected(s,hostTuple)
             s.send(self.myComm.makeChunk(message))
+        # the following function is used to set host tuples and init sockets for TCP
+        def initializeSockets(self,Commander2Vacuums=[], Vacuums2Commander=[], 
+                              Commander2Planner=None, Planner2Commander=None):
+            self.hosts.Commander2Vacuums = Commander2Vacuums
+            self.hosts.Vacuums2Commander = Vacuums2Commander
+            self.hosts.Commander2Planner = Commander2Planner
+            self.hosts.Planner2Commander = Planner2Commander
+            self.sockets.Commander2Vacuums = []
+            for i in self.hosts.Commander2Vacuums:
+                self.sockets.Commander2Vacuums.append(socket.socket())
+            self.sockets.Vacuums2Commander = []
+            for i in self.hosts.Vacuums2Commander:
+                self.sockets.Vacuums2Commander.append(socket.socket())
+            self.sockets.Commander2Planner = socket.socket()
+            self.sockets.Planner2Commander = socket.socket()
+        # the following function is shorthand for creating host tuples
+        def genHostTuple(hostName,hostPort):
+            return (hostName,hostPort)
 
     def setWorking(self,value) :
         self.isWorking = value
@@ -437,7 +461,9 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Pass the messageover the simulation network
-            pass
+            self.sendMessageOverSocket(self.sockets.Commander2Planner,
+                                       self.hosts.Commander2Planner,
+                                       network.xml2Char())
         elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(network.xml2Char())
 
@@ -462,7 +488,9 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Pass the message over the simulation network
-            pass
+            self.sendMessageOverSocket(self.sockets.Commander2Planner,
+                                       self.hosts.Commander2Planner,
+                                       orders.xml2Char())
         elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
             
@@ -485,7 +513,9 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Send the message over the simulation network
-            pass
+            self.sendMessageOverSocket(self.sockets.Planner2Commander,
+                                       self.hosts.Planner2Commander,
+                                       orders.xml2Char())
         elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
@@ -506,7 +536,9 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Send the message over the simulation network
-            pass
+            self.sendMessageOverSocket(self.sockets.Commander2Vacuums[vacuumID],
+                                       self.hosts.Commander2Vacuums[vacuumID],
+                                       orders.xml2Char())
         elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
@@ -529,7 +561,9 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Send the message over the simulation network.
-            pass
+            self.sendMessageOverSocket(self.sockets.Vacuums2Commander[IDnum],
+                                       self.hosts.Vacuums2Commander[IDnum],
+                                       report.xml2Char())
         elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(report.xml2Char())
 
@@ -549,7 +583,9 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Send the message on the simulation plane.
-            pass
+            self.sendMessageOverSocket(self.sockets.Commander2Planner,
+                                       self.hosts.Commander2Planner,
+                                       orders.xml2Char())
         elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
@@ -559,7 +595,7 @@ class Channel:
         sensorData = XMLMessageUpdatePlannerSensor()
         sensorData.createRootNode()
 
-        if(self.sendOverTCP) :
+        if(self.sendBackplaneOverTCP) :
             # Send the message on the back plane
             # Question: should it really be on the back plane?
             pass
@@ -571,7 +607,7 @@ class Channel:
         sensorData = XMLMessageSensorStatus(noisyView)
         sensorData.createRootNode()
 
-        if(self.sendOverTCP) :
+        if(self.sendBackplaneOverTCP) :
             # Send the message on the back plane.
             # Question: should it really be on the back plane?
             pass
@@ -583,7 +619,7 @@ class Channel:
         worldData = XMLMessageWorldStatus(A)
         worldData.createRootNode()
 
-        if(self.sendOverTCP) :
+        if(self.sendBackplaneOverTCP) :
             # Send the message on the back plane.
             pass
         else :
@@ -594,7 +630,7 @@ class Channel:
         worldWetness = XMLMessageWorldWetness(Moisture)
         worldWetness.createRootNode()
 
-        if(self.sendOverTCP) :
+        if(self.sendBackplaneOverTCP) :
             # Send the message on the back plane.
             pass
         else :
@@ -605,7 +641,7 @@ class Channel:
         update = XMLMessageUpdateWorldPlanner()
         update.createRootNode()
 
-        if(self.sendOverTCP) :
+        if(self.sendBackplaneOverTCP) :
             # Send the message on the back plane.
             # Question: should this really be on the back plane?
             pass
@@ -619,7 +655,7 @@ class Channel:
         update.setPos(xpos,ypos)
         update.createRootNode()
 
-        if(self.sendOverTCP) :
+        if(self.sendBackplaneOverTCP) :
             # Send the message on the back plane.
             # Question: should this really be on the back plane?
             pass
@@ -633,7 +669,7 @@ class Channel:
         newTime.createRootNode()
         #print(newTime.xml2Char())
 
-        if(self.sendOverTCP) :
+        if(self.sendBackplaneOverTCP) :
             # Send the message on the back plane.
             pass
         else :
@@ -646,7 +682,7 @@ class Channel:
         newExpenditure.createRootNode()
         #print(newExpenditure.xml2Char())
 
-        if(self.sendOverTCP) :
+        if(self.sendBackplaneOverTCP) :
             # Send the message on the back plane.
             pass
         else :
@@ -659,7 +695,7 @@ class Channel:
         update.setPos(xpos,ypos)
         update.createRootNode()
 
-        if(self.sendOverTCP) :
+        if(self.sendBackplaneOverTCP) :
             # Send the message on the back plane
             pass
         else :
