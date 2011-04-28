@@ -138,6 +138,8 @@ class  GraphicalWorld (World,Tk) :
         self.draw()
         skip = 10;
         for i in range(N) :
+            #import time # DEBUG
+            #time.sleep(1) # DEBUG
             self.inc()
             #if(i%skip==0) :
             self.draw()

@@ -5,7 +5,7 @@
 #   Created on: 2 Feb, 2011
 #       Author: Skufka - adapted by black - adapted by PW
 # 
-#       class definition for the channel object using sockets
+#       class definition for the channel object not using sockets
 # 
 #  This material is based on research sponsored by DARPA under agreement
 #  number FA8750-10-2-0165. The U.S. Government is authorized to
@@ -129,7 +129,7 @@ class Channel:
 
     sendOverTCP = False # Send XML over TCP?  If not, uses local function calls
     sendBackplaneOverTCP = False # Send backplane data over TCP? If not, use local calls
-    acceptIncomingConnections = True # Start servers to receive XML over TCP? 
+    acceptIncomingConnections = False # Start servers to receive XML over TCP? 
     SERVERS_DETAILS = [("localhost",9999)] # Array of servers to start [(host,port), ...]
     # Each server corresponds to a single simulated agent (commander, planner, etc.)
 
@@ -159,8 +159,9 @@ class Channel:
                 # client.
                 def handle(self):
                     # self.request is the TCP socket connected to the client
-                    self.server.myParent.receiveXMLReportParseAndDecide(self,
-                                                                        self.server.myParent.myComm.readChunk(self.request))
+                    message = self.server.myParent.myComm.readChunk(self.request)
+                    self.server.myParent.receiveXMLReportParseAndDecide(message)
+                    #print "Message dispatched!  Length: ",len(message) # DEBUG 
             class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
                 def setParentClass(self,myParent):
                     self.myParent = myParent
@@ -196,28 +197,58 @@ class Channel:
                     Commander2Planner = None
                     Planner2Commander = None
                     Vacuums2Commander = None
-            sockets = socketClass()
-            hosts = hostDataClass()
+            self.sockets = socketClass()
+            self.hosts = hostDataClass()
 
     if (sendOverTCP):
         # the following function is called each time we wish to send a communication 
         # from current agent to a remote agent, in order to either establish the 
         # initial socket connection (or reestablish it?)
         def ensureSocketConnected(self,s,hostTuple) :
+            import socket
             try:
                 s.connect((hostTuple[0],hostTuple[1]))
+                return False
             except socket.error,(value,message):
                 if value == 106:  # error 106 is fine (it means we're already connected)
                     pass
                 else:
-                    raise        
+                    raise   
+            return True
         # the following function sends message over socket in our var len string format
         def sendMessageOverSocket(self,s,hostTuple,message) :
-            ensureSocketConnected(s,hostTuple)
-            s.send(self.myComm.makeChunk(message))
+            import socket
+            mySocket = socket.socket()
+            mySocket.connect((hostTuple[0],hostTuple[1]))
+            mySocket.send(self.myComm.makeChunk(message))
+            mySocket.close()
+        def OLDsendMessageOverSocket(self,s,hostTuple,message) :
+            import socket
+            import time # DEBUG
+            #print "Sending mess!  Length: ",len(message)," To:",hostTuple # DEBUG
+            attempts = 0
+            while attempts < 5:
+                try:
+                    attempts += 1
+                    if (self.ensureSocketConnected(s,hostTuple)):
+                        print "Host",hostTuple,"was connected to" # DEBUG
+                    else:
+                        print "Host",hostTuple,"was not connected to" # DEBUG
+                        time.sleep(1) # DEBUG
+                    #time.sleep(1) # DEBUG
+                    #s.send(self.myComm.makeChunk(message))
+                    print len(message) # DEBUG
+                    #s.shutdown(2) # DEBUG
+                except socket.error,(value,emessage):
+                    print "Socket Error: ",value,emessage," Attempt: ",attempts," Length: ",len(message)," To:",hostTuple # DEBUG
+                    time.sleep(1) # DEBUG
+                    raise # DEBUG
+                    continue
+            #print "Message sent!  Length: ",len(message) # DEBUG
         # the following function is used to set host tuples and init sockets for TCP
         def initializeSockets(self,Commander2Vacuums=[], Vacuums2Commander=[], 
                               Commander2Planner=None, Planner2Commander=None):
+            import socket
             self.hosts.Commander2Vacuums = Commander2Vacuums
             self.hosts.Vacuums2Commander = Vacuums2Commander
             self.hosts.Commander2Planner = Commander2Planner
@@ -706,9 +737,19 @@ if (__name__ =='__main__') :
     world = World()
     world.inc()
 
-    channel1 = Channel(world)
-    channel2 = Channel(world)
+#    channel1 = Channel(world)
+#    channel2 = Channel(world)
 
+    chan = Channel(world)
+    chan.initializeSockets((("127.0.0.1",9999,"C2V1"),
+                            ("127.0.0.1",9999,"C2V2"),
+                            ("127.0.0.1",9999,"C2V3")),
+                           (("127.0.0.1",9999,"V12C"),
+                            ("127.0.0.1",9999,"V22C"),
+                            ("127.0.0.1",9999,"V32C")),
+                           ("127.0.0.1",9999,"C2P"),
+                           ("127.0.0.1",9999,"P2C"))
+    
 
     def silly(a, b) :
         print("type: {0}\n{1}".format(type(a),b))
