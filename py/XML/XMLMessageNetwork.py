@@ -296,7 +296,7 @@ if (__name__ =='__main__') :
 
     network.setNetworkID(1)
     network.setProbSuccessfulTransmission(0.22)
-    print(network.xml2Char())
+    print(network.xml2Char(True))
 
     #root_node = network.root_node.cloneNode(True)
     #network.copyXMLTree(root_node)

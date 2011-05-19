@@ -70,10 +70,10 @@ from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 from XMLMessageGetReportVacuumCommander import \
      XMLMessageGetReportVacuumCommander
 
-from XML.XMLMessageWorldStatus import \
+from XMLMessageWorldStatus import \
      XMLMessageWorldStatus
 
-from XML.XMLMessageWorldWetness import \
+from XMLMessageWorldWetness import \
      XMLMessageWorldWetness
 
 from XMLMessageUpdateWorldPlanner import \
