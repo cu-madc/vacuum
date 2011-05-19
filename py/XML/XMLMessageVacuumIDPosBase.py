@@ -401,3 +401,15 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
 
 
 
+if (__name__ =='__main__') :
+    orders = XMLMessageVacuumIDPosBase()
+
+    vacuumID = 0
+    xPos = 1
+    yPos = 2
+    
+    orders.setVacuumID(vacuumID)
+    orders.setPos(xPos,yPos)
+    orders.createRootNode()
+    orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
+    print(orders.xml2Char(True))

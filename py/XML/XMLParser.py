@@ -338,11 +338,11 @@ class XMLParser (xml.sax.handler.ContentHandler):
 
 
 
-    def xml2Char(self) :
+    def xml2Char(self,debug=False) :
         # Convert the parsed XML file in the local root and then
         # put the char file into the local buffer.
         #
-        if(self.DEBUG) :
+        if(debug) :
             return(self.doc.toprettyxml(indent="  ",newl="\n"))
         else :
             return(self.doc.toprettyxml(indent="",newl=""))
