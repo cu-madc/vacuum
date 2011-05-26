@@ -65,8 +65,19 @@ from XMLIncomingDIF import XMLIncomingDIF
 from XMLParser import XMLParser
 
 
-class XMLMessageNetwork (XMLIncomingDIF) :
+class XMLMessageExternalParameter (XMLIncomingDIF) :
 
+    DUST_RATE, DUST_SIZE, \
+       RAIN_RATE, RAIN_SIZE, \
+       GRID_SIZE, \
+       NUMBER_OF_VACUUMS = range(6)
+
+    ParameterTitles = {DUST_RATE:'dust rate', \
+                       DUST_SIZE:'dust size', \
+                       RAIN_RATE:'rain rate', \
+                       RAIN_SIZE:'rain size', \
+                       GRID_SIZE:'grid size', \
+                       NUMBER_OF_VACUUMS:'number vacuums'}
 
     def __init__(self) :
 	XMLIncomingDIF.__init__(self)
@@ -79,26 +90,25 @@ class XMLMessageNetwork (XMLIncomingDIF) :
 	self.probSuccessfulTransmission = 1.0
 
 
+        # Initialize the list of parameters that will be defined in
+        # this XML tree. This is a list of things that will be
+        # defined. Each entry in the list is a list of information
+        # used to define a parameter.
+        #
+        #    An entry in the previous list has the following form:
+        #        [parameter type (ex: DUST_RATE), parameter value (ex: 0.2)]
+        #
+        self.parameterList = []
+
+
+
 
     def __del__(self) :
         pass
 
 
-    def getNetworkID(self) :
-        return(self.networkID)
-
-
-    def setNetworkID(self,value) :
-        self.networkID = value
-        self.updateNetworkIDNode()
-
-    def getProbSuccessfulTransmission(self) :
-        return(self.probSuccessfulTransmission)
-
-
-    def setProbSuccessfulTransmission(self,value) :
-        self.probSuccessfulTransmission = value
-        self.updateProbTransmission()
+    def setParameterValue(self,type,value) :
+        self.parameterList.append([type,value])
 
 
     def createRootNode(self) :
@@ -128,8 +138,12 @@ class XMLMessageNetwork (XMLIncomingDIF) :
         node.appendChild(self.objectClassNode)
 
         nameNode = self.doc.createElement("name")
-        nameNode.appendChild(self.doc.createTextNode("vacuumNetwork"))
+        nameNode.appendChild(self.doc.createTextNode("External"))
         self.objectClassNode.appendChild(nameNode)
+
+	typeNode = self.doc.createElement("type")
+        typeNode.appendChild(self.doc.createTextNode("parameter"))
+        self.objectClassNode.appendChild(typeNode)
 
         self.createDimensions()
 
@@ -139,46 +153,44 @@ class XMLMessageNetwork (XMLIncomingDIF) :
         # objectClass node as a child of the dimensions node. Finally
         # a "name" node is added as a child of the dimensions node.
 
-        self.dimensionsNode = self.doc.createElement("dimensions")
-        self.objectClassNode.appendChild(self.dimensionsNode)
-        self.setNetworkIDNode()
-        self.setProbSuccessNode()
-        
-        
+        for type in self.parameterList:
+            self.dimensionsNode = self.doc.createElement("dimensions")
+            self.objectClassNode.appendChild(self.dimensionsNode)
+
+            if(type[0] in self.ParameterTitles) :
+                self.makeNodeSingleValue(self.ParameterTitles[type[0]],type[1])
 
 
-    def setNetworkIDNode(self) :
+    def makeNodeSingleValue(self,name,value) :
         # Method to set the value of the id for this vacuum. It
         # indicates which vacumm this structure is associated
         # with. The value is then added to the xml tree under the
         # dimensions node.
 
-        self.networkIDNode = self.doc.createElement("dimension")
-        self.dimensionsNode.appendChild(self.networkIDNode)
+        self.newNode = self.doc.createElement("dimension")
+        self.dimensionsNode.appendChild(self.newNode)
 
         dimension = self.doc.createElement("name")
-        node = self.doc.createTextNode("networkID")
+        node = self.doc.createTextNode(name)
         dimension.appendChild(node)
-        self.networkIDNode.appendChild(dimension)
+        self.newNode.appendChild(dimension)
 
         dimension = self.doc.createElement("value")
-        node = self.doc.createTextNode(str(self.getNetworkID()))
+        if(type(value) is float) :
+            node = self.doc.createTextNode("{0:22.14E}".format(value))
+        else :
+            node = self.doc.createTextNode(str(value))
+                
         dimension.appendChild(node)
-        self.networkIDNode.appendChild(dimension)
+        self.newNode.appendChild(dimension)
 
 
 
-    def updateNetworkIDNode(self) :
-        # Method to change the network ID node to reflect the current
-        # value of the network id.
-        self.updateValue("networkID",self.getNetworkID())
+    #def updateNetworkIDNode(self) :
+    #    # Method to change the network ID node to reflect the current
+    #    # value of the network id.
+    #    self.updateValue("networkID",self.getNetworkID())
 
-
-    def updateProbTransmission(self) :
-        # Method to change the network ID node to reflect the current
-        # value of the network id.
-        self.updateValue("probabilitySuccessfulTransmission",
-                         self.getProbSuccessfulTransmission())
 
 
     def updateValue(self,valueName,newValue) :
@@ -207,22 +219,6 @@ class XMLMessageNetwork (XMLIncomingDIF) :
 
 
 
-    def setProbSuccessNode(self) :
-        # Method to set the value of the prob. of a successful
-        # transmission. 
-
-        self.probSuccessNode = self.doc.createElement("dimension")
-        self.dimensionsNode.appendChild(self.probSuccessNode)
-
-        dimension = self.doc.createElement("name")
-        node = self.doc.createTextNode("probabilitySuccessfulTransmission")
-        dimension.appendChild(node)
-        self.probSuccessNode.appendChild(dimension)
-
-        dimension = self.doc.createElement("value")
-        node = self.doc.createTextNode("{0:22.14E}".format(self.getProbSuccessfulTransmission()))
-        dimension.appendChild(node)
-        self.probSuccessNode.appendChild(dimension)
 
 
 
@@ -287,16 +283,23 @@ class XMLMessageNetwork (XMLIncomingDIF) :
 
 
 if (__name__ =='__main__') :
-    network = XMLMessageNetwork()
-    network.setNetworkID(3)
-    network.setProbSuccessfulTransmission(0.3)
-    network.createRootNode()
-    print(network.xml2Char())
+    parameter = XMLMessageExternalParameter()
+    parameter.setParameterValue(XMLMessageExternalParameter.DUST_RATE,0.2)
+    parameter.setParameterValue(XMLMessageExternalParameter.RAIN_RATE,0.4)
+    parameter.setParameterValue(XMLMessageExternalParameter.GRID_SIZE,5)
+    parameter.setParameterValue(XMLMessageExternalParameter.DUST_SIZE,0.3)
+    parameter.setParameterValue(XMLMessageExternalParameter.RAIN_SIZE,2.0)
+    parameter.setParameterValue(XMLMessageExternalParameter.GRID_SIZE,6)
+    parameter.setParameterValue(XMLMessageExternalParameter.NUMBER_OF_VACUUMS,5)
+    print(parameter.parameterList)
+
+    parameter.createRootNode()
+    print(parameter.xml2Char(True))
 
 
-    network.setNetworkID(1)
-    network.setProbSuccessfulTransmission(0.22)
-    print(network.xml2Char(True))
+    #parameter.setNetworkID(1)
+    #parameter.setProbSuccessfulTransmission(0.22)
+    #print(parameter.xml2Char(True))
 
-    #root_node = network.root_node.cloneNode(True)
-    #network.copyXMLTree(root_node)
+    ##root_node = parameter.root_node.cloneNode(True)
+    ##parameter.copyXMLTree(root_node)
