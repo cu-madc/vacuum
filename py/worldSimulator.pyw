@@ -97,7 +97,7 @@ chan = Channel(W);   # TODO register the channel to the world
 
 
 # create the commander and planner
-plan=Planner(r*s/float(N*N),r*s/float(N*N),accuracy,N);
+plan=Planner(r*s/float(N*N),r,s,accuracy,N);
 chan.setPlanner(plan)
 plan.setChannel(chan)
 W.setPlanner(plan)
@@ -118,11 +118,9 @@ for i in range(numVacs) :
     vacArray.append(vacuum)
     pos = vacuum.getPosition()
     chan.addVacuum(vacuum,i,pos[0],pos[1])
-    W.incrementVacuumCount()
     W.addVacuum(vacuum)
 
 
-command.setNumberVacuums(len(vacArray))
 
 
 W.mainloop()

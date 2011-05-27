@@ -71,7 +71,6 @@ class Commander :
 
     def __init__(self,channel=None) : 
 
-        self.numberVacuums = 0   # Number of vacuums to track
         self.setWorking(True)
         self.setChannel(channel) # handle to planner
 
@@ -82,12 +81,6 @@ class Commander :
 
     def getWorking(self) :
         return(self.isWorking)
-
-    def setNumberVacuums(self,value) :
-        self.numberVacuums = value
-
-    def getNumberVacuums(self) :
-        return(self.numberVacuums)
 
     def getChannel(self) :
         return(self.channel)

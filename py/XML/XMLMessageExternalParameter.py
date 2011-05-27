@@ -61,11 +61,11 @@
 # 
 
 from xml.dom.minidom import Document
-from XMLIncomingDIF import XMLIncomingDIF
+#from XMLIncomingDIF import XMLIncomingDIF
 from XMLParser import XMLParser
 
 
-class XMLMessageExternalParameter (XMLIncomingDIF) :
+class XMLMessageExternalParameter (XMLParser) :
 
     DUST_RATE, DUST_SIZE, \
        RAIN_RATE, RAIN_SIZE, \
@@ -80,8 +80,8 @@ class XMLMessageExternalParameter (XMLIncomingDIF) :
                        NUMBER_OF_VACUUMS:'number vacuums'}
 
     def __init__(self) :
-	XMLIncomingDIF.__init__(self)
-	self.setMyInformationType(self.VACUUM_NETWORK);
+	XMLParser.__init__(self)
+	self.setMyInformationType(self.MESSAGE_EXTERNAL_PARAMETER);
 	self.dimensionsNode = None
 	self.objectClassNode = None
 	self.networkIDNode = None
@@ -108,6 +108,15 @@ class XMLMessageExternalParameter (XMLIncomingDIF) :
 
 
     def setParameterValue(self,type,value) :
+
+	# Check to see if this parameter has been defined
+	for item in self.parameterList:
+	    if(item[0] == type) :
+		# this parameter has already been defined
+		item[1] = value
+		return
+
+	# It has not been defined yet. Add it to the list.
         self.parameterList.append([type,value])
 
 
@@ -153,8 +162,8 @@ class XMLMessageExternalParameter (XMLIncomingDIF) :
         # objectClass node as a child of the dimensions node. Finally
         # a "name" node is added as a child of the dimensions node.
 
+	self.dimensionsNode = self.doc.createElement("dimensions")
         for type in self.parameterList:
-            self.dimensionsNode = self.doc.createElement("dimensions")
             self.objectClassNode.appendChild(self.dimensionsNode)
 
             if(type[0] in self.ParameterTitles) :
@@ -283,6 +292,11 @@ class XMLMessageExternalParameter (XMLIncomingDIF) :
 
 
 if (__name__ =='__main__') :
+    #DUST_RATE, DUST_SIZE, \
+	#       RAIN_RATE, RAIN_SIZE, \
+	#       GRID_SIZE, \
+	#       NUMBER_OF_VACUUMS = range(6)
+
     parameter = XMLMessageExternalParameter()
     parameter.setParameterValue(XMLMessageExternalParameter.DUST_RATE,0.2)
     parameter.setParameterValue(XMLMessageExternalParameter.RAIN_RATE,0.4)
@@ -291,6 +305,7 @@ if (__name__ =='__main__') :
     parameter.setParameterValue(XMLMessageExternalParameter.RAIN_SIZE,2.0)
     parameter.setParameterValue(XMLMessageExternalParameter.GRID_SIZE,6)
     parameter.setParameterValue(XMLMessageExternalParameter.NUMBER_OF_VACUUMS,5)
+    parameter.setParameterValue(XMLMessageExternalParameter.NUMBER_OF_VACUUMS,8)
     print(parameter.parameterList)
 
     parameter.createRootNode()

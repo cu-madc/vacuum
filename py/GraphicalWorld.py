@@ -99,8 +99,20 @@ class  GraphicalWorld (World,Tk) :
 
     def addVacuum(self,vacuum) :
         # routine to add a vacuum to the list of vacuums tracked by
-        # the world.
+        # the world. This overrides the method of the same name in the
+        # base class.
         self.vacuumArray.append(vacuum)
+	self.setNumberVacuums(len(self.vacuumArray))
+
+    def deleteVacuum(self,vacuum)
+        # routine to delete a vacuum from the list of vacuums tracked
+        # by the world. This overrides the method of the same name in
+        # the base class.
+	for i in range(len(self.vacuumArray)):
+	    if(self.vacuumArray[i]==vacuum):
+		self.vacuumArray.pop(i)
+		self.setNumberVacuums(len(self.vacuumArray))
+		return
 
     def getVacuums(self) :
         return(self.vacuumArray)

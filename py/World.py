@@ -83,17 +83,19 @@ class  World :
     def intializeVariables(self,r,s,v,cloudsize) :
         # initialize the variables this class keeps track of (input rate and size constants)
         self.time=0;
-        self.r = r                 # rate constant for - events per unit time(world wide)
-        self.s = s                 # size constant for exponential distribution of sizes
-        self.v = v                 # rate constant for RAIN events - events per unit
-                                   # time (world wide)
-        self.cloudsize = cloudsize # average size of rain event
+	self.setDirtRate(r)          # rate constant for - events per unit time(world wide)
+	self.setDirtSize(s)          # size constant for exponential distribution of sizes
+	self.setRainRate(v)          # rate constant for RAIN events - events per unit
+	                             # time (world wide)
+	self.setRainSize(cloudsize)  # average size of rain event
+	
 
         self.A = zeros((self.N,self.N),dtype=float64)        # array of values for dirt levels
         self.Moisture = zeros((self.N,self.N),dtype=float64) # array of values for moisture level
 
 
-
+    def setNumberVacuums(self,number) :
+	self.numberVacuums = number
 
         
     def clean(self,x,y) :
@@ -130,6 +132,30 @@ class  World :
 
     def getChannel(self) :
         return(self.channel)
+
+
+    def setDirtRate(self,r) :
+        self.r = r                 # rate constant for - events per unit time(world wide)
+
+    def setDirtSize(self,s) :
+        self.s = s                 # size constant for exponential distribution of sizes
+
+    def setRainRate(self,v) :
+        self.v = v                 # rate constant for RAIN events - events per unit
+                                   # time (world wide)
+
+    def setRainSize(self,cloudsize) :
+        self.cloudsize = cloudsize # average size of rain event
+
+    def addVacuum(self,vacuum) :
+	# This is a dummy method. It is assumed to be overridden by a
+	# child class.
+	pass
+
+    def deleteVacuum(self,vacuum) :
+    	# This is a dummy method. It is assumed to be overridden by a
+	# child class.
+	pass
 
 
     def inc(self) :

@@ -94,6 +94,8 @@ from XMLMessageWorldVacuumCurrentTime import \
 from XMLMessageVacuumAddExpenditureWorld import \
      XMLMessageVacuumAddExpenditureWorld
 
+from XMLMessageExternalParameter import \
+     XMLMessageExternalParameter
 
 class XMLIncomingDIF (XMLParser) :
 
@@ -198,7 +200,7 @@ class XMLIncomingDIF (XMLParser) :
         self.parseXMLString(passedXML)
         [name,type] = self.getObjectClassNameAndType()
         incomingXML = None
-
+	#print("Name: {0} Type: {1}".format(name,type))
 
 
         if( (name=="Planner") and (type == "Vacuum Orders")) :
@@ -562,6 +564,30 @@ class XMLIncomingDIF (XMLParser) :
                 if(expenditure) :
                     incomingXML.setExpenditure(expenditure[3][1][2])
 
+
+        elif( (name=="External") and (type=="parameter")) :
+	    # This is an external message. It has information about a
+	    # set of parameters.
+	    incomingXML = XMLMessageExternalParameter()
+
+	    # Get all of the information associated with the
+	    # dimensions that were passed.
+	    dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+            if(dimensions) :
+		# For each dimension go through and decide what type of dimension it is.
+		for dimension in dimensions[3]:
+		    name  = self.getChildWithName([dimension],"name")    # Get the name leaf on the tree
+		    value = self.getChildWithName([dimension],"value")   # Get the value leaf on the tree
+
+		    #print("Value {0} - {1}".format(name[2],value[2]))
+		    for key, val in XMLMessageExternalParameter.ParameterTitles.iteritems():
+			# Go through each member of the possible parameters and check for a match
+			#print("check {0} - {1}".format(key,val))
+			if(val == name[2]) :
+			    # This is the same type. Set the parameter
+			    incomingXML.setParameterValue(key,value[2])
+			    break
 
 
 

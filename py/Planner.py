@@ -69,7 +69,7 @@ from SensorArray import SensorArray
 class Planner :
 
 
-    def __init__(self,errGrowth,dirtRate,accuracy,N) :
+    def __init__(self,errGrowth,unnormalizeDirtRate,unnormalizeDirtSize,accuracy,N) :
         
         # define the
         #     variance growth parameter,
@@ -85,9 +85,12 @@ class Planner :
         self.dirtLevels = []
         self.wetview = zeros((N,N),dtype=float64);
         self.viewPrecision = zeros((N,N),dtype=float64);
-        
-        self.errGrowth=errGrowth      # estimated growth in variance
-        self.dirtRate=dirtRate        #
+
+        self.unnormalizeDirtRate = unnormalizeDirtRate
+	self.unnormalizeDirtSize = unnormalizeDirtSize
+        self.errGrowth = errGrowth
+	self.normalizeDirtRate()
+
 
         # Define the other objects that need to be tracked.
         self.setChannel(None)
@@ -147,6 +150,19 @@ class Planner :
         while(id>=len(self.vacuumlocation)) :
             self.vacuumlocation.append(None)
         self.vacuumlocation[id] = [x,y]
+
+
+    def setUnnormalizedDirtRate(self,dirtRate) :
+	self.unnormalizeDirtRate = dirtRate
+	self.normalizeDirtRate()
+
+    def setUnnormalizedDirtSize(self,dirtSize) :
+	self.unnormalizeDirtSize = dirtSize
+	self.normalizeDirtRate()
+
+
+    def normalizeDirtRate(self) :
+        self.dirtRate  = self.unnormalizeDirtRate*self.unnormalizeDirtSize/float(self.N*self.N)
 
 
     def defineDistanceArray(self) :

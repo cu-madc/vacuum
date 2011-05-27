@@ -95,7 +95,8 @@ class XMLParser (xml.sax.handler.ContentHandler):
            MESSAGE_VACUUM_NEW_POSITION_PLANNER, \
            MESSAGE_WORLD_VACUUM_CURRENT_TIME, \
            MESSAGE_VACUUM_WORLD_ADD_EXPENDITURE, \
-           MESSAGE_VACUUM_WORLD_CLEAN_GRID = range(21)
+           MESSAGE_VACUUM_WORLD_CLEAN_GRID, \
+	   MESSAGE_EXTERNAL_PARAMETER = range(22)
 	
 
 
@@ -324,13 +325,13 @@ class XMLParser (xml.sax.handler.ContentHandler):
         #
         if(currentNode) :
             for sibling in currentNode:
-                if (sibling[0]==name):
-                    return (sibling);
+		if (sibling[0]==name):
+		    return (sibling);
 
-                checkChildren = self.getChildWithName(sibling[3],name)
-                if(checkChildren) :
-                    #  A match was found. Return it.
-                    return(checkChildren);
+		checkChildren = self.getChildWithName(sibling[3],name)
+		if(checkChildren) :
+		    #  A match was found. Return it.
+		    return(checkChildren);
 
                 
         return(None);

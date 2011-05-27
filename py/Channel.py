@@ -167,6 +167,30 @@ class Channel:
         self.vacuumArray[id] = vacuum
         self.sendPlannerVacuumMovedPosition(id,xpos,ypos)
 
+	if (self.world):
+	    self.world.addVacuum(vacuum)
+
+
+    def setNumberVacuums(self,number,x=0,y=0) :
+	# Routine to set the number of vacuums that are being tracked.
+	if(number > len(self.vacuumArray)) :
+	    # There are more vacuums to be used than currently
+	    # defined. Add the extras to the list.
+	    for i in range(number-len(self.vacuumArray)):
+		vacuum = Vacuum(i+len(self.vacuumArray))
+		self.addVacuum(vacuum,i+len(self.vacuumArray),x,y)
+
+	elif (number < len(self.vacuumArray)) :
+	    # Need to have fewer vacuums than what are currently
+	    # defined. Delete the extras.
+	    while(len(self.vacuumArray)>number) :
+		vacuum = self.vacuumArray.pop()
+		
+		if (self.world):
+		    self.world.deleteVacuum(vacuum)
+		    
+
+
     def setWorld(self,value) :
         self.world = value
 
@@ -351,6 +375,47 @@ class Channel:
                 # wetness levels.
                 self.planner.setWet(info.getMatrixFromArray())
 
+
+
+	elif(info.getMyInformationType() == XMLParser.MESSAGE_EXTERNAL_PARAMETER) :
+	    # This is a message from the outside with information
+	    # about a parameter to set.
+	    #print("External message")
+	    for item in info.parameterList:
+
+		if(item[0] == XMLMessageExternalParameter.DUST_RATE) :
+		    #print("dust rate: {0}".format(item[1]))
+		    if(self.planner) :
+			self.planner.setUnnormalizedDirtRate(float(item[1]))
+
+		    if(self.world) :
+			self.world.setDirtRate(float(item[1]))
+		    
+		elif(item[0] == XMLMessageExternalParameter.DUST_SIZE) :
+		    if(self.planner) :
+			self.planner.setUnnormalizedDirtSize(float(item[1]))
+
+		    if(self.world) :
+			self.world.setDirtSize(float(item[1]))
+
+		    
+		elif(item[0] == XMLMessageExternalParameter.RAIN_RATE):
+		    if(self.world) :
+			self.world.setRainRate(float(item[1]))
+
+			
+		elif(item[0] == XMLMessageExternalParameter.RAIN_SIZE):
+		    if(self.world) :
+			self.world.setRainSize(float(item[1]))
+
+		    
+		elif(item[0] == XMLMessageExternalParameter.GRID_SIZE):
+		    print("grid size: {0}".format(int(item[1])))
+		    
+		elif(item[0] == XMLMessageExternalParameter.NUMBER_OF_VACUUMS):
+		    #print("number vacs: {0}".format(int(item[1])))
+		    if(self.world) :
+			self.world.setNumberVacuums(int(item[1]))
 
 
 
@@ -645,12 +710,24 @@ class Channel:
 
 
 if (__name__ =='__main__') :
-    world = World()
-    world.inc()
+    from XML.XMLMessageExternalParameter import XMLMessageExternalParameter
+    from XML.XMLIncomingDIF import XMLIncomingDIF
+    parameter = XMLMessageExternalParameter()
+    parameter.setParameterValue(XMLMessageExternalParameter.DUST_RATE,0.2)
+    parameter.setParameterValue(XMLMessageExternalParameter.RAIN_RATE,0.4)
+    parameter.setParameterValue(XMLMessageExternalParameter.GRID_SIZE,5)
+    parameter.setParameterValue(XMLMessageExternalParameter.DUST_SIZE,0.3)
+    parameter.setParameterValue(XMLMessageExternalParameter.RAIN_SIZE,2.0)
+    parameter.setParameterValue(XMLMessageExternalParameter.GRID_SIZE,6)
+    parameter.setParameterValue(XMLMessageExternalParameter.NUMBER_OF_VACUUMS,10)
+    parameter.createRootNode()
+    message = parameter.xml2Char(False)
+    #dif = XMLIncomingDIF()
+    #incoming = dif.determineXMLInformation(message)
 
-    channel1 = Channel(world)
-    channel2 = Channel(world)
-
-    def silly(a,*b) :
-        print("type: {0}\n{1}".format(type(a),b))
-
+    from Planner import Planner
+    channel = Channel()
+    planner = Planner(1.0,1.0,1.0,1.0,4)
+    channel.setPlanner(planner)
+    channel.receiveXMLReportParseAndDecide(message)
+    #print(message)
