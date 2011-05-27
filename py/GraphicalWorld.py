@@ -104,7 +104,7 @@ class  GraphicalWorld (World,Tk) :
         self.vacuumArray.append(vacuum)
 	self.setNumberVacuums(len(self.vacuumArray))
 
-    def deleteVacuum(self,vacuum)
+    def deleteVacuum(self,vacuum):
         # routine to delete a vacuum from the list of vacuums tracked
         # by the world. This overrides the method of the same name in
         # the base class.
