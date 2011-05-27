@@ -63,6 +63,7 @@ from numpy import *
 from numpy.linalg import *
 
 from World import World
+from Vacuum import Vacuum
 
 # The xml classes used to define the messages being passed.
 from XML.XMLParser import XMLParser
@@ -177,8 +178,8 @@ class Channel:
 	    # There are more vacuums to be used than currently
 	    # defined. Add the extras to the list.
 	    for i in range(number-len(self.vacuumArray)):
-		vacuum = Vacuum(i+len(self.vacuumArray))
-		self.addVacuum(vacuum,i+len(self.vacuumArray),x,y)
+		vacuum = Vacuum(len(self.vacuumArray))
+		self.addVacuum(vacuum,len(self.vacuumArray),x,y)
 
 	elif (number < len(self.vacuumArray)) :
 	    # Need to have fewer vacuums than what are currently
@@ -421,6 +422,8 @@ class Channel:
 		    
 		elif(item[0] == XMLMessageExternalParameter.NUMBER_OF_VACUUMS):
 		    #print("number vacs: {0}".format(int(item[1])))
+		    self.setNumberVacuums(int(item[1]))
+		    
 		    if(self.world) :
 			self.world.setNumberVacuums(int(item[1]))
 
@@ -732,9 +735,18 @@ if (__name__ =='__main__') :
     #dif = XMLIncomingDIF()
     #incoming = dif.determineXMLInformation(message)
 
+    
+    
     from Planner import Planner
     channel = Channel()
     planner = Planner(1.0,1.0,1.0,1.0,4)
     channel.setPlanner(planner)
     channel.receiveXMLReportParseAndDecide(message)
-    #print(message)
+    print(message)
+
+
+    print("one: {1}\n{0}".format(channel.vacuumArray,len(channel.vacuumArray)))
+    channel.setNumberVacuums(7)
+    print("two: {1}\n{0}".format(channel.vacuumArray,len(channel.vacuumArray)))
+    channel.setNumberVacuums(3)
+    print("three: {1}\n{0}".format(channel.vacuumArray,len(channel.vacuumArray)))
