@@ -109,7 +109,9 @@ class  GraphicalWorld (World,Tk) :
         # by the world. This overrides the method of the same name in
         # the base class.
 	for i in range(len(self.vacuumArray)):
+	    # Loop through all the vacuums
 	    if(self.vacuumArray[i]==vacuum):
+		# This is the one to delete.
 		self.vacuumArray.pop(i)
 		self.setNumberVacuums(len(self.vacuumArray))
 		return

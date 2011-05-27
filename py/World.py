@@ -95,9 +95,36 @@ class  World :
 
 
     def setNumberVacuums(self,number) :
+	# Routine to set the value that tracks the number of vacuums.
 	self.numberVacuums = number
 
-        
+
+    def setGridSize(self,N):
+	# Routine to set the grid size.
+	if(N > self.N) :
+	    # Need to add more grids.
+	    while(self.N < N) :
+		# Add a row and then a column to A and Moisture
+		self.A = append(self.A,zeros((1,self.N),dtype=float64),axis=0)
+		self.A = append(self.A,zeros((self.N+1,1),dtype=float64),axis=1)
+
+		self.Moisture = append(self.Moisture,zeros((1,self.N),dtype=float64),axis=0)
+		self.Moisture = append(self.Moisture,zeros((self.N+1,1),dtype=float64),axis=1)
+		self.N += 1
+
+	
+	elif (N < self.N) :
+	    # Need to delete grids
+	    while(self.N > N) :
+		# Delete a row and then delete a column from A and Moisture
+		self.A = delete(self.A,self.N-1,axis=0)
+		self.A = delete(self.A,self.N-1,axis=1)
+
+		self.Moisture = delete(self.Moisture,self.N-1,axis=0)
+		self.Moisture = delete(self.Moisture,self.N-1,axis=1)
+
+		self.N -= 1
+
     def clean(self,x,y) :
         # reset location x,y dirt level to 0
         self.A[x,y] = 0.0
@@ -119,6 +146,9 @@ class  World :
 
     def randomDust(self) :
         self.A = random.rand(self.N*self.N).reshape(self.N,self.N)
+
+    def randomMoisture(self) :
+        self.Moisture = random.rand(self.N*self.N).reshape(self.N,self.N)
 
 
     def addExpenditure(self,value) :
@@ -216,4 +246,20 @@ class  World :
             
 if (__name__ =='__main__') :
     world = World()
-    world.inc()
+    #world.inc()
+    world.randomDust()
+    world.randomMoisture()
+
+    print(world.A)
+    print(world.Moisture)
+
+    world.setGridSize(8)
+    
+    print(world.A)
+    print(world.Moisture)
+
+    world.setGridSize(3)
+
+    print(world.A)
+    print(world.Moisture)
+    

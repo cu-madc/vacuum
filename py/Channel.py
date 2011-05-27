@@ -410,7 +410,14 @@ class Channel:
 
 		    
 		elif(item[0] == XMLMessageExternalParameter.GRID_SIZE):
-		    print("grid size: {0}".format(int(item[1])))
+		    if(self.world) :
+			self.world.setGridSize(int(item[1]))
+
+		    if(self.sensor):
+			self.sensor.setGridSize(int(item[1]))
+
+		    if(self.planner):
+			self.planner.setGridSize(int(item[1]))
 		    
 		elif(item[0] == XMLMessageExternalParameter.NUMBER_OF_VACUUMS):
 		    #print("number vacs: {0}".format(int(item[1])))

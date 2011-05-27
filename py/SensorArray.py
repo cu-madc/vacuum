@@ -85,7 +85,34 @@ class SensorArray :
 
     def getWorking(self):
         return(self.isWorking)
-        
+
+
+    def setGridSize(self,N):
+	# Routine to set the grid size.
+	if(N > self.N) :
+	    # Need to add more grids.
+	    while(self.N < N) :
+		# Add a row and then a column to A and Moisture
+		self.array = append(self.array,zeros((1,self.N),dtype=float64),axis=0)
+		self.array = append(self.array,zeros((self.N+1,1),dtype=float64),axis=1)
+
+		self.Wet = append(self.Wet,zeros((1,self.N),dtype=float64),axis=0)
+		self.Wet = append(self.Wet,zeros((self.N+1,1),dtype=float64),axis=1)
+		self.N += 1
+
+	
+	elif (N < self.N) :
+	    # Need to delete grids
+	    while(self.N > N) :
+		# Delete a row and then delete a column from A and Moisture
+		self.array = delete(self.array,self.N-1,axis=0)
+		self.array = delete(self.array,self.N-1,axis=1)
+
+		self.Wet = delete(self.Wet,self.N-1,axis=0)
+		self.Wet = delete(self.Wet,self.N-1,axis=1)
+
+		self.N -= 1
+
 
     def getChannel(self) :
         return(self.channel)

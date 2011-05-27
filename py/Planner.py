@@ -165,6 +165,40 @@ class Planner :
         self.dirtRate  = self.unnormalizeDirtRate*self.unnormalizeDirtSize/float(self.N*self.N)
 
 
+    def setGridSize(self,N):
+	# Routine to set the grid size.
+	if(N > self.N) :
+	    # Need to add more grids.
+	    while(self.N < N) :
+		# Add a row and then a column to A and Moisture
+		self.worldview = append(self.worldview,zeros((1,self.N),dtype=float64),axis=0)
+		self.worldview = append(self.worldview,zeros((self.N+1,1),dtype=float64),axis=1)
+
+		self.wetview = append(self.wetview,zeros((1,self.N),dtype=float64),axis=0)
+		self.wetview = append(self.wetview,zeros((self.N+1,1),dtype=float64),axis=1)
+
+		self.viewPrecision = append(self.viewPrecision,zeros((1,self.N),dtype=float64),axis=0)
+		self.viewPrecision = append(self.viewPrecision,zeros((self.N+1,1),dtype=float64),axis=1)
+
+		self.N += 1
+
+	
+	elif (N < self.N) :
+	    # Need to delete grids
+	    while(self.N > N) :
+		# Delete a row and then delete a column from A and Moisture
+		self.worldview = delete(self.worldview,self.N-1,axis=0)
+		self.worldview = delete(self.worldview,self.N-1,axis=1)
+
+		self.viewPrecision = delete(self.viewPrecision,self.N-1,axis=0)
+		self.viewPrecision = delete(self.viewPrecision,self.N-1,axis=1)
+
+		self.wetview = delete(self.wetview,self.N-1,axis=0)
+		self.wetview = delete(self.wetview,self.N-1,axis=1)
+
+		self.N -= 1
+
+
     def defineDistanceArray(self) :
         # Define the array that keeps track of the distances between
         # places in the world. This is used by the vacuums to
@@ -280,19 +314,16 @@ class Planner :
 
 
 if (__name__ =='__main__') :
-    from Channel import Channel
-    from Commander import Commander
+    planner = Planner(1.0,1.0,1.0,1.0,4)
+    #planner.inc()
 
-    world = World()
-    sensor = SensorArray(0.1,world)
-    planner = Planner(0.2,0.1,sensor,world)
+    print(planner.viewPrecision)
 
-    #N = world.getNumber()
-    #for i in range(N) :
-    #    for j in range(N) :
-    #        print("\n\nRow: {0} Col: {1}\n{2}".format(i,j,planner.Z[i][j]))
+    planner.setGridSize(8)
+    
+    print(planner.viewPrecision)
 
-    #print("Val: {0}".format(planner.Z[1][2][3,4]))
-    planner.receiveOrder(0,2,3)
-    planner.setChannel(Channel(world,[],sensor,planner,Commander()))
-    planner.recommendOrder(0)
+    planner.setGridSize(3)
+
+    print(planner.viewPrecision)
+    
