@@ -85,7 +85,7 @@ class XMLMessageExternalParameter (XMLParser) :
 
     def __init__(self) :
 	XMLParser.__init__(self)
-	self.setMyInformationType(self.MESSAGE_EXTERNAL_COMMAND);
+	self.setMyInformationType(self.MESSAGE_EXTERNAL_PARAMETER);
 	self.dimensionsNode = None
 	self.objectClassNode = None
 
