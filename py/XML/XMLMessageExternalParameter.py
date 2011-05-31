@@ -1,12 +1,14 @@
 #!/usr/bin/python
 #
-#  XMLMessageNetwork.py
+#  XMLMessageExternalParameter.py
 # 
-#   Created on: Jan 29, 2011
+#   Created on: 31 May, 2011
 #       Author: black
 # 
-#       Methods for the class that keeps track of the information specific
-#       to the network associated with a given vacumm.
+#       Methods for the class that keeps track of the information
+#       specific to passing the values of global parameters used in a
+#       simulation. This is for a request that comes in from the
+#       outside of the simulation.
 # 
 #  This material is based on research sponsored by DARPA under agreement
 #  number FA8750-10-2-0165. The U.S. Government is authorized to
