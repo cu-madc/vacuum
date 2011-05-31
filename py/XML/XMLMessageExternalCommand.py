@@ -1,12 +1,13 @@
 #!/usr/bin/python
 #
-#  XMLMessageNetwork.py
+#  XMLMessageExternalCommand.py
 # 
-#   Created on: Jan 29, 2011
+#   Created on: 31 May, 2011
 #       Author: black
 # 
-#       Methods for the class that keeps track of the information specific
-#       to the network associated with a given vacumm.
+#       Methods for the class that keeps track of the information
+#       specific to external commands coming from the outside to
+#       change execution or request information.
 # 
 #  This material is based on research sponsored by DARPA under agreement
 #  number FA8750-10-2-0165. The U.S. Government is authorized to
@@ -65,29 +66,25 @@ from xml.dom.minidom import Document
 from XMLParser import XMLParser
 
 
-class XMLMessageExternalParameter (XMLParser) :
+class XMLMessageExternalCommand (XMLParser) :
 
-    DUST_RATE, DUST_SIZE, \
-       RAIN_RATE, RAIN_SIZE, \
-       GRID_SIZE, \
-       NUMBER_OF_VACUUMS = range(6)
+    STOP, \
+	  START, \
+	  RESTART, \
+	  RESET, \
+	  POLL = range(5)
 
-    ParameterTitles = {DUST_RATE:'dust rate', \
-                       DUST_SIZE:'dust size', \
-                       RAIN_RATE:'rain rate', \
-                       RAIN_SIZE:'rain size', \
-                       GRID_SIZE:'grid size', \
-                       NUMBER_OF_VACUUMS:'number vacuums'}
+    ParameterTitles = {STOP:'stop execution', \
+                       START:'start execution', \
+                       RESTART:'restart execution', \
+                       RESET:'reset', \
+                       POLL:'poll'}
 
     def __init__(self) :
 	XMLParser.__init__(self)
-	self.setMyInformationType(self.MESSAGE_EXTERNAL_PARAMETER);
+	self.setMyInformationType(self.MESSAGE_EXTERNAL_COMMAND);
 	self.dimensionsNode = None
 	self.objectClassNode = None
-	self.networkIDNode = None
-	self.probSuccessNode = None
-        self.networkID = 0
-	self.probSuccessfulTransmission = 1.0
 
 
         # Initialize the list of parameters that will be defined in
@@ -107,17 +104,17 @@ class XMLMessageExternalParameter (XMLParser) :
         pass
 
 
-    def setParameterValue(self,type,value) :
+    def setParameterValue(self,type) :
 
 	# Check to see if this parameter has been defined
 	for item in self.parameterList:
-	    if(item[0] == type) :
+	    if(item == type) :
 		# this parameter has already been defined
-		item[1] = value
+		item = type
 		return
 
 	# It has not been defined yet. Add it to the list.
-        self.parameterList.append([type,value])
+        self.parameterList.append(type)
 
 
     def createRootNode(self) :
@@ -166,14 +163,13 @@ class XMLMessageExternalParameter (XMLParser) :
         for type in self.parameterList:
             self.objectClassNode.appendChild(self.dimensionsNode)
 
-            if(type[0] in self.ParameterTitles) :
-                self.makeNodeSingleValue(self.ParameterTitles[type[0]],type[1])
+            if(type in self.ParameterTitles) :
+                self.makeNodeSingleValue(self.ParameterTitles[type])
 
 
-    def makeNodeSingleValue(self,name,value) :
-        # Method to set the value of the id for this vacuum. It
-        # indicates which vacumm this structure is associated
-        # with. The value is then added to the xml tree under the
+    def makeNodeSingleValue(self,name) :
+        # Method to set a value by adding a leaf on to the current
+        # tree. The value is then added to the xml tree under the
         # dimensions node.
 
         self.newNode = self.doc.createElement("dimension")
@@ -184,21 +180,8 @@ class XMLMessageExternalParameter (XMLParser) :
         dimension.appendChild(node)
         self.newNode.appendChild(dimension)
 
-        dimension = self.doc.createElement("value")
-        if(type(value) is float) :
-            node = self.doc.createTextNode("{0:22.14E}".format(value))
-        else :
-            node = self.doc.createTextNode(str(value))
-                
-        dimension.appendChild(node)
-        self.newNode.appendChild(dimension)
 
 
-
-    #def updateNetworkIDNode(self) :
-    #    # Method to change the network ID node to reflect the current
-    #    # value of the network id.
-    #    self.updateValue("networkID",self.getNetworkID())
 
 
 
@@ -268,14 +251,6 @@ class XMLMessageExternalParameter (XMLParser) :
 
                         #print("  Name: {0} Value: {1}".format(name,value))
                                 
-                        if(name == "networkID") :
-                            self.setNetworkID(int(value))
-                            
-                        elif(name == "probabilitySuccessfulTransmission") :
-                            self.setProbSuccessfulTransmission(float(value))
-
-                    #print("network: {0} - prob: {1}".format(
-                    #    self.getNetworkID(),self.getProbSuccessfulTransmission()))
                         
 
             else :
@@ -297,24 +272,17 @@ if (__name__ =='__main__') :
 	#       GRID_SIZE, \
 	#       NUMBER_OF_VACUUMS = range(6)
 
-    parameter = XMLMessageExternalParameter()
-    parameter.setParameterValue(XMLMessageExternalParameter.DUST_RATE,0.2)
-    parameter.setParameterValue(XMLMessageExternalParameter.RAIN_RATE,0.4)
-    parameter.setParameterValue(XMLMessageExternalParameter.GRID_SIZE,5)
-    parameter.setParameterValue(XMLMessageExternalParameter.DUST_SIZE,0.3)
-    parameter.setParameterValue(XMLMessageExternalParameter.RAIN_SIZE,2.0)
-    parameter.setParameterValue(XMLMessageExternalParameter.GRID_SIZE,6)
-    parameter.setParameterValue(XMLMessageExternalParameter.NUMBER_OF_VACUUMS,5)
-    parameter.setParameterValue(XMLMessageExternalParameter.NUMBER_OF_VACUUMS,8)
+    parameter = XMLMessageExternalCommand()
+    parameter.setParameterValue(XMLMessageExternalCommand.STOP)
+    parameter.setParameterValue(XMLMessageExternalCommand.START)
+    parameter.setParameterValue(XMLMessageExternalCommand.RESTART)
+    parameter.setParameterValue(XMLMessageExternalCommand.RESET)
+    parameter.setParameterValue(XMLMessageExternalCommand.POLL)
     print(parameter.parameterList)
-
     parameter.createRootNode()
     print(parameter.xml2Char(True))
 
 
-    #parameter.setNetworkID(1)
-    #parameter.setProbSuccessfulTransmission(0.22)
     #print(parameter.xml2Char(True))
-
     ##root_node = parameter.root_node.cloneNode(True)
     ##parameter.copyXMLTree(root_node)
