@@ -69,27 +69,23 @@ from XMLParser import XMLParser
 
 class XMLMessageExternalParameter (XMLParser) :
 
-    DUST_RATE, DUST_SIZE, \
-       RAIN_RATE, RAIN_SIZE, \
-       GRID_SIZE, \
-       NUMBER_OF_VACUUMS = range(6)
+    STOP, \
+	  START, \
+	  RESTART, \
+	  RESET, \
+	  POLL = range(5)
 
-    ParameterTitles = {DUST_RATE:'dust rate', \
-                       DUST_SIZE:'dust size', \
-                       RAIN_RATE:'rain rate', \
-                       RAIN_SIZE:'rain size', \
-                       GRID_SIZE:'grid size', \
-                       NUMBER_OF_VACUUMS:'number vacuums'}
+    ParameterTitles = {STOP:'stop execution', \
+                       START:'start execution', \
+                       RESTART:'restart execution', \
+                       RESET:'reset', \
+                       POLL:'poll'}
 
     def __init__(self) :
 	XMLParser.__init__(self)
-	self.setMyInformationType(self.MESSAGE_EXTERNAL_PARAMETER);
+	self.setMyInformationType(self.MESSAGE_EXTERNAL_COMMAND);
 	self.dimensionsNode = None
 	self.objectClassNode = None
-	self.networkIDNode = None
-	self.probSuccessNode = None
-        self.networkID = 0
-	self.probSuccessfulTransmission = 1.0
 
 
         # Initialize the list of parameters that will be defined in
@@ -197,12 +193,6 @@ class XMLMessageExternalParameter (XMLParser) :
 
 
 
-    #def updateNetworkIDNode(self) :
-    #    # Method to change the network ID node to reflect the current
-    #    # value of the network id.
-    #    self.updateValue("networkID",self.getNetworkID())
-
-
 
     def updateValue(self,valueName,newValue) :
         # Method to change the network ID node to reflect the current
@@ -270,15 +260,7 @@ class XMLMessageExternalParameter (XMLParser) :
 
                         #print("  Name: {0} Value: {1}".format(name,value))
                                 
-                        if(name == "networkID") :
-                            self.setNetworkID(int(value))
-                            
-                        elif(name == "probabilitySuccessfulTransmission") :
-                            self.setProbSuccessfulTransmission(float(value))
 
-                    #print("network: {0} - prob: {1}".format(
-                    #    self.getNetworkID(),self.getProbSuccessfulTransmission()))
-                        
 
             else :
                 # Error - there is more than one object class node.
@@ -314,9 +296,6 @@ if (__name__ =='__main__') :
     print(parameter.xml2Char(True))
 
 
-    #parameter.setNetworkID(1)
-    #parameter.setProbSuccessfulTransmission(0.22)
     #print(parameter.xml2Char(True))
-
     ##root_node = parameter.root_node.cloneNode(True)
     ##parameter.copyXMLTree(root_node)
