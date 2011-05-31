@@ -97,6 +97,9 @@ from XMLMessageVacuumAddExpenditureWorld import \
 from XMLMessageExternalParameter import \
      XMLMessageExternalParameter
 
+from XMLMessageExternalCommand import \
+     XMLMessageExternalCommand
+
 class XMLIncomingDIF (XMLParser) :
 
     DEBUG = False
@@ -590,6 +593,32 @@ class XMLIncomingDIF (XMLParser) :
 			    break
 
 
+        elif( (name=="External") and (type=="command")) :
+	    # This is an external message. It has information about an
+	    # action to take.
+	    incomingXML = XMLMessageExternalCommand()
+
+	    # Get all of the information associated with the
+	    # dimensions that were passed.
+	    dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+            if(dimensions) :
+		# For each dimension go through and decide what type of dimension it is.
+		for dimension in dimensions[3]:
+		    name  = self.getChildWithName([dimension],"name")    # Get the name leaf on the tree
+
+
+		    #print("Value {0} - {1}".format(name[2],value[2]))
+		    for key, val in XMLMessageExternalCommand.ParameterTitles.iteritems():
+			# Go through each member of the possible parameters and check for a match
+			#print("check {0} - {1}".format(key,name[2]))
+			if(val == name[2]) :
+			    # This is the same type. Set the parameter
+			    #print("Setting: {0}".format(key))
+			    incomingXML.setParameterValue(key)
+			    break
+
+
 
         if(incomingXML) :
             # If an incoming XML object was created then pass along
@@ -604,7 +633,14 @@ class XMLIncomingDIF (XMLParser) :
 
 
 if (__name__ =='__main__') :
-    dif = XMLIncomingDIF()
-    dif.readXMLFile("networkSample.xml")
-    name = dif.getObjectClassName("vacuumNetwork")
-    print("Name: {0}".format(name))
+    parameter = XMLMessageExternalCommand()
+    parameter.setParameterValue(XMLMessageExternalCommand.STOP)
+    parameter.setParameterValue(XMLMessageExternalCommand.START)
+    parameter.setParameterValue(XMLMessageExternalCommand.RESTART)
+    parameter.setParameterValue(XMLMessageExternalCommand.RESET)
+    parameter.setParameterValue(XMLMessageExternalCommand.POLL)
+    #print(parameter.parameterList)
+    parameter.createRootNode()
+
+    incoming = XMLIncomingDIF()
+    incoming.determineXMLInformation(parameter.xml2Char(False))

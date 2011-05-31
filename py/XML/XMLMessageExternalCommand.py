@@ -148,7 +148,7 @@ class XMLMessageExternalCommand (XMLParser) :
         self.objectClassNode.appendChild(nameNode)
 
 	typeNode = self.doc.createElement("type")
-        typeNode.appendChild(self.doc.createTextNode("parameter"))
+        typeNode.appendChild(self.doc.createTextNode("command"))
         self.objectClassNode.appendChild(typeNode)
 
         self.createDimensions()
