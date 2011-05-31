@@ -69,17 +69,19 @@ from XMLParser import XMLParser
 
 class XMLMessageExternalParameter (XMLParser) :
 
-    STOP, \
-	  START, \
-	  RESTART, \
-	  RESET, \
-	  POLL = range(5)
 
-    ParameterTitles = {STOP:'stop execution', \
-                       START:'start execution', \
-                       RESTART:'restart execution', \
-                       RESET:'reset', \
-                       POLL:'poll'}
+    DUST_RATE, DUST_SIZE, \
+       RAIN_RATE, RAIN_SIZE, \
+       GRID_SIZE, \
+       NUMBER_OF_VACUUMS = range(6)
+
+    ParameterTitles = {DUST_RATE:'dust rate', \
+                       DUST_SIZE:'dust size', \
+                       RAIN_RATE:'rain rate', \
+                       RAIN_SIZE:'rain size', \
+                       GRID_SIZE:'grid size', \
+                       NUMBER_OF_VACUUMS:'number vacuums'}
+
 
     def __init__(self) :
 	XMLParser.__init__(self)
