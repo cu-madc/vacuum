@@ -429,6 +429,38 @@ class Channel:
 
 
 
+	elif(info.getMyInformationType() == XMLParser.MESSAGE_EXTERNAL_COMMAND) :
+	    # This is a message from the outside with information
+	    # about a command request
+	    #print("External Command")
+	    for item in info.parameterList:
+
+		if(item == XMLMessageExternalCommand.STOP) :
+		    print("stop: {0}".format(item))
+		    if(self.world) :
+			pass
+
+		elif(item == XMLMessageExternalCommand.START) :
+		    print("start: {0}".format(item))
+		    if(self.world) :
+			pass
+
+		elif(item == XMLMessageExternalCommand.RESTART) :
+		    print("restart: {0}".format(item))
+		    if(self.world) :
+			pass
+
+		elif(item == XMLMessageExternalCommand.RESET) :
+		    print("reset: {0}".format(item))
+		    if(self.world) :
+			pass
+
+		elif(item == XMLMessageExternalCommand.POLL) :
+		    print("poll: {0}".format(item))
+		    if(self.world) :
+			pass
+
+
 
     ## sendVacuumReportFromCommander2Planner
     #
@@ -720,6 +752,22 @@ class Channel:
 
 
 if (__name__ =='__main__') :
+    from XML.XMLMessageExternalCommand import XMLMessageExternalCommand
+    import sys
+    parameter = XMLMessageExternalCommand()
+    parameter.setParameterValue(XMLMessageExternalCommand.STOP)
+    parameter.setParameterValue(XMLMessageExternalCommand.START)
+    parameter.setParameterValue(XMLMessageExternalCommand.RESTART)
+    parameter.setParameterValue(XMLMessageExternalCommand.RESET)
+    parameter.setParameterValue(XMLMessageExternalCommand.POLL)
+    parameter.createRootNode()
+    print(parameter.xml2Char(True))
+
+    channel = Channel()
+    channel.receiveXMLReportParseAndDecide(parameter.xml2Char(False))
+    sys.exit(0)
+    
+    
     from XML.XMLMessageExternalParameter import XMLMessageExternalParameter
     from XML.XMLIncomingDIF import XMLIncomingDIF
     parameter = XMLMessageExternalParameter()
