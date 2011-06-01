@@ -161,6 +161,15 @@ class Channel:
         return(self.planner)
 
     def addVacuum(self,vacuum,id,xpos,ypos) :
+
+	for definedVacuum in self.vacuumArray :
+	    # Check to see if this vacuum is already defined. We can
+	    # get into this routine from a variety of places. It might
+	    # be possible to have already called this routine.
+	    if(vacuum == definedVacuum) :
+		#print("Found this one...")
+		return
+
         while(id>=len(self.vacuumArray)) :
             # There are not enough vacuum objects defined. Create
             # place holders.

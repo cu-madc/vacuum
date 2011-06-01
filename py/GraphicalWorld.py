@@ -97,12 +97,25 @@ class  GraphicalWorld (World,Tk) :
     def getPlanner(self) :
         return(self.planner)
 
-    def addVacuum(self,vacuum) :
+    def addVacuum(self,vacuum,debug=0) :
         # routine to add a vacuum to the list of vacuums tracked by
         # the world. This overrides the method of the same name in the
         # base class.
+
+	for definedVacuum in self.vacuumArray :
+	    # Check to see if this vacuum is already defined. We need
+	    # to do this because the channel adds a vacuum to the
+	    # world automatically. It is possible that the channel
+	    # already added this vacuum.
+	    if(vacuum == definedVacuum) :
+		#print("Found this one...")
+		return
+	    
         self.vacuumArray.append(vacuum)
 	self.setNumberVacuums(len(self.vacuumArray))
+	if(debug) :
+	    print("Add Vacuum: {0}".format(debug))
+	    self.printVacuumInfo(0)
 
     def deleteVacuum(self,vacuum):
         # routine to delete a vacuum from the list of vacuums tracked
@@ -135,6 +148,8 @@ class  GraphicalWorld (World,Tk) :
         exit(0)
 
     def start(self) :
+
+	# Get the parameters from the inputs in the window.
         N = int(self.NValue.get())
         self.r = float(self.rValue.get())
         self.s = float(self.sValue.get())
@@ -143,6 +158,7 @@ class  GraphicalWorld (World,Tk) :
 
         self.intializeVariables(self.r,self.s,self.v,self.cloudsize)
         for vacuum in self.vacuumArray:
+	    # Turn on each of the vacuums - i.e. reset the vacuum.
             vacuum.setWorking(True)
             vacuum.setStatus(3)
             vacuum.initializeTime(0.0)
@@ -158,8 +174,20 @@ class  GraphicalWorld (World,Tk) :
 
             H.append(sum(sum(self.A)))
             R.append(sum(self.Moisture>0))
-    
+
+	    #self.printVacuumInfo(i)
+	    
         print("Mean of H: {0}".format(mean(H)))
+
+
+    def printVacuumInfo(self,time) :
+	# Convencience routine for printing out the vacuum info - used
+	# for debugging.
+	j = 0
+	for vacuum in self.vacuumArray:
+	    print("{0} - {1} ({2})".format(j,vacuum,time))
+	    j += 1
+	print("\n\n")
 
 
     def setupWindow(self) :

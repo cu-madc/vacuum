@@ -118,8 +118,11 @@ for i in range(numVacs) :
     vacArray.append(vacuum)
     pos = vacuum.getPosition()
     chan.addVacuum(vacuum,i,pos[0],pos[1])
-    W.addVacuum(vacuum)
+    #print("going to add vacuum {0}".format(i))
+    W.addVacuum(vacuum,i+1)
 
+
+#W.printVacuumInfo(0)
 
 
 
