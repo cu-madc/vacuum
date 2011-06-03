@@ -63,6 +63,7 @@
 from numpy import *
 from numpy.linalg import *
 
+from Channel import Channel
 
 
 class SensorArray :
@@ -76,8 +77,7 @@ class SensorArray :
         self.Wet = zeros((self.N,self.N),dtype=float64)   # array of values for dirt levels
 
         self.setWorking(True)
-
-        self.channel = 0                               # handle to channel to planner
+        self.setChannel(None)                             # handle to channel to planner
 
 
     def setWorking(self,value) :
@@ -161,6 +161,14 @@ class SensorArray :
 
         return(None)
 
+
+    @staticmethod
+    def spawnSensorArray(accuracy=0.0) :
+	channel = Channel()
+	sensor = SensorArray(accuracy)
+	sensor.setChannel(channel)
+	channel.setSensor(sensor)
+	return(sensor)
 
 
 

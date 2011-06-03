@@ -90,8 +90,6 @@ class Commander :
         self.channel = value
 
 
-
-
     def getReport(self,xPos,yPos,status,IDnum) :
         # receive a report from a vac and take action
         if (self.isWorking)  :

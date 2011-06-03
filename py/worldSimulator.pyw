@@ -89,7 +89,7 @@ N = W.getNumber()
 # create and set the sensor
 
 accuracy = 0.4
-sensor = SensorArray(accuracy)
+sensor = SensorArray.spawnSensorArray(accuracy)   #SensorArray(accuracy)
 W.setSensor(sensor)
 
 # channel setup
@@ -103,13 +103,19 @@ plan.setChannel(chan)
 W.setPlanner(plan)
 W.setChannel(chan)
 
-command= Commander.spawnCommander()   # Commander(chan)
+command = Commander.spawnCommander()   # Commander(chan)
 command.getChannel().setPlanner(plan)
+command.getChannel().getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())
 
 plan.getChannel().getRouter().setChannel(Router.COMMANDER,command.getChannel())
+plan.getChannel().getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())
 
-sensor.setChannel(chan)
-chan.setSensor(sensor)
+sensor.getChannel().getRouter().setChannel(Router.COMMANDER,command.getChannel())
+sensor.getChannel().getRouter().setChannel(Router.PLANNER,plan.getChannel())
+sensor.getChannel().setPlanner(plan)
+
+#sensor.setChannel(chan)
+#chan.setSensor(sensor)
 
 
 # Create vacuums
@@ -119,6 +125,7 @@ for i in range(numVacs) :
     vacuum = Vacuum(i,1.0)
     vacuum.setChannel(chan)
     vacuum.getChannel().getRouter().setChannel(Router.COMMANDER,command.getChannel())
+    vacuum.getChannel().getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())
     vacArray.append(vacuum)
     pos = vacuum.getPosition()
     chan.addVacuum(vacuum,i,pos[0],pos[1])
