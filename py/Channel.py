@@ -65,6 +65,9 @@ from numpy.linalg import *
 from World import World
 from Vacuum import Vacuum
 
+from Router import Router
+
+
 # The xml classes used to define the messages being passed.
 from XML.XMLParser import XMLParser
 from XML.XMLIncomingDIF import XMLIncomingDIF
@@ -106,6 +109,7 @@ from XML.XMLMessageVacuumAddExpenditureWorld import \
 class Channel:
 
     sendOverTCP = False
+    checkInfoType = False
     
     
     def __init__(self,world=None,vacuums=[],sensor=None,planner=None,commander=None) :
@@ -121,6 +125,8 @@ class Channel:
         self.setSensor(sensor)
         self.setPlanner(planner)
         self.setCommander(commander)
+
+	self.router = Router(self)
 
 
 
@@ -159,6 +165,9 @@ class Channel:
 
     def getPlanner(self) :
         return(self.planner)
+
+    def getRouter(self) :
+	return(self.router)
 
     def addVacuum(self,vacuum,id,xpos,ypos) :
 
@@ -228,24 +237,26 @@ class Channel:
     def receiveXMLReportParseAndDecide(self,xmlString) :
         dif = XMLIncomingDIF()
         info = dif.determineXMLInformation(xmlString)
-        #print("Got information: {0}".format(info.getMyInformationType()))
+	if(self.checkInfoType) :
+	    print("Got information: {0}".format(info.getMyInformationType()))
+	    self.checkInfoType = False
 
 
         if(info.getMyInformationType() ==
            XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
             
-            if(self.commander) :
+            if(self.planner) :
                 pos = info.getPos()
-                #print("sending report to commander for {0} - {1},{2}".format(
+                #print("sending report to planner for {0} - {1},{2}".format(
                 #    info.getVacuumID(),pos[0],pos[1]))
-                self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
+                self.planner.receiveReport(pos[0],pos[1]) #,info.getVacuumID())
 
 
 
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
-
-            if(self.commander) :
+	    #print("Channel.recieveXMLReportParseAndDecide - send!")
+            if(self.planner) :
                 pos = info.getPos()
                 #print("sending report to planner for {0} - {1},{2}".format(
                 #    info.getVacuumID(),pos[0],pos[1]))
@@ -335,10 +346,10 @@ class Channel:
 
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_GET_REPORT_VACUUM_COMMANDER) :
-            
+
             if(self.commander) :
                 pos = info.getPos()
-                #print("sending report to planner for {0} - {1},{2} - {3}".format(
+                #print("sending report to commander for {0} - {1},{2} - {3}".format(
                 #    info.getVacuumID(),pos[0],pos[1],info.getStatus()))
                 self.commander.getReport(pos[0],pos[1],info.getStatus(),info.getVacuumID())
 
@@ -358,8 +369,11 @@ class Channel:
 
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_UPDATE_WORLD_PLANNER) :
+
+	    #print("Send world update to planner");
             if(self.planner):
                 # Request that the planner make an update to its view.
+		#print("Update planner")
                 self.planner.updateView()
 
 
@@ -368,6 +382,7 @@ class Channel:
             if(self.sensor) :
                 # Request that the sensor make a request to measure
                 # the world.
+		#print("asking sensor to measure.")
                 self.sensor.measure()
 
 
@@ -375,6 +390,7 @@ class Channel:
         elif(info.getMyInformationType() == XMLParser.MESSAGE_STATUS_SENSOR_PLANNER) :
             if(self.planner) :
                 # Send the planner what the sensor things the world status is.
+		#print("Send planner dirt levels.")
                 self.planner.setDirtLevels(info.getMatrixFromArray())
 
 
@@ -383,6 +399,7 @@ class Channel:
             if(self.planner) :
                 # Send the planner what the sensor things is the world
                 # wetness levels.
+		print("send planner wet levels")
                 self.planner.setWet(info.getMatrixFromArray())
 
 
@@ -396,6 +413,7 @@ class Channel:
 		if(item[0] == XMLMessageExternalParameter.DUST_RATE) :
 		    #print("dust rate: {0}".format(item[1]))
 		    if(self.planner) :
+			print("send planner dirt rate")
 			self.planner.setUnnormalizedDirtRate(float(item[1]))
 
 		    if(self.world) :
@@ -403,6 +421,7 @@ class Channel:
 		    
 		elif(item[0] == XMLMessageExternalParameter.DUST_SIZE) :
 		    if(self.planner) :
+			print("send planner dirt size")
 			self.planner.setUnnormalizedDirtSize(float(item[1]))
 
 		    if(self.world) :
@@ -427,6 +446,7 @@ class Channel:
 			self.sensor.setGridSize(int(item[1]))
 
 		    if(self.planner):
+			print("send planner grid size")
 			self.planner.setGridSize(int(item[1]))
 		    
 		elif(item[0] == XMLMessageExternalParameter.NUMBER_OF_VACUUMS):
@@ -539,7 +559,8 @@ class Channel:
             # Send the message over the simulation network
             pass
         elif(self.sendMessage()) :
-            self.receiveXMLReportParseAndDecide(orders.xml2Char())
+	    self.router.sendString(Router.COMMANDER,orders.xml2Char())
+            #self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
 
@@ -585,7 +606,10 @@ class Channel:
             # Send the message over the simulation network.
             pass
         elif(self.sendMessage()) :
-            self.receiveXMLReportParseAndDecide(report.xml2Char())
+	    #self.checkInfoType = True
+	    #print("sending vacuum to commander")
+	    self.router.sendString(Router.COMMANDER,report.xml2Char())
+	    #self.receiveXMLReportParseAndDecide(report.xml2Char())
 
 
 
@@ -617,6 +641,7 @@ class Channel:
     # from the sensor and send it to the sensor.
     def sendMeasuredFromPlanner2Sensor(self) :
         sensorData = XMLMessageUpdatePlannerSensor()
+	#print("Channel.sendMeasuredFromPlanner2Sensor: {0}".format(sensorData.getMyInformationType()))
         sensorData.createRootNode()
 
         if(self.sendOverTCP) :
@@ -624,11 +649,13 @@ class Channel:
             # Question: should it really be on the back plane?
             pass
         else :
+	    #self.checkInfoType = True
             self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
     def sendStatusSensor2Planner(self,noisyView) :
         sensorData = XMLMessageSensorStatus(noisyView)
+	#print("Channel.sendStatusSensor2Planner: {0}".format(sensorData.getMyInformationType()))
         sensorData.createRootNode()
 
         if(self.sendOverTCP) :
@@ -636,6 +663,7 @@ class Channel:
             # Question: should it really be on the back plane?
             pass
         else :
+	    #self.checkInfoType = True
             self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
@@ -676,6 +704,7 @@ class Channel:
     # necessary during a world time step.
     def sendPlannerUpdateRequest(self) :
         update = XMLMessageUpdateWorldPlanner()
+	#print("Channel.sendMPlannerUpdateRequest: {0}".format(update.getMyInformationType()))
         update.createRootNode()
 
         if(self.sendOverTCP) :
@@ -683,6 +712,7 @@ class Channel:
             # Question: should this really be on the back plane?
             pass
         else :
+	    #self.checkInfoType = True
             self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 

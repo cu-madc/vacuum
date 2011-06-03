@@ -241,6 +241,7 @@ class Planner :
         tau_0=self.viewPrecision;          # matrix
             
         # get data from sensor, if available
+	#print("Planner.updateView: requesting sensor to send measured")
         self.channel.sendMeasuredFromPlanner2Sensor()
             
         # update levels based on sensor information
@@ -286,7 +287,7 @@ class Planner :
         if not self.getWorking() :
             return([])
 
-        #print("recommend order: {0} {1} {2}".format(id,xPos,yPos))
+        #print("Planner.recommendOrder: {0} {1} {2}".format(id,xPos,yPos))
         if(len(self.vacuumlocation)>id) :
             self.setVacuumLocation(id,xPos,yPos)
         else :

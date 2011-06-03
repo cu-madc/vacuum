@@ -88,6 +88,12 @@ class Router:
     def setWorld(self,world) :
 	self.agents[self.WORLD]['parent'] = world
 
+    def setChannel(self,type,channel) :
+	self.agents[type]['parent'] = channel
+
+    def getChannel(self,type) :
+	return(self.agents[type]['parent'])
+
 	
     def sendString(self,destination,message):
 	if('parent' in self.agents[destination]):

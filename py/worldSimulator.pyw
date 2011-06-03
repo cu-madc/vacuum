@@ -69,7 +69,7 @@ from Planner import Planner
 from SensorArray import SensorArray
 from GraphicalWorld import GraphicalWorld
 from Vacuum import Vacuum
-
+from Router import Router
 
 
 
@@ -103,8 +103,11 @@ plan.setChannel(chan)
 W.setPlanner(plan)
 W.setChannel(chan)
 
-command=Commander(chan); # Commander.spawnCommander()   #
-chan.setCommander(command)
+command= Commander.spawnCommander()   # Commander(chan)
+command.getChannel().setPlanner(plan)
+
+plan.getChannel().getRouter().setChannel(Router.COMMANDER,command.getChannel())
+
 sensor.setChannel(chan)
 chan.setSensor(sensor)
 
@@ -115,6 +118,7 @@ vacArray = []
 for i in range(numVacs) :
     vacuum = Vacuum(i,1.0)
     vacuum.setChannel(chan)
+    vacuum.getChannel().getRouter().setChannel(Router.COMMANDER,command.getChannel())
     vacArray.append(vacuum)
     pos = vacuum.getPosition()
     chan.addVacuum(vacuum,i,pos[0],pos[1])
