@@ -103,7 +103,7 @@ plan.setChannel(chan)
 W.setPlanner(plan)
 W.setChannel(chan)
 
-command=Commander(chan);
+command=Commander(chan); # Commander.spawnCommander()   #
 chan.setCommander(command)
 sensor.setChannel(chan)
 chan.setSensor(sensor)

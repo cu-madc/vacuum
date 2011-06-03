@@ -64,6 +64,7 @@ from numpy import *
 from numpy.linalg import *
 
 from World import World
+from Channel import Channel
 
 class Commander :
     
@@ -111,6 +112,13 @@ class Commander :
         self.channel.sendMoveOrderFromCommander2Vacuum(xord,yord,IDnum)
         self.channel.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
 
+
+    @staticmethod
+    def spawnCommander() :
+	channel = Channel()
+	commander = Commander(channel)
+	channel.setCommander(commander)
+	return(commander)
 
 
 
