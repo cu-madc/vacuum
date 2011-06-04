@@ -515,7 +515,8 @@ class Channel:
             # Pass the messageover the simulation network
             pass
         elif(self.sendMessage()) :
-            self.receiveXMLReportParseAndDecide(network.xml2Char())
+	    self.router.sendString(Router.PLANNER,network.xml2Char())
+            #self.receiveXMLReportParseAndDecide(network.xml2Char())
 
 
 
@@ -540,7 +541,8 @@ class Channel:
             # Pass the message over the simulation network
             pass
         elif(self.sendMessage()) :
-            self.receiveXMLReportParseAndDecide(orders.xml2Char())
+	    self.router.sendString(Router.PLANNER,orders.xml2Char())
+            #self.receiveXMLReportParseAndDecide(orders.xml2Char())
             
 
 
@@ -635,7 +637,8 @@ class Channel:
             # Send the message on the simulation plane.
             pass
         elif(self.sendMessage()) :
-            self.receiveXMLReportParseAndDecide(orders.xml2Char())
+	    self.router.sendString(Router.PLANNER,orders.xml2Char())
+            #self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
 
@@ -669,7 +672,8 @@ class Channel:
             pass
         else :
 	    #self.checkInfoType = True
-            self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
+	    self.router.sendString(Router.PLANNER,sensorData.xml2Char())
+            #self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
     ## sendWorldStatusToSensor
@@ -720,13 +724,14 @@ class Channel:
             pass
         else :
 	    #self.checkInfoType = True
-            self.receiveXMLReportParseAndDecide(update.xml2Char())
+	    self.router.sendString(Router.PLANNER,update.xml2Char())
+            #self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
     ## sendPlannerVacuumMovedPosition
     #
     # Routine to send the new position of a vacuum. This comes from a
-    # vacuum.
+    # vacuum and is sent to a planner.
     def sendPlannerVacuumMovedPosition(self,idnum,xpos,ypos) :
         #update = XMLMessageVaccumMovedReportToPlanner()
         update = XMLMessageVacuumIDPosBase()
@@ -740,7 +745,8 @@ class Channel:
             # Question: should this really be on the back plane?
             pass
         else :
-            self.receiveXMLReportParseAndDecide(update.xml2Char())
+	    self.router.sendString(Router.PLANNER,update.xml2Char())
+            #self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
     ## sendVacuumWorldTime

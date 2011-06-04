@@ -65,6 +65,7 @@ from numpy import *
 from numpy.linalg import *
 from World import World
 from SensorArray import SensorArray
+from Channel import Channel
 
 class Planner :
 
@@ -312,6 +313,15 @@ class Planner :
         #raw_input("Press Enter to continue...")
         self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord,id)
     
+
+
+    @staticmethod
+    def spawnPlanner(errGrowth,unnormalizeDirtRate,unnormalizeDirtSize,accuracy,N) :
+	channel = Channel()
+	planner = Planner(errGrowth,unnormalizeDirtRate,unnormalizeDirtSize,accuracy,N)
+	planner.setChannel(channel)
+	channel.setPlanner(planner)
+	return(planner)
 
 
 if (__name__ =='__main__') :
