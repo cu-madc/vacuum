@@ -357,6 +357,7 @@ class Channel:
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_STATUS) :
             if(self.sensor) :
                 # let the sensor know the world status.
+		#print("Channel.receiveXMLReportParseAndDecide - XMLParser.MESSAGE_WORLD_STATUS")
                 self.sensor.setArray(info.getMatrixFromArray())
     
 
@@ -364,6 +365,7 @@ class Channel:
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_WETNESS) :
             if(self.sensor) :
                 # Let the sensor know the wetness levels of the world.
+		#print("Channel.receiveXMLReportParseAndDecide - XMLParser.MESSAGE_WORLD_WETNESS")
                 self.sensor.setWet(info.getMatrixFromArray())
 
 
@@ -383,6 +385,7 @@ class Channel:
                 # Request that the sensor make a request to measure
                 # the world.
 		#print("asking sensor to measure.")
+		#print("Channel.receiveXMLReportParseAndDecide - XMLParser.MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR")
                 self.sensor.measure()
 
 
@@ -399,7 +402,7 @@ class Channel:
             if(self.planner) :
                 # Send the planner what the sensor things is the world
                 # wetness levels.
-		print("send planner wet levels")
+		#print("send planner wet levels")
                 self.planner.setWet(info.getMatrixFromArray())
 
 
@@ -413,7 +416,7 @@ class Channel:
 		if(item[0] == XMLMessageExternalParameter.DUST_RATE) :
 		    #print("dust rate: {0}".format(item[1]))
 		    if(self.planner) :
-			print("send planner dirt rate")
+			#print("send planner dirt rate")
 			self.planner.setUnnormalizedDirtRate(float(item[1]))
 
 		    if(self.world) :
@@ -421,7 +424,7 @@ class Channel:
 		    
 		elif(item[0] == XMLMessageExternalParameter.DUST_SIZE) :
 		    if(self.planner) :
-			print("send planner dirt size")
+			#print("send planner dirt size")
 			self.planner.setUnnormalizedDirtSize(float(item[1]))
 
 		    if(self.world) :
@@ -443,10 +446,11 @@ class Channel:
 			self.world.setGridSize(int(item[1]))
 
 		    if(self.sensor):
+			#print("Channel.receiveXMLReportParseAndDecide - XMLParser.GRID_SIZE")
 			self.sensor.setGridSize(int(item[1]))
 
 		    if(self.planner):
-			print("send planner grid size")
+			#print("send planner grid size")
 			self.planner.setGridSize(int(item[1]))
 		    
 		elif(item[0] == XMLMessageExternalParameter.NUMBER_OF_VACUUMS):
@@ -650,7 +654,8 @@ class Channel:
             pass
         else :
 	    #self.checkInfoType = True
-            self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
+	    self.router.sendString(Router.SENSORARRAY,sensorData.xml2Char())
+            #self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
     def sendStatusSensor2Planner(self,noisyView) :
@@ -678,7 +683,8 @@ class Channel:
             # Send the message on the back plane.
             pass
         else :
-            self.receiveXMLReportParseAndDecide(worldData.xml2Char())
+	    self.router.sendString(Router.SENSORARRAY,worldData.xml2Char())
+            #self.receiveXMLReportParseAndDecide(worldData.xml2Char())
 
 
 
@@ -693,7 +699,8 @@ class Channel:
             # Send the message on the back plane.
             pass
         else :
-            self.receiveXMLReportParseAndDecide(worldWetness.xml2Char())
+	    self.router.sendString(Router.SENSORARRAY,worldWetness.xml2Char())
+            #self.receiveXMLReportParseAndDecide(worldWetness.xml2Char())
 
 
 
