@@ -139,6 +139,8 @@ class Router:
 	if((destination == self.VACUUM) and
 	   (vacuumID>-1) and
 	   (vacuumID < len(self.vacuumArray))) :
+	    #print("Router.sendString: {0}".format(vacuumID))
+	    #self.channel.checkInfoType = True
 	    self.vacuumArray[vacuumID].receiveXMLReportParseAndDecide(message)
 	
 	elif('parent' in self.agents[destination]):

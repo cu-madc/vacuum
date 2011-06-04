@@ -777,6 +777,7 @@ class Channel:
             # Send the message on the back plane.
             pass
         else :
+	    #print("Channel.sendVacuumWorldTime - {0}".format(id))
 	    self.router.sendString(Router.VACUUM,newTime.xml2Char(),id)
             #self.receiveXMLReportParseAndDecide(newTime.xml2Char())
 
