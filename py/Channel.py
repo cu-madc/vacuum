@@ -63,7 +63,7 @@ from numpy import *
 from numpy.linalg import *
 
 from World import World
-from Vacuum import Vacuum
+#from Vacuum import Vacuum
 
 from Router import Router
 
@@ -127,6 +127,7 @@ class Channel:
         self.setCommander(commander)
 
 	self.router = Router(self)
+	self.vacuum = None
 
 
 
@@ -168,6 +169,12 @@ class Channel:
 
     def getRouter(self) :
 	return(self.router)
+
+    def setVacuum(self,vacuum) :
+	self.vacuum = vacuum
+
+    def getVacuum(self):
+	return(self.vacuum)
 
     def addVacuum(self,vacuum,id,xpos,ypos) :
 
@@ -283,8 +290,10 @@ class Channel:
             #print("sending report to vacuum for {0} - {1},{2}".format(
             #    info.getVacuumID(),pos[0],pos[1]))
 
-            if(vacuumID < len(self.vacuumArray)) :
-                self.vacuumArray[vacuumID].moveord(pos[0],pos[1])
+            #if(vacuumID < len(self.vacuumArray)) :
+	    if(self.vacuum) :
+		self.vacuum.moveord(pos[0],pos[1])
+                #self.vacuumArray[vacuumID].moveord(pos[0],pos[1])
 
 
         elif(info.getMyInformationType() ==
@@ -307,8 +316,10 @@ class Channel:
             #print("sending report to vacuum for {0} - {1},{2}".format(
             #    info.getVacuumID(),pos[0],pos[1]))
 
-            if(vacuumID < len(self.vacuumArray)) :
-                self.vacuumArray[vacuumID].timeStep(time,info.getMatrixFromArray())
+            #if(vacuumID < len(self.vacuumArray)) :
+	    if(self.vacuum) :
+		self.vacuum.timeStep(time,info.getMatrixFromArray())
+                #self.vacuumArray[vacuumID].timeStep(time,info.getMatrixFromArray())
 
 
         elif(info.getMyInformationType() ==
@@ -589,7 +600,8 @@ class Channel:
             # Send the message over the simulation network
             pass
         elif(self.sendMessage()) :
-            self.receiveXMLReportParseAndDecide(orders.xml2Char())
+	    self.router.sendString(Router.VACUUM,orders.xml2Char(),vacuumID)
+            #self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
 
@@ -637,7 +649,8 @@ class Channel:
             # Send the message on the simulation plane.
             pass
         elif(self.sendMessage()) :
-	    self.router.sendString(Router.PLANNER,orders.xml2Char())
+	    self.router.sendString(Router.VACUUM,orders.xml2Char(),IDnum)
+	    #self.router.sendString(Router.PLANNER,orders.xml2Char())
             #self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
@@ -764,7 +777,8 @@ class Channel:
             # Send the message on the back plane.
             pass
         else :
-            self.receiveXMLReportParseAndDecide(newTime.xml2Char())
+	    self.router.sendString(Router.VACUUM,newTime.xml2Char(),id)
+            #self.receiveXMLReportParseAndDecide(newTime.xml2Char())
 
 
     ## sendVacuumWorldExpenditure
@@ -780,7 +794,8 @@ class Channel:
             # Send the message on the back plane.
             pass
         else :
-            self.receiveXMLReportParseAndDecide(newExpenditure.xml2Char())
+	    self.router.sendString(Router.VACUUM,newExpenditure.xml2Char(),id)
+            #self.receiveXMLReportParseAndDecide(newExpenditure.xml2Char())
 
 
     ## sendWorldCleanedGrid
@@ -799,7 +814,8 @@ class Channel:
             # Send the message on the back plane
             pass
         else :
-            self.receiveXMLReportParseAndDecide(update.xml2Char())
+	    self.router.sendString(Router.VACUUM,update.xml2Char(),idnum)
+            #self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
 

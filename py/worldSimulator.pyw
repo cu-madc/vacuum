@@ -98,8 +98,6 @@ chan = Channel(W);   # TODO register the channel to the world
 
 # create the commander and planner
 plan=Planner.spawnPlanner(r*s/float(N*N),r,s,accuracy,N)
-#chan.setPlanner(plan)
-#plan.setChannel(chan)
 
 W.setPlanner(plan)
 W.setChannel(chan)
@@ -114,22 +112,24 @@ plan.getChannel().getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())
 sensor.getChannel().getRouter().setChannel(Router.COMMANDER,command.getChannel())
 sensor.getChannel().getRouter().setChannel(Router.PLANNER,plan.getChannel())
 
-#sensor.setChannel(chan)
-#chan.setSensor(sensor)
-
 
 # Create vacuums
 numVacs=3
 vacArray = []
 for i in range(numVacs) :
-    vacuum = Vacuum(i,1.0)
-    vacuum.setChannel(chan)
+    vacuum = Vacuum.spawnVacuum(i,1.0)
     vacuum.getChannel().getRouter().setChannel(Router.COMMANDER,command.getChannel())
     vacuum.getChannel().getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())
     vacuum.getChannel().getRouter().setChannel(Router.PLANNER,plan.getChannel())
     vacArray.append(vacuum)
     pos = vacuum.getPosition()
-    chan.addVacuum(vacuum,i,pos[0],pos[1])
+    #chan.addVacuum(vacuum,i,pos[0],pos[1])
+    
+    plan.getChannel().getRouter().addVacuum(vacuum.getChannel(),i)
+    sensor.getChannel().getRouter().addVacuum(vacuum.getChannel(),i)
+    command.getChannel().getRouter().addVacuum(vacuum.getChannel(),i)
+    vacuum.getChannel().sendPlannerVacuumMovedPosition(i,pos[0],pos[1])
+
     #print("going to add vacuum {0}".format(i))
     W.addVacuum(vacuum,i+1)
 

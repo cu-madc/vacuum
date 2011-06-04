@@ -62,6 +62,7 @@
 from numpy import *
 from numpy.linalg import *
 
+from Channel import Channel
 
 class Vacuum : 
     # robot vaccum object
@@ -249,7 +250,15 @@ class Vacuum :
                     # assume world will dry, then 8 more time units to complete cleaning
                     self.timeDone=self.time+self.timeToClean 
                     
-            
+
+    @staticmethod
+    def spawnVacuum(self,IDnum,currentTime=0.0,channel=None) :
+	channel = Channel()
+	vacuum = Vacuum(IDnum,currentTime,channel)
+	vacuum.setChannel(channel)
+	channel.setVacuum(vacuum)
+	return(vacuum)
+
     
     
 if (__name__ =='__main__') :

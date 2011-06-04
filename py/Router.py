@@ -71,6 +71,7 @@ class Router:
     def __init__(self,channel) :
 	self.channel = channel
 	self.agents = [dict(),dict(),dict(),dict(),dict()]
+	self.vacuumArray = []     # array of object handles
 
 
     def setCommander(self,commander) :
@@ -94,9 +95,55 @@ class Router:
     def getChannel(self,type) :
 	return(self.agents[type]['parent'])
 
+
+    def addVacuum(self,vacuum,id) :
+
+	for definedVacuum in self.vacuumArray :
+	    # Check to see if this vacuum is already defined. We can
+	    # get into this routine from a variety of places. It might
+	    # be possible to have already called this routine.
+	    if(vacuum == definedVacuum) :
+		#print("Found this one...")
+		return
+
+        while(id>=len(self.vacuumArray)) :
+            # There are not enough vacuum objects defined. Create
+            # place holders.
+            self.vacuumArray.append(None)
+        self.vacuumArray[id] = vacuum
+
+
+    def setNumberVacuums(self,number) :
+	# Routine to set the number of vacuums that are being tracked.
+	if(number > len(self.vacuumArray)) :
+	    # There are more vacuums to be used than currently
+	    # defined. Add the extras to the list.
+	    for i in range(number-len(self.vacuumArray)):
+		#vacuum = Vacuum(len(self.vacuumArray))
+		self.addVacuum(None,len(self.vacuumArray))
+
+	elif (number < len(self.vacuumArray)) :
+	    # Need to have fewer vacuums than what are currently
+	    # defined. Delete the extras.
+	    while(len(self.vacuumArray)>number) :
+		vacuum = self.vacuumArray.pop()
+
+		# TODO - this needs to be updated somewhere.... The world is not updating now!
+		#if (self.world):
+		#    self.world.deleteVacuum(vacuum)
+		    
+
 	
-    def sendString(self,destination,message):
-	if('parent' in self.agents[destination]):
+    def sendString(self,destination,message,vacuumID=-1):
+
+	if((destination == self.VACUUM) and
+	   (vacuumID>-1) and
+	   (vacuumID < len(self.vacuumArray))) :
+	    self.vacuumArray[vacuumID].receiveXMLReportParseAndDecide(message)
+	
+	elif('parent' in self.agents[destination]):
 	    if(self.agents[destination]['parent']) :
 		self.agents[destination]['parent'].receiveXMLReportParseAndDecide(message)
-	
+
+
+
