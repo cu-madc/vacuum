@@ -125,13 +125,17 @@ from XML.XMLMessageVacuumAddExpenditureWorld import \
 from XML.XMLMessageVacuumCleanWorld import \
      XMLMessageVacuumCleanWorld
 
+## Channel
+#
+# Creates a channel, which is a medium through which simulated agents communicate.
+#
+# This channel uses local function calls, not sockets, for communication.
 class Channel:
 
+    # The following two must be set to False. If you wish to use TCP sockets, you
+    # should use SocketChannel and not Channel. The Princess is not here. Go away.
     sendOverTCP = False # Send XML over TCP?  If not, uses local function calls
     sendBackplaneOverTCP = False # Send backplane data over TCP? If not, use local calls
-    acceptIncomingConnections = False # Start servers to receive XML over TCP? 
-    SERVERS_DETAILS = [("localhost",9999)] # Array of servers to start [(host,port), ...]
-    # Each server corresponds to a single simulated agent (commander, planner, etc.)
 
     def __init__(self,world=None,vacuums=[],sensor=None,planner=None,commander=None) :
 
@@ -146,124 +150,6 @@ class Channel:
         self.setSensor(sensor)
         self.setPlanner(planner)
         self.setCommander(commander)
-
-        if (self.acceptIncomingConnections) :
-            from comm import Comm
-            import threading
-            import SocketServer
-            self.myComm = Comm()
-            class MyTCPHandler(SocketServer.BaseRequestHandler):
-                # The RequestHandler class for our server.
-                # It is instantiated once per connection to the server, and must
-                # override the handle() method to implement communication to the
-                # client.
-                def handle(self):
-                    # self.request is the TCP socket connected to the client
-                    message = self.server.myParent.myComm.readChunk(self.request)
-                    self.server.myParent.receiveXMLReportParseAndDecide(message)
-                    #print "Message dispatched!  Length: ",len(message) # DEBUG 
-            class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
-                def setParentClass(self,myParent):
-                    self.myParent = myParent
-
-            # self.servers = []
-
-            # Create and activate server; will keep running until interrupted by Ctrl-C
-            for i in self.SERVERS_DETAILS :
-                server = ThreadedTCPServer((i[0], i[1]), MyTCPHandler)
-                server.setParentClass(self)
-                # Start a thread with the server -- that thread will then start one
-                # more thread for each request
-                server_thread = threading.Thread(target=server.serve_forever)
-                # Exit the server thread when the main thread terminates
-                server_thread.setDaemon(True)
-                server_thread.start()
-                # self.servers.append(server)
-
-        # initialize socket networking functionality, if going to be used
-        if(self.sendOverTCP) :
-            from comm import Comm    # import our variable-length string library
-            import socket         # import socket network communication library
-            self.myComm = Comm()  # instantiate variable-length string generator
-            class socketClass:
-                def __init__(self):
-                    Commander2Vacuums = None
-                    Commander2Planner = None
-                    Planner2Commander = None
-                    Vacuums2Commander = None
-            class hostDataClass:
-                def __init__(self):
-                    Commander2Vacuums = None
-                    Commander2Planner = None
-                    Planner2Commander = None
-                    Vacuums2Commander = None
-            self.sockets = socketClass()
-            self.hosts = hostDataClass()
-
-    if (sendOverTCP):
-        # the following function is called each time we wish to send a communication 
-        # from current agent to a remote agent, in order to either establish the 
-        # initial socket connection (or reestablish it?)
-        def ensureSocketConnected(self,s,hostTuple) :
-            import socket
-            try:
-                s.connect((hostTuple[0],hostTuple[1]))
-                return False
-            except socket.error,(value,message):
-                if value == 106:  # error 106 is fine (it means we're already connected)
-                    pass
-                else:
-                    raise   
-            return True
-        # the following function sends message over socket in our var len string format
-        def sendMessageOverSocket(self,s,hostTuple,message) :
-            import socket
-            mySocket = socket.socket()
-            mySocket.connect((hostTuple[0],hostTuple[1]))
-            mySocket.send(self.myComm.makeChunk(message))
-            mySocket.close()
-        def OLDsendMessageOverSocket(self,s,hostTuple,message) :
-            import socket
-            import time # DEBUG
-            #print "Sending mess!  Length: ",len(message)," To:",hostTuple # DEBUG
-            attempts = 0
-            while attempts < 5:
-                try:
-                    attempts += 1
-                    if (self.ensureSocketConnected(s,hostTuple)):
-                        print "Host",hostTuple,"was connected to" # DEBUG
-                    else:
-                        print "Host",hostTuple,"was not connected to" # DEBUG
-                        time.sleep(1) # DEBUG
-                    #time.sleep(1) # DEBUG
-                    #s.send(self.myComm.makeChunk(message))
-                    print len(message) # DEBUG
-                    #s.shutdown(2) # DEBUG
-                except socket.error,(value,emessage):
-                    print "Socket Error: ",value,emessage," Attempt: ",attempts," Length: ",len(message)," To:",hostTuple # DEBUG
-                    time.sleep(1) # DEBUG
-                    raise # DEBUG
-                    continue
-            #print "Message sent!  Length: ",len(message) # DEBUG
-        # the following function is used to set host tuples and init sockets for TCP
-        def initializeSockets(self,Commander2Vacuums=[], Vacuums2Commander=[], 
-                              Commander2Planner=None, Planner2Commander=None):
-            import socket
-            self.hosts.Commander2Vacuums = Commander2Vacuums
-            self.hosts.Vacuums2Commander = Vacuums2Commander
-            self.hosts.Commander2Planner = Commander2Planner
-            self.hosts.Planner2Commander = Planner2Commander
-            self.sockets.Commander2Vacuums = []
-            for i in self.hosts.Commander2Vacuums:
-                self.sockets.Commander2Vacuums.append(socket.socket())
-            self.sockets.Vacuums2Commander = []
-            for i in self.hosts.Vacuums2Commander:
-                self.sockets.Vacuums2Commander.append(socket.socket())
-            self.sockets.Commander2Planner = socket.socket()
-            self.sockets.Planner2Commander = socket.socket()
-        # the following function is shorthand for creating host tuples
-        def genHostTuple(hostName,hostPort):
-            return (hostName,hostPort)
 
     def setWorking(self,value) :
         self.isWorking = value
@@ -323,7 +209,6 @@ class Channel:
         info = dif.determineXMLInformation(xmlString)
         #print("Got information: {0}".format(info.getMyInformationType()))
 
-
         if(info.getMyInformationType() ==
            XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
             
@@ -332,8 +217,6 @@ class Channel:
                 #print("sending report to commander for {0} - {1},{2}".format(
                 #    info.getVacuumID(),pos[0],pos[1]))
                 self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
-
-
 
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
@@ -344,8 +227,6 @@ class Channel:
                 #    info.getVacuumID(),pos[0],pos[1]))
                 self.planner.recommendOrder(info.getVacuumID(),pos[0],pos[1])
 
-
-
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER) :
             
@@ -354,8 +235,6 @@ class Channel:
                 #print("sending report to commander for {0} - {1},{2}".format(
                 #    info.getVacuumID(),pos[0],pos[1]))
                 self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
-
-
 
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
@@ -368,7 +247,6 @@ class Channel:
             if(vacuumID < len(self.vacuumArray)) :
                 self.vacuumArray[vacuumID].moveord(pos[0],pos[1])
 
-
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID) :
 
@@ -377,9 +255,7 @@ class Channel:
                 vacuumID = info.getVacuumID()
                #print("sending cleaning report to world from vacuum for {0} - {1},{2}".format(
                #    info.getVacuumID(),pos[0],pos[1]))
-
                 self.world.clean(pos[0],pos[1])
-
 
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_WORLD_VACUUM_CURRENT_TIME) :
@@ -392,7 +268,6 @@ class Channel:
             if(vacuumID < len(self.vacuumArray)) :
                 self.vacuumArray[vacuumID].timeStep(time,info.getMatrixFromArray())
 
-
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_VACUUM_WORLD_ADD_EXPENDITURE) :
 
@@ -401,9 +276,7 @@ class Channel:
                 vacuumID = info.getVacuumID()
                 #print("sending expenditure report to world for {0} - {1}".format(
                 #    info.getVacuumID(),expenditure))
-
                 self.world.addExpenditure(expenditure)
-
 
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
@@ -414,7 +287,6 @@ class Channel:
                 #    info.getVacuumID(),pos[0],pos[1]))
                 self.planner.receiveOrder(info.getVacuumID(),pos[0],pos[1])
 
-
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER) :
             
@@ -423,8 +295,6 @@ class Channel:
                 #print("sending vacuum position to planner for {0} - {1},{2}".format(
                 #    info.getVacuumID(),pos[0],pos[1]))
                 self.planner.setVacuumLocation(info.getVacuumID(),pos[0],pos[1])
-
-
 
         elif(info.getMyInformationType() ==
              XMLParser.MESSAGE_GET_REPORT_VACUUM_COMMANDER) :
@@ -435,43 +305,29 @@ class Channel:
                 #    info.getVacuumID(),pos[0],pos[1],info.getStatus()))
                 self.commander.getReport(pos[0],pos[1],info.getStatus(),info.getVacuumID())
 
-
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_STATUS) :
             if(self.sensor) :
                 self.sensor.setArray(info.getMatrixFromArray())
-    
-
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_WETNESS) :
             if(self.sensor) :
                 self.sensor.setWet(info.getMatrixFromArray())
 
-
-
         elif(info.getMyInformationType() == XMLParser.MESSAGE_UPDATE_WORLD_PLANNER) :
             if(self.planner):
                 self.planner.updateView()
-
-
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR) :
             if(self.sensor) :
                 self.sensor.measure()
 
-
-
         elif(info.getMyInformationType() == XMLParser.MESSAGE_STATUS_SENSOR_PLANNER) :
             if(self.planner) :
                 self.planner.setDirtLevels(info.getMatrixFromArray())
 
-
-
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WETNESS_SENSOR_PLANNER) :
             if(self.planner) :
                 self.planner.setWet(info.getMatrixFromArray())
-
-
-
 
 
     ## sendVacuumReportFromCommander2Planner
@@ -492,13 +348,10 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Pass the messageover the simulation network
-            self.sendMessageOverSocket(self.sockets.Commander2Planner,
-                                       self.hosts.Commander2Planner,
+            self.sendMessageOverSocket(self.hosts.Commander2Planner,
                                        network.xml2Char())
         elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(network.xml2Char())
-
-
 
 
     ## sendRecommendOrderFromCommander2Planner
@@ -516,11 +369,9 @@ class Channel:
         orders.createRootNode()
         orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
         
-
         if(self.sendOverTCP) :
             # Pass the message over the simulation network
-            self.sendMessageOverSocket(self.sockets.Commander2Planner,
-                                       self.hosts.Commander2Planner,
+            self.sendMessageOverSocket(self.hosts.Commander2Planner,
                                        orders.xml2Char())
         elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
@@ -544,13 +395,10 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Send the message over the simulation network
-            self.sendMessageOverSocket(self.sockets.Planner2Commander,
-                                       self.hosts.Planner2Commander,
+            self.sendMessageOverSocket(self.hosts.Planner2Commander,
                                        orders.xml2Char())
         elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
-
-
 
 
     ## sendMoveOrderFromCommander2Vacuum
@@ -567,13 +415,10 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Send the message over the simulation network
-            self.sendMessageOverSocket(self.sockets.Commander2Vacuums[vacuumID],
-                                       self.hosts.Commander2Vacuums[vacuumID],
+            self.sendMessageOverSocket(self.hosts.Commander2Vacuums[vacuumID],
                                        orders.xml2Char())
         elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
-
-
 
 
     ## sendReportFromVacuum2Commander
@@ -592,12 +437,10 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Send the message over the simulation network.
-            self.sendMessageOverSocket(self.sockets.Vacuums2Commander[IDnum],
-                                       self.hosts.Vacuums2Commander[IDnum],
+            self.sendMessageOverSocket(self.hosts.Vacuums2Commander[IDnum],
                                        report.xml2Char())
         elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(report.xml2Char())
-
 
 
     ## sendMoveOrderFromCommander2Planner
@@ -614,12 +457,10 @@ class Channel:
 
         if(self.sendOverTCP) :
             # Send the message on the simulation plane.
-            self.sendMessageOverSocket(self.sockets.Commander2Planner,
-                                       self.hosts.Commander2Planner,
+            self.sendMessageOverSocket(self.hosts.Commander2Planner,
                                        orders.xml2Char())
         elif(self.sendMessage()) :
             self.receiveXMLReportParseAndDecide(orders.xml2Char())
-
 
 
     def sendMeasuredFromPlanner2Sensor(self) :
@@ -740,16 +581,7 @@ if (__name__ =='__main__') :
 #    channel1 = Channel(world)
 #    channel2 = Channel(world)
 
-    chan = Channel(world)
-    chan.initializeSockets((("127.0.0.1",9999,"C2V1"),
-                            ("127.0.0.1",9999,"C2V2"),
-                            ("127.0.0.1",9999,"C2V3")),
-                           (("127.0.0.1",9999,"V12C"),
-                            ("127.0.0.1",9999,"V22C"),
-                            ("127.0.0.1",9999,"V32C")),
-                           ("127.0.0.1",9999,"C2P"),
-                           ("127.0.0.1",9999,"P2C"))
-    
+    chan = Channel(world)    
 
     def silly(a, b) :
         print("type: {0}\n{1}".format(type(a),b))
