@@ -237,6 +237,7 @@ class  World :
         self.channel.sendPlannerUpdateRequest()
 
         for vacuum in range(self.numberVacuums):
+	    #print("Sending to vacuum {0}".format(vacuum))
             self.channel.sendVacuumWorldTime(T,vacuum,self.Moisture)
             
         self.time=T;

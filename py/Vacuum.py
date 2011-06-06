@@ -69,7 +69,7 @@ class Vacuum :
 
 
     def __init__(self,IDnum,currentTime=0.0,channel=None) : #class constructor
-            
+
         self.xPos   = 0
         self.yPos   = 0
         self.setStatus(3)                     # 1 - moving, 2-cleaning, 3-waiting, 4-repairing
@@ -126,6 +126,7 @@ class Vacuum :
 
     def setID(self,value) :
         self.IDnum = value
+	#print("Setting id: {0}-{1}".format(self.IDnum,value))
 
     def setStatus(self,value) :
         self.status = value
@@ -209,7 +210,7 @@ class Vacuum :
             
 
         self.time=time;
-        #print("time: {0} status: {1} queue: {2} ".format(t,self.status,self.queue))
+        #print("time: {0} ID: {1} status: {2} queue: {3} ".format(time,self.IDnum,self.status,self.queue))
             
         if (self.time>=self.timeDone) :
             # Vacuum operation is complete
@@ -252,8 +253,9 @@ class Vacuum :
                     
 
     @staticmethod
-    def spawnVacuum(self,IDnum,currentTime=0.0,channel=None) :
-	channel = Channel()
+    def spawnVacuum(IDnum,currentTime=0.0,channel=None) :
+	if(not channel) :
+	    channel = Channel()
 	vacuum = Vacuum(IDnum,currentTime,channel)
 	vacuum.setChannel(channel)
 	channel.setVacuum(vacuum)

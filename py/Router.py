@@ -68,6 +68,8 @@ class Router:
 	       VACUUM, \
 	       WORLD = range(5)
 
+    DEBUG = False
+
     def __init__(self,channel) :
 	self.channel = channel
 	self.agents = [dict(),dict(),dict(),dict(),dict()]
@@ -78,6 +80,8 @@ class Router:
 	self.agents[self.COMMANDER]['parent'] = commander
 
     def setPlanner(self,planner) :
+	if(self.DEBUG) :
+	    print("Setting planner: {0}".format(planner))
 	self.agents[self.PLANNER]['parent'] = planner
 
     def setSensorArray(self,sensorArray) :
@@ -90,10 +94,19 @@ class Router:
 	self.agents[self.WORLD]['parent'] = world
 
     def setChannel(self,type,channel) :
+	if(self.DEBUG) :
+	    print("Setting channel: {0}-{1}".format(type,channel))
+
 	self.agents[type]['parent'] = channel
 
     def getChannel(self,type) :
 	return(self.agents[type]['parent'])
+
+    def setDebug(self,value) :
+	self.DEBUG = value
+
+    def getDebug(self) :
+	return(self.DEBUG)
 
 
     def addVacuum(self,vacuum,id) :
@@ -134,17 +147,21 @@ class Router:
 		    
 
 	
-    def sendString(self,destination,message,vacuumID=-1):
+    def sendString(self,destination,message,vacuumID=-1,debug=False):
 
 	if((destination == self.VACUUM) and
 	   (vacuumID>-1) and
 	   (vacuumID < len(self.vacuumArray))) :
-	    #print("Router.sendString: {0}".format(vacuumID))
-	    #self.channel.checkInfoType = True
+	    if(debug) :
+		print("Router.sendString: {0}".format(vacuumID))
+		self.vacuumArray[vacuumID].checkInfoType = True
+
 	    self.vacuumArray[vacuumID].receiveXMLReportParseAndDecide(message)
 	
 	elif('parent' in self.agents[destination]):
 	    if(self.agents[destination]['parent']) :
+		if(debug) :
+		    self.agents[destination]['parent'].checkInfoType = True
 		self.agents[destination]['parent'].receiveXMLReportParseAndDecide(message)
 
 

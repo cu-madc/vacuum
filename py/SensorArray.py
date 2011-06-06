@@ -154,7 +154,7 @@ class SensorArray :
             self.Wet = self.Wet>0;
             wetted=self.Wet;
 	    # TODO - why is this sending the information back to itself???
-            self.channel.sendWorldWetnessToSensor(wetted)
+            # self.channel.sendWorldWetnessToSensor(wetted)
 
             
             #return([noisyView,wetted])

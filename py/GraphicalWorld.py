@@ -97,7 +97,7 @@ class  GraphicalWorld (World,Tk) :
     def getPlanner(self) :
         return(self.planner)
 
-    def addVacuum(self,vacuum,debug=0) :
+    def addVacuum(self,vacuum,debug=False) :
         # routine to add a vacuum to the list of vacuums tracked by
         # the world. This overrides the method of the same name in the
         # base class.

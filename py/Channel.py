@@ -110,6 +110,7 @@ class Channel:
 
     sendOverTCP = False
     checkInfoType = False
+    DEBUG = False
     
     
     def __init__(self,world=None,vacuums=[],sensor=None,planner=None,commander=None) :
@@ -175,6 +176,13 @@ class Channel:
 
     def getVacuum(self):
 	return(self.vacuum)
+
+    def setDebug(self,value) :
+	self.DEBUG = value
+	self.router.setDebug(value)
+
+    def getDebug(self) :
+	return(self.DEBUG)
 
     def addVacuum(self,vacuum,id,xpos,ypos) :
 
@@ -313,11 +321,11 @@ class Channel:
             
             time = info.getTime()
             vacuumID = info.getVacuumID()
-            #print("sending report to vacuum for {0} - {1},{2}".format(
-            #    info.getVacuumID(),pos[0],pos[1]))
+            #print("sending report to vacuum for {0}".format(vacuumID))
 
             #if(vacuumID < len(self.vacuumArray)) :
 	    if(self.vacuum) :
+		#print("sending to vacuum.")
 		self.vacuum.timeStep(time,info.getMatrixFromArray())
                 #self.vacuumArray[vacuumID].timeStep(time,info.getMatrixFromArray())
 
@@ -366,9 +374,11 @@ class Channel:
 
 
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_STATUS) :
+	    #print("Send world status to the sensor.")
             if(self.sensor) :
+		#print("Channel.receiveXMLReportParseAndDecide - sending status.")
                 # let the sensor know the world status.
-		#print("Channel.receiveXMLReportParseAndDecide - XMLParser.MESSAGE_WORLD_STATUS")
+		# print("Channel.receiveXMLReportParseAndDecide-XMLParser.MESSAGE_WORLD_STATUS")
                 self.sensor.setArray(info.getMatrixFromArray())
     
 
@@ -670,7 +680,7 @@ class Channel:
             pass
         else :
 	    #self.checkInfoType = True
-	    self.router.sendString(Router.SENSORARRAY,sensorData.xml2Char())
+	    self.router.sendString(Router.SENSORARRAY,sensorData.xml2Char()) #,-1,True)
             #self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
@@ -685,7 +695,7 @@ class Channel:
             pass
         else :
 	    #self.checkInfoType = True
-	    self.router.sendString(Router.PLANNER,sensorData.xml2Char())
+	    self.router.sendString(Router.PLANNER,sensorData.xml2Char()) #,-1,True)
             #self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
@@ -728,7 +738,7 @@ class Channel:
     # necessary during a world time step.
     def sendPlannerUpdateRequest(self) :
         update = XMLMessageUpdateWorldPlanner()
-	#print("Channel.sendMPlannerUpdateRequest: {0}".format(update.getMyInformationType()))
+	#print("Channel.sendPlannerUpdateRequest: {0}".format(update.getMyInformationType()))
         update.createRootNode()
 
         if(self.sendOverTCP) :
@@ -737,7 +747,7 @@ class Channel:
             pass
         else :
 	    #self.checkInfoType = True
-	    self.router.sendString(Router.PLANNER,update.xml2Char())
+	    self.router.sendString(Router.PLANNER,update.xml2Char()) #,-1,True)
             #self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 

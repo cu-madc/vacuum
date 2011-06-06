@@ -115,15 +115,19 @@ sensor.getChannel().getRouter().setChannel(Router.COMMANDER,command.getChannel()
 sensor.getChannel().getRouter().setChannel(Router.PLANNER,plan.getChannel())
 sensor.getChannel().getRouter().setChannel(Router.WORLD,W.getChannel())
 
+#chan.setDebug(True)
 chan.getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())
 chan.getRouter().setChannel(Router.COMMANDER,command.getChannel())
 chan.getRouter().setChannel(Router.PLANNER,plan.getChannel())
+chan.setPlanner(plan)
+
 
 # Create vacuums
 numVacs=3
 vacArray = []
 for i in range(numVacs) :
-    vacuum = Vacuum.spawnVacuum(i,1.0)
+    #print("Initializing vacuum {0}".format(i))
+    vacuum = Vacuum.spawnVacuum(i,0)
     vacuum.getChannel().getRouter().setChannel(Router.COMMANDER,command.getChannel())
     vacuum.getChannel().getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())
     vacuum.getChannel().getRouter().setChannel(Router.PLANNER,plan.getChannel())
@@ -138,7 +142,7 @@ for i in range(numVacs) :
     vacuum.getChannel().sendPlannerVacuumMovedPosition(i,pos[0],pos[1])
 
     #print("going to add vacuum {0}".format(i))
-    W.addVacuum(vacuum,i+1)
+    W.addVacuum(vacuum)
 
 
 #W.printVacuumInfo(0)
