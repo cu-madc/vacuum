@@ -108,7 +108,6 @@ from XML.XMLMessageVacuumAddExpenditureWorld import \
 
 class Channel:
 
-    sendOverTCP = False
     checkInfoType = False
     DEBUG = False
     
@@ -532,10 +531,7 @@ class Channel:
         network.createRootNode()
         network.specifyInformationType(XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
 
-        if(self.sendOverTCP) :
-            # Pass the messageover the simulation network
-            pass
-        elif(self.sendMessage()) :
+	if(self.sendMessage()) :
 	    self.router.sendString(Router.PLANNER,network.xml2Char())
             #self.receiveXMLReportParseAndDecide(network.xml2Char())
 
@@ -558,10 +554,7 @@ class Channel:
         orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
         
 
-        if(self.sendOverTCP) :
-            # Pass the message over the simulation network
-            pass
-        elif(self.sendMessage()) :
+	if(self.sendMessage()) :
 	    self.router.sendString(Router.PLANNER,orders.xml2Char())
             #self.receiveXMLReportParseAndDecide(orders.xml2Char())
             
@@ -582,10 +575,7 @@ class Channel:
         orders.createRootNode()
         orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
 
-        if(self.sendOverTCP) :
-            # Send the message over the simulation network
-            pass
-        elif(self.sendMessage()) :
+	if(self.sendMessage()) :
 	    self.router.sendString(Router.COMMANDER,orders.xml2Char())
             #self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
@@ -606,10 +596,7 @@ class Channel:
         orders.createRootNode()
         orders.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM)
 
-        if(self.sendOverTCP) :
-            # Send the message over the simulation network
-            pass
-        elif(self.sendMessage()) :
+	if(self.sendMessage()) :
 	    self.router.sendString(Router.VACUUM,orders.xml2Char(),vacuumID)
             #self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
@@ -630,10 +617,7 @@ class Channel:
         report.setStatus(status)
         report.createRootNode()
 
-        if(self.sendOverTCP) :
-            # Send the message over the simulation network.
-            pass
-        elif(self.sendMessage()) :
+	if(self.sendMessage()) :
 	    #self.checkInfoType = True
 	    #print("sending vacuum to commander")
 	    self.router.sendString(Router.COMMANDER,report.xml2Char())
@@ -655,10 +639,7 @@ class Channel:
         orders.createRootNode()
         orders.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
 
-        if(self.sendOverTCP) :
-            # Send the message on the simulation plane.
-            pass
-        elif(self.sendMessage()) :
+	if(self.sendMessage()) :
 	    self.router.sendString(Router.VACUUM,orders.xml2Char(),IDnum)
 	    #self.router.sendString(Router.PLANNER,orders.xml2Char())
             #self.receiveXMLReportParseAndDecide(orders.xml2Char())
@@ -674,14 +655,9 @@ class Channel:
 	#print("Channel.sendMeasuredFromPlanner2Sensor: {0}".format(sensorData.getMyInformationType()))
         sensorData.createRootNode()
 
-        if(self.sendOverTCP) :
-            # Send the message on the back plane
-            # Question: should it really be on the back plane?
-            pass
-        else :
-	    #self.checkInfoType = True
-	    self.router.sendString(Router.SENSORARRAY,sensorData.xml2Char()) #,-1,True)
-            #self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
+	#self.checkInfoType = True
+	self.router.sendString(Router.SENSORARRAY,sensorData.xml2Char()) #,-1,True)
+	#self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
     def sendStatusSensor2Planner(self,noisyView) :
@@ -689,14 +665,9 @@ class Channel:
 	#print("Channel.sendStatusSensor2Planner: {0}".format(sensorData.getMyInformationType()))
         sensorData.createRootNode()
 
-        if(self.sendOverTCP) :
-            # Send the message on the back plane.
-            # Question: should it really be on the back plane?
-            pass
-        else :
-	    #self.checkInfoType = True
-	    self.router.sendString(Router.PLANNER,sensorData.xml2Char()) #,-1,True)
-            #self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
+	#self.checkInfoType = True
+	self.router.sendString(Router.PLANNER,sensorData.xml2Char()) #,-1,True)
+	#self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
     ## sendWorldStatusToSensor
@@ -706,12 +677,8 @@ class Channel:
         worldData = XMLMessageWorldStatus(A)
         worldData.createRootNode()
 
-        if(self.sendOverTCP) :
-            # Send the message on the back plane.
-            pass
-        else :
-	    self.router.sendString(Router.SENSORARRAY,worldData.xml2Char())
-            #self.receiveXMLReportParseAndDecide(worldData.xml2Char())
+	self.router.sendString(Router.SENSORARRAY,worldData.xml2Char())
+	#self.receiveXMLReportParseAndDecide(worldData.xml2Char())
 
 
 
@@ -722,12 +689,8 @@ class Channel:
         worldWetness = XMLMessageWorldWetness(Moisture)
         worldWetness.createRootNode()
 
-        if(self.sendOverTCP) :
-            # Send the message on the back plane.
-            pass
-        else :
-	    self.router.sendString(Router.SENSORARRAY,worldWetness.xml2Char())
-            #self.receiveXMLReportParseAndDecide(worldWetness.xml2Char())
+	self.router.sendString(Router.SENSORARRAY,worldWetness.xml2Char())
+	#self.receiveXMLReportParseAndDecide(worldWetness.xml2Char())
 
 
 
@@ -741,14 +704,9 @@ class Channel:
 	#print("Channel.sendPlannerUpdateRequest: {0}".format(update.getMyInformationType()))
         update.createRootNode()
 
-        if(self.sendOverTCP) :
-            # Send the message on the back plane.
-            # Question: should this really be on the back plane?
-            pass
-        else :
-	    #self.checkInfoType = True
-	    self.router.sendString(Router.PLANNER,update.xml2Char()) #,-1,True)
-            #self.receiveXMLReportParseAndDecide(update.xml2Char())
+	#self.checkInfoType = True
+	self.router.sendString(Router.PLANNER,update.xml2Char()) #,-1,True)
+	#self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
     ## sendPlannerVacuumMovedPosition
@@ -763,13 +721,8 @@ class Channel:
         update.createRootNode()
         update.specifyInformationType(XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER)
 
-        if(self.sendOverTCP) :
-            # Send the message on the back plane.
-            # Question: should this really be on the back plane?
-            pass
-        else :
-	    self.router.sendString(Router.PLANNER,update.xml2Char())
-            #self.receiveXMLReportParseAndDecide(update.xml2Char())
+	self.router.sendString(Router.PLANNER,update.xml2Char())
+	#self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
     ## sendVacuumWorldTime
@@ -783,13 +736,9 @@ class Channel:
         newTime.createRootNode()
         #print(newTime.xml2Char())
 
-        if(self.sendOverTCP) :
-            # Send the message on the back plane.
-            pass
-        else :
-	    #print("Channel.sendVacuumWorldTime - {0}".format(id))
-	    self.router.sendString(Router.VACUUM,newTime.xml2Char(),id)
-            #self.receiveXMLReportParseAndDecide(newTime.xml2Char())
+	#print("Channel.sendVacuumWorldTime - {0}".format(id))
+	self.router.sendString(Router.VACUUM,newTime.xml2Char(),id)
+	#self.receiveXMLReportParseAndDecide(newTime.xml2Char())
 
 
     ## sendVacuumWorldExpenditure
@@ -801,12 +750,8 @@ class Channel:
         newExpenditure.createRootNode()
         #print(newExpenditure.xml2Char())
 
-        if(self.sendOverTCP) :
-            # Send the message on the back plane.
-            pass
-        else :
-	    self.router.sendString(Router.VACUUM,newExpenditure.xml2Char(),id)
-            #self.receiveXMLReportParseAndDecide(newExpenditure.xml2Char())
+	self.router.sendString(Router.VACUUM,newExpenditure.xml2Char(),id)
+	#self.receiveXMLReportParseAndDecide(newExpenditure.xml2Char())
 
 
     ## sendWorldCleanedGrid
@@ -821,12 +766,8 @@ class Channel:
         update.createRootNode()
         update.specifyInformationType(XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID)
 
-        if(self.sendOverTCP) :
-            # Send the message on the back plane
-            pass
-        else :
-	    self.router.sendString(Router.VACUUM,update.xml2Char(),idnum)
-            #self.receiveXMLReportParseAndDecide(update.xml2Char())
+	self.router.sendString(Router.VACUUM,update.xml2Char(),idnum)
+	#self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
 
