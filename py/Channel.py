@@ -430,7 +430,7 @@ class Channel:
 	elif(info.getMyInformationType() == XMLParser.MESSAGE_EXTERNAL_PARAMETER) :
 	    # This is a message from the outside with information
 	    # about a parameter to set.
-	    #print("External message")
+	    # print("External message")
 	    for item in info.parameterList:
 
 		if(item[0] == XMLMessageExternalParameter.DUST_RATE) :
@@ -480,6 +480,15 @@ class Channel:
 		    if(self.world) :
 			self.world.setNumberVacuums(int(item[1]))
 
+
+		elif(item[0] == XMLMessageExternalParameter.HOST_ADDRESS):
+		    #print("set host: {0}".format(item[1]))
+		    self.router.setHost(item[1])
+
+
+		elif(item[0] == XMLMessageExternalParameter.HOST_PORT):
+		    #print("set port: {0}".format(item[1]))
+		    self.router.setPort(item[1])
 
 
 	elif(info.getMyInformationType() == XMLParser.MESSAGE_EXTERNAL_COMMAND) :
@@ -785,7 +794,7 @@ if (__name__ =='__main__') :
 
     channel = Channel()
     channel.receiveXMLReportParseAndDecide(parameter.xml2Char(False))
-    sys.exit(0)
+    #sys.exit(0)
     
     
     from XML.XMLMessageExternalParameter import XMLMessageExternalParameter
@@ -797,12 +806,17 @@ if (__name__ =='__main__') :
     parameter.setParameterValue(XMLMessageExternalParameter.DUST_SIZE,0.3)
     parameter.setParameterValue(XMLMessageExternalParameter.RAIN_SIZE,2.0)
     parameter.setParameterValue(XMLMessageExternalParameter.GRID_SIZE,6)
-    parameter.setParameterValue(XMLMessageExternalParameter.NUMBER_OF_VACUUMS,10)
+    #parameter.setParameterValue(XMLMessageExternalParameter.NUMBER_OF_VACUUMS,10)
+    parameter.setParameterValue(XMLMessageExternalParameter.HOST_ADDRESS,'192.168.0.1')
+    parameter.setParameterValue(XMLMessageExternalParameter.HOST_PORT,'43811')
+
     parameter.createRootNode()
     message = parameter.xml2Char(False)
+    print("\n\n{0}".format(message))
+    channel.receiveXMLReportParseAndDecide(message)
     #dif = XMLIncomingDIF()
     #incoming = dif.determineXMLInformation(message)
-
+    sys.exit(0)
     
     
     from Planner import Planner

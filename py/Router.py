@@ -75,6 +75,8 @@ class Router:
 	self.agents = [dict(),dict(),dict(),dict(),dict()]
 	self.vacuumArray = []     # array of object handles
 
+	self.host_address = ''
+	self.port_number  = ''
 
     def setCommander(self,commander) :
 	self.agents[self.COMMANDER]['parent'] = commander
@@ -107,6 +109,16 @@ class Router:
 
     def getDebug(self) :
 	return(self.DEBUG)
+
+
+    def setHost(self,address) :
+	#print("setting address: {0}".format(address))
+	self.host_address = address
+
+
+    def setPort(self,port) :
+	#print("setting port: {0}".format(port))
+	self.port_number  = port
 
 
     def addVacuum(self,vacuum,id) :

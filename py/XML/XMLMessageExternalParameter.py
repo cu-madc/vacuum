@@ -73,14 +73,19 @@ class XMLMessageExternalParameter (XMLParser) :
     DUST_RATE, DUST_SIZE, \
        RAIN_RATE, RAIN_SIZE, \
        GRID_SIZE, \
-       NUMBER_OF_VACUUMS = range(6)
+       NUMBER_OF_VACUUMS, \
+       HOST_ADDRESS, \
+       HOST_PORT = range(8)
 
     ParameterTitles = {DUST_RATE:'dust rate', \
                        DUST_SIZE:'dust size', \
                        RAIN_RATE:'rain rate', \
                        RAIN_SIZE:'rain size', \
                        GRID_SIZE:'grid size', \
-                       NUMBER_OF_VACUUMS:'number vacuums'}
+                       NUMBER_OF_VACUUMS:'number vacuums', \
+		       HOST_ADDRESS:'host address',\
+		       HOST_PORT:'host port'
+		       }
 
 
     def __init__(self) :
@@ -292,6 +297,8 @@ if (__name__ =='__main__') :
     parameter.setParameterValue(XMLMessageExternalParameter.GRID_SIZE,6)
     parameter.setParameterValue(XMLMessageExternalParameter.NUMBER_OF_VACUUMS,5)
     parameter.setParameterValue(XMLMessageExternalParameter.NUMBER_OF_VACUUMS,8)
+    parameter.setParameterValue(XMLMessageExternalParameter.HOST_ADDRESS,'192.168.0.1')
+    parameter.setParameterValue(XMLMessageExternalParameter.HOST_PORT,'43811')
     print(parameter.parameterList)
 
     parameter.createRootNode()
