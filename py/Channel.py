@@ -470,6 +470,13 @@ class Channel:
 		    #print("set port: {0}".format(item[1]))
 		    self.router.setPort(item[1])
 
+		elif(item[0] == XMLMessageExternalParameter.HOST_TYPE) :
+		    print("host type: {0}".format(item[1]))
+		    pass
+
+		elif(item[0] == XMLMessageExternalParameter.VACUUM_ID) :
+		    print("vacuum id: {0}".format(item[1]))
+		    pass
 
 	elif(info.getMyInformationType() == XMLParser.MESSAGE_EXTERNAL_COMMAND) :
 	    # This is a message from the outside with information
@@ -757,17 +764,17 @@ class Channel:
 if (__name__ =='__main__') :
     from XML.XMLMessageExternalCommand import XMLMessageExternalCommand
     import sys
-    parameter = XMLMessageExternalCommand()
-    parameter.setParameterValue(XMLMessageExternalCommand.STOP)
-    parameter.setParameterValue(XMLMessageExternalCommand.START)
-    parameter.setParameterValue(XMLMessageExternalCommand.RESTART)
-    parameter.setParameterValue(XMLMessageExternalCommand.RESET)
-    parameter.setParameterValue(XMLMessageExternalCommand.POLL)
-    parameter.createRootNode()
-    print(parameter.xml2Char(True))
+    #parameter = XMLMessageExternalCommand()
+    #parameter.setParameterValue(XMLMessageExternalCommand.STOP)
+    #parameter.setParameterValue(XMLMessageExternalCommand.START)
+    #parameter.setParameterValue(XMLMessageExternalCommand.RESTART)
+    #parameter.setParameterValue(XMLMessageExternalCommand.RESET)
+    #parameter.setParameterValue(XMLMessageExternalCommand.POLL)
+    #parameter.createRootNode()
+    #print(parameter.xml2Char(True))
 
     channel = Channel()
-    channel.receiveXMLReportParseAndDecide(parameter.xml2Char(False))
+    #channel.receiveXMLReportParseAndDecide(parameter.xml2Char(False))
     #sys.exit(0)
     
     
@@ -783,10 +790,12 @@ if (__name__ =='__main__') :
     #parameter.setParameterValue(XMLMessageExternalParameter.NUMBER_OF_VACUUMS,10)
     parameter.setParameterValue(XMLMessageExternalParameter.HOST_ADDRESS,'192.168.0.1')
     parameter.setParameterValue(XMLMessageExternalParameter.HOST_PORT,'43811')
+    parameter.setParameterValue(XMLMessageExternalParameter.HOST_TYPE,1)
+    parameter.setParameterValue(XMLMessageExternalParameter.VACUUM_ID,5)
 
     parameter.createRootNode()
     message = parameter.xml2Char(False)
-    print("\n\n{0}".format(message))
+    print("\n\n{0}".format(parameter.xml2Char(True)))
     channel.receiveXMLReportParseAndDecide(message)
     #dif = XMLIncomingDIF()
     #incoming = dif.determineXMLInformation(message)
