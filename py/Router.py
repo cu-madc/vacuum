@@ -148,6 +148,19 @@ class Router:
 
 
 
+    ## setHostInformation(self,hostType,host,port,vacuumID)
+    #
+    # Routine to take information about another agent and add it to
+    # the agents list.
+    def setHostInformation(self,hostType,host,port,vacuumID):
+	if((hostType>-1) and (hostType<len(self.agents))) :
+	    self.agents[hostType]['host'] = host
+	    self.agents[hostType]['port'] = port
+	    self.agents[hostType]['id']   = vacuumID
+
+	#print(self.agents)
+
+
 
     def addVacuum(self,vacuum,id) :
 

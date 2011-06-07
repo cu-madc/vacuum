@@ -411,6 +411,11 @@ class Channel:
 	    # This is a message from the outside with information
 	    # about a parameter to set.
 	    # print("External message")
+	    host = ''
+	    port = -1
+	    hostType = -1
+	    vacuumID = -1
+	
 	    for item in info.parameterList:
 
 		if(item[0] == XMLMessageExternalParameter.DUST_RATE) :
@@ -463,20 +468,63 @@ class Channel:
 
 		elif(item[0] == XMLMessageExternalParameter.HOST_ADDRESS):
 		    #print("set host: {0}".format(item[1]))
-		    self.router.setHost(item[1])
+		    #self.router.setHost(item[1])
+		    host = item[1]
 
 
 		elif(item[0] == XMLMessageExternalParameter.HOST_PORT):
 		    #print("set port: {0}".format(item[1]))
-		    self.router.setPort(item[1])
+		    #self.router.setPort(item[1])
+		    port = int(item[1])
 
 		elif(item[0] == XMLMessageExternalParameter.HOST_TYPE) :
-		    print("host type: {0}".format(item[1]))
-		    pass
+		    #print("host type: {0}".format(item[1]))
+		    hostType = int(item[1])
 
 		elif(item[0] == XMLMessageExternalParameter.VACUUM_ID) :
-		    print("vacuum id: {0}".format(item[1]))
-		    pass
+		    #print("vacuum id: {0}".format(item[1]))
+		    vacuumID = int(item[1])
+
+
+
+	    if(host or (port>-1) or (hostType>-1) or (vacuumID>-1)):
+		# information was passed that provides information
+		# about the setup of the simulation.
+
+		if(host and (port>-1) and (hostType>-1)):
+		    # There is enough information to define another
+		    # agent in the system. If it is a vacuum, though
+		    # we will need the vacuum id which has to be
+		    # checked.
+
+		    if(hostType == Router.VACUUM) :
+			if(vacuumID>-1):
+			    self.router.setHostInformation(hostType,host,port,vacuumID)
+
+			#else :
+			#    print("Error - Badly formed message came in. Message with vacuum information did not include a vacuum id.")
+
+		    else:
+			# This is information for an agent that is not
+			# a vacuum.
+			self.router.setHostInformation(hostType,host,port,vacuumID)
+
+
+		else:
+		    # If you get down here then incomplete information
+		    # was given. Assume that the file had details
+		    # about this particular agent.
+
+		    if(host) :
+			self.router.setHost(host)
+
+		    if(port > -1) :
+			self.router.setPort(port)
+
+		    #if(hostType > -1) :
+		    #     print("Error - badly formed message came in. The host type was specified but the other required information was incomplete.")
+
+		    
 
 	elif(info.getMyInformationType() == XMLParser.MESSAGE_EXTERNAL_COMMAND) :
 	    # This is a message from the outside with information
