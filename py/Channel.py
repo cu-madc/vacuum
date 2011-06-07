@@ -114,10 +114,7 @@ class Channel:
     
     def __init__(self,world=None,vacuums=[],sensor=None,planner=None,commander=None) :
 
-        self.setWorking(True)
-        self.setReliability(1.0)   # Probability of properly transmitting the
-                                   # message. Default is full reliability.
-        
+        self.setWorking(True)        
         self.delay = 0.0           # transmission delay - not yet implemented
 
         self.setWorld(world)
@@ -142,12 +139,6 @@ class Channel:
 
     def getWorking(self) :
         return(self.isWorking)
-
-    def setReliability(self,value) :
-        self.reliability = value
-
-    def getReliability(self) :
-        return(self.reliability)
 
     def setSensor(self,sensor) :
         self.sensor = sensor
@@ -229,17 +220,6 @@ class Channel:
 
     def getWorld(self) :
         return(self.world)
-
-
-    ## sendMessage(self)
-    #
-    # This generates a random number to determine if a message should
-    # be sent. It is used when the system is in debug mode, and we
-    # want to make some local runs under one process.
-    def sendMessage(self) :
-        if(self.reliability>random.rand(1)[0]) :
-            return(True)
-        return(False)
 
 
 
@@ -540,9 +520,8 @@ class Channel:
         network.createRootNode()
         network.specifyInformationType(XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
 
-	if(self.sendMessage()) :
-	    self.router.sendString(Router.PLANNER,network.xml2Char())
-            #self.receiveXMLReportParseAndDecide(network.xml2Char())
+	self.router.sendString(Router.PLANNER,network.xml2Char())
+	#self.receiveXMLReportParseAndDecide(network.xml2Char())
 
 
 
@@ -563,9 +542,8 @@ class Channel:
         orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
         
 
-	if(self.sendMessage()) :
-	    self.router.sendString(Router.PLANNER,orders.xml2Char())
-            #self.receiveXMLReportParseAndDecide(orders.xml2Char())
+	self.router.sendString(Router.PLANNER,orders.xml2Char())
+	#self.receiveXMLReportParseAndDecide(orders.xml2Char())
             
 
 
@@ -584,9 +562,8 @@ class Channel:
         orders.createRootNode()
         orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
 
-	if(self.sendMessage()) :
-	    self.router.sendString(Router.COMMANDER,orders.xml2Char())
-            #self.receiveXMLReportParseAndDecide(orders.xml2Char())
+	self.router.sendString(Router.COMMANDER,orders.xml2Char())
+	#self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
 
@@ -605,9 +582,8 @@ class Channel:
         orders.createRootNode()
         orders.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM)
 
-	if(self.sendMessage()) :
-	    self.router.sendString(Router.VACUUM,orders.xml2Char(),vacuumID)
-            #self.receiveXMLReportParseAndDecide(orders.xml2Char())
+	self.router.sendString(Router.VACUUM,orders.xml2Char(),vacuumID)
+	#self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
 
@@ -626,11 +602,10 @@ class Channel:
         report.setStatus(status)
         report.createRootNode()
 
-	if(self.sendMessage()) :
-	    #self.checkInfoType = True
-	    #print("sending vacuum to commander")
-	    self.router.sendString(Router.COMMANDER,report.xml2Char())
-	    #self.receiveXMLReportParseAndDecide(report.xml2Char())
+	#self.checkInfoType = True
+	#print("sending vacuum to commander")
+	self.router.sendString(Router.COMMANDER,report.xml2Char())
+	#self.receiveXMLReportParseAndDecide(report.xml2Char())
 
 
 
@@ -648,10 +623,9 @@ class Channel:
         orders.createRootNode()
         orders.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
 
-	if(self.sendMessage()) :
-	    self.router.sendString(Router.VACUUM,orders.xml2Char(),IDnum)
-	    #self.router.sendString(Router.PLANNER,orders.xml2Char())
-            #self.receiveXMLReportParseAndDecide(orders.xml2Char())
+	self.router.sendString(Router.VACUUM,orders.xml2Char(),IDnum)
+	#self.router.sendString(Router.PLANNER,orders.xml2Char())
+	#self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
 

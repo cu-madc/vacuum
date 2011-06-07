@@ -60,6 +60,8 @@
 # 
 #
 
+import random
+
 class Router:
 
     COMMANDER, \
@@ -75,8 +77,21 @@ class Router:
 	self.agents = [dict(),dict(),dict(),dict(),dict()]
 	self.vacuumArray = []     # array of object handles
 
+        self.setReliability(1.0)   # Probability of properly transmitting the
+                                   # message. Default is full reliability.
+
 	self.host_address = ''
 	self.port_number  = ''
+
+
+
+    def setReliability(self,value) :
+        self.reliability = value
+
+    def getReliability(self) :
+        return(self.reliability)
+
+
 
     def setCommander(self,commander) :
 	self.agents[self.COMMANDER]['parent'] = commander
@@ -119,6 +134,19 @@ class Router:
     def setPort(self,port) :
 	#print("setting port: {0}".format(port))
 	self.port_number  = port
+
+
+    ## sendMessage(self)
+    #
+    # This generates a random number to determine if a message should
+    # be sent. It is used when the system is in debug mode, and we
+    # want to make some local runs under one process.
+    def sendMessage(self) :
+        if(self.reliability>random.random()) :
+            return(True)
+        return(False)
+
+
 
 
     def addVacuum(self,vacuum,id) :
@@ -168,13 +196,16 @@ class Router:
 		print("Router.sendString: {0}".format(vacuumID))
 		self.vacuumArray[vacuumID].checkInfoType = True
 
-	    self.vacuumArray[vacuumID].receiveXMLReportParseAndDecide(message)
+	    if(self.sendMessage()) :
+		self.vacuumArray[vacuumID].receiveXMLReportParseAndDecide(message)
 	
 	elif('parent' in self.agents[destination]):
 	    if(self.agents[destination]['parent']) :
 		if(debug) :
 		    self.agents[destination]['parent'].checkInfoType = True
-		self.agents[destination]['parent'].receiveXMLReportParseAndDecide(message)
+
+		if(self.sendMessage()) :
+		    self.agents[destination]['parent'].receiveXMLReportParseAndDecide(message)
 
 
 
