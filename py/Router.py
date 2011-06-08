@@ -153,12 +153,23 @@ class Router:
     # Routine to take information about another agent and add it to
     # the agents list.
     def setHostInformation(self,hostType,host,port,vacuumID):
-	if((hostType>-1) and (hostType<len(self.agents))) :
-	    self.agents[hostType]['host'] = host
-	    self.agents[hostType]['port'] = port
-	    self.agents[hostType]['id']   = vacuumID
 
-	#print(self.agents)
+	if((hostType>-1) and (hostType<len(self.agents))) :
+
+	    if(hostType == self.VACUUM):
+
+		if((vacuumID>-1) and (vacuumID < len(self.vacuumArray))) :
+		    # This is a well formed message for a vacuum.
+		    self.vacuumArray[vacuumID] = {'host':host,
+						  'port':port}
+					      
+
+	    else:
+		self.agents[hostType]['host'] = host
+		self.agents[hostType]['port'] = port
+
+	print(self.agents)
+	print(self.vacuumArray)
 
 
 
@@ -202,17 +213,30 @@ class Router:
 	
     def sendString(self,destination,message,vacuumID=-1,debug=False):
 
-	if((destination == self.VACUUM) and
-	   (vacuumID>-1) and
-	   (vacuumID < len(self.vacuumArray))) :
-	    if(debug) :
-		print("Router.sendString: {0}".format(vacuumID))
-		self.vacuumArray[vacuumID].checkInfoType = True
+	if((hostType<0) or (hostType>=len(self.agents))) :
+	    # This is not a valid destination. Just return.
+	    return
 
-	    if(self.sendMessage()) :
-		self.vacuumArray[vacuumID].receiveXMLReportParseAndDecide(message)
+
+	if(destination == self.VACUUM):
+	    # This is a message for a vacuum. Need to check to see if
+	    # it has a proper ID.
+
+	    if((vacuumID>-1) and (vacuumID < len(self.vacuumArray))) :
+		# This is a well formed message for a vacuum.
+		
+		if(debug) :
+		    print("Router.sendString: {0}".format(vacuumID))
+		    self.vacuumArray[vacuumID].checkInfoType = True
+
+		if(self.sendMessage()) :
+		    self.vacuumArray[vacuumID].receiveXMLReportParseAndDecide(message)
+
+
 	
 	elif('parent' in self.agents[destination]):
+	    # This is a message for an agent that is not a vacuum.
+	    
 	    if(self.agents[destination]['parent']) :
 		if(debug) :
 		    self.agents[destination]['parent'].checkInfoType = True

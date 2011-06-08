@@ -838,8 +838,8 @@ if (__name__ =='__main__') :
     #parameter.setParameterValue(XMLMessageExternalParameter.NUMBER_OF_VACUUMS,10)
     parameter.setParameterValue(XMLMessageExternalParameter.HOST_ADDRESS,'192.168.0.1')
     parameter.setParameterValue(XMLMessageExternalParameter.HOST_PORT,'43811')
-    parameter.setParameterValue(XMLMessageExternalParameter.HOST_TYPE,1)
-    parameter.setParameterValue(XMLMessageExternalParameter.VACUUM_ID,5)
+    parameter.setParameterValue(XMLMessageExternalParameter.HOST_TYPE,Router.VACUUM)
+    parameter.setParameterValue(XMLMessageExternalParameter.VACUUM_ID,2)
 
     parameter.createRootNode()
     message = parameter.xml2Char(False)
