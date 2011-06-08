@@ -176,13 +176,14 @@ class Channel:
 
     def addVacuum(self,vacuum,id,xpos,ypos) :
 
-	for definedVacuum in self.vacuumArray :
-	    # Check to see if this vacuum is already defined. We can
-	    # get into this routine from a variety of places. It might
-	    # be possible to have already called this routine.
-	    if(vacuum == definedVacuum) :
-		#print("Found this one...")
-		return
+	if(vacuum != None):
+	    for definedVacuum in self.vacuumArray :
+		# Check to see if this vacuum is already defined. We can
+		# get into this routine from a variety of places. It might
+		# be possible to have already called this routine.
+		if(vacuum == definedVacuum) :
+		    #print("Found this one...")
+		    return
 
         while(id>=len(self.vacuumArray)) :
             # There are not enough vacuum objects defined. Create
@@ -201,8 +202,8 @@ class Channel:
 	    # There are more vacuums to be used than currently
 	    # defined. Add the extras to the list.
 	    for i in range(number-len(self.vacuumArray)):
-		vacuum = Vacuum(len(self.vacuumArray))
-		self.addVacuum(vacuum,len(self.vacuumArray),x,y)
+		#vacuum = Vacuum(len(self.vacuumArray))
+		self.addVacuum(None,len(self.vacuumArray),x,y)
 
 	elif (number < len(self.vacuumArray)) :
 	    # Need to have fewer vacuums than what are currently
@@ -499,6 +500,7 @@ class Channel:
 
 		    if(hostType == Router.VACUUM) :
 			if(vacuumID>-1):
+			    #print("Set up vacuum's host information: {0} - {1} - {2} - {3}".format(hostType,host,port,vacuumID))
 			    self.router.setHostInformation(hostType,host,port,vacuumID)
 
 			#else :
@@ -507,6 +509,7 @@ class Channel:
 		    else:
 			# This is information for an agent that is not
 			# a vacuum.
+			#print("Set up agent's host information: {0} - {1} - {2} - {3}".format(hostType,host,port,vacuumID))
 			self.router.setHostInformation(hostType,host,port,vacuumID)
 
 
@@ -822,6 +825,7 @@ if (__name__ =='__main__') :
     #print(parameter.xml2Char(True))
 
     channel = Channel()
+    channel.getRouter().setNumberVacuums(7)
     #channel.receiveXMLReportParseAndDecide(parameter.xml2Char(False))
     #sys.exit(0)
     
