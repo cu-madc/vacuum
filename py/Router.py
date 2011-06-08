@@ -213,9 +213,9 @@ class Router:
 	
     def sendString(self,destination,message,vacuumID=-1,debug=False):
 
-	if((hostType<0) or (hostType>=len(self.agents))) :
-	    # This is not a valid destination. Just return.
-	    return
+	#if((hostType<0) or (hostType>=len(self.agents))) :
+	#    # This is not a valid destination. Just return.
+	#    return
 
 
 	if(destination == self.VACUUM):
@@ -225,11 +225,22 @@ class Router:
 	    if((vacuumID>-1) and (vacuumID < len(self.vacuumArray))) :
 		# This is a well formed message for a vacuum.
 		
-		if(debug) :
-		    print("Router.sendString: {0}".format(vacuumID))
-		    self.vacuumArray[vacuumID].checkInfoType = True
+		if((type(self.vacuumArray[vacuumID]) is dict) and
+		   ('host' in self.vacuumArray[vacuumID]) and
+		   ('port' in self.vacuumArray[vacuumID])) :
+		    # IP iformation is available for this
+		    # agent. Send the information over the
+		    # network.
+		    pass
 
-		if(self.sendMessage()) :
+		elif(self.sendMessage()) :
+		    # The information held for this object is a
+		    # pointer to the vacuums channel.
+
+		    if(debug) :
+			print("Router.sendString: {0}".format(vacuumID))
+			self.vacuumArray[vacuumID].checkInfoType = True
+
 		    self.vacuumArray[vacuumID].receiveXMLReportParseAndDecide(message)
 
 
@@ -238,10 +249,22 @@ class Router:
 	    # This is a message for an agent that is not a vacuum.
 	    
 	    if(self.agents[destination]['parent']) :
-		if(debug) :
-		    self.agents[destination]['parent'].checkInfoType = True
 
-		if(self.sendMessage()) :
+		if((type(self.agents[destination]) is dict) and
+		   ('host' in self.agents[destination]) and
+		   ('port' in self.agents[destination])) :
+		    # IP iformation is available for this
+		    # agent. Send the information over the
+		    # network.
+		    pass
+
+		elif(self.sendMessage()) :
+		    # The information held for this object is a
+		    # pointer to the agent's channel.
+
+		    if(debug) :
+			self.agents[destination]['parent'].checkInfoType = True
+
 		    self.agents[destination]['parent'].receiveXMLReportParseAndDecide(message)
 
 
