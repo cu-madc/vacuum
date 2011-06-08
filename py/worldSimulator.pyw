@@ -117,7 +117,7 @@ sensor.getChannel().getRouter().setChannel(Router.WORLD,W.getChannel())
 chan.getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())
 chan.getRouter().setChannel(Router.COMMANDER,command.getChannel())
 chan.getRouter().setChannel(Router.PLANNER,plan.getChannel())
-chan.setPlanner(plan)
+
 
 
 # Create vacuums
