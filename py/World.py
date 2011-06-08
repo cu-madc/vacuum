@@ -64,6 +64,8 @@
 from numpy import *
 from numpy.linalg import *
 
+from Channel import Channel
+
 class  World :
 
 
@@ -242,7 +244,15 @@ class  World :
             
         self.time=T;
 
-        
+
+
+    @staticmethod
+    def spawnWorld(r=1.0,s=1.0,v=1.0,cloudsize=1.0) :
+	world = World(r,s,v,cloudsize)
+	channel = Channel(world)
+	world.setChannel(channel)
+	return(world)
+
             
             
 if (__name__ =='__main__') :

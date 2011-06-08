@@ -83,7 +83,7 @@ v         = .2
 cloudsize = 20
 
 # Create the world and get the gridsize
-W = GraphicalWorld(r,s,v,cloudsize);
+W = GraphicalWorld.spawnWorld(r,s,v,cloudsize);
 N = W.getNumber() 
 
 # create and set the sensor
@@ -93,14 +93,12 @@ sensor = SensorArray.spawnSensorArray(accuracy)   #SensorArray(accuracy)
 W.setSensor(sensor)
 
 # channel setup
-chan = Channel(W);   # TODO register the channel to the world
+chan = W.getChannel()   # TODO register the channel to the world
 
 
 # create the commander and planner
 plan=Planner.spawnPlanner(r*s/float(N*N),r,s,accuracy,N)
-
 W.setPlanner(plan)
-W.setChannel(chan)
 
 command = Commander.spawnCommander()   # Commander(chan)
 command.getChannel().getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())

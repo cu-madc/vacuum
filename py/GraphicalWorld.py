@@ -69,6 +69,7 @@ from Tkinter import *
 from World import World
 from WorldView import WorldView
 from FalseColor import FalseColor
+from Channel import Channel
 
 class  GraphicalWorld (World,Tk) :
 
@@ -83,6 +84,9 @@ class  GraphicalWorld (World,Tk) :
         self.setupWindow()
         self.setupOptionsEntry()
         self.vacuumArray = []      # array of object handles
+
+	self.setSensor(None)
+	self.setPlanner(None)
 
 
     def setSensor(self,sensor) :
@@ -229,7 +233,7 @@ class  GraphicalWorld (World,Tk) :
 
         # Define the entry for the number of time steps.
         self.NValue = StringVar()
-        self.NValue.set("10")
+        self.NValue.set("30")
         Label(self.entryFrame,text="N=").pack(side=LEFT,padx=5)
         self.NValueEntry = Entry(self.entryFrame,textvariable=self.NValue,width=7)
         self.NValueEntry.pack(side=LEFT,expand=NO)
@@ -290,17 +294,30 @@ class  GraphicalWorld (World,Tk) :
 
     def draw(self) :
         # Get the arrays that need to be plotted
-        sensorArray = self.getSensor().getArray()
-        plannerArray = self.getPlanner().getArray()
+	sensor = self.getSensor()
+	if(sensor):
+	    sensorArray = self.getSensor().getArray()
 
+	planner = self.getPlanner()
+	if(planner) :
+	    plannerArray = self.getPlanner().getArray()
+	
         # Figure out the bounds for the color scale.
-        low  = amin([amin(self.A),amin(sensorArray),amin(plannerArray)])
-        high = amax([amax(self.A),amax(sensorArray),amax(plannerArray)])
+	if(planner and sensor) :
+	    low  = amin([amin(self.A),amin(sensorArray),amin(plannerArray)])
+	    high = amax([amax(self.A),amax(sensorArray),amax(plannerArray)])
+
+	else:
+	    low = amin(self.A)
+	    high = amax(self.A)
 
         # Draw each depiction of the world
         self.realView.draw(self.vacuumArray,self.A,[low,high])
-        self.sensorView.draw(self.vacuumArray,self.getSensor().getArray(),[low,high])
-        self.plannerView.draw(self.vacuumArray,plannerArray,[low,high])
+	if(sensor):
+	    self.sensorView.draw(self.vacuumArray,sensor.getArray(),[low,high])
+
+	if(planner):
+	    self.plannerView.draw(self.vacuumArray,plannerArray,[low,high])
 
         # Update the view of the time and the legend
         self.timeLabel.config(text="t= {0}".format(self.time))
@@ -309,6 +326,13 @@ class  GraphicalWorld (World,Tk) :
         self.update()
         #time.sleep(1.0)
 
+
+    @staticmethod
+    def spawnWorld(r=1.0,s=1.0,v=1.0,cloudsize=1.0) :
+	world = GraphicalWorld(r,s,v,cloudsize)
+	channel = Channel(world)
+	world.setChannel(channel)
+	return(world)
 
 
 if (__name__ =='__main__') :

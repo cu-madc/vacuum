@@ -62,7 +62,7 @@
 from numpy import *
 from numpy.linalg import *
 
-from World import World
+#from World import World
 #from Vacuum import Vacuum
 
 from Router import Router
