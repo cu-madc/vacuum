@@ -1,0 +1,216 @@
+\documentclass{beamer}
+
+\mode<presentation>
+
+\usetheme{Frankfurt}%
+\usecolortheme{seagull}
+\usepackage{multimedia}
+%\usepackage{movie15}
+
+\logo{\includegraphics[height=.25in]{clarksonGreen}}
+
+%\definecolor{garnet}{RGB}{179,0,91}
+%\definecolor{garnet}{RGB}{108,43,53}
+\definecolor{garnet}{RGB}{136,0,0}
+%\definecolor{clarksonGreen}{RGB}{0,71,28}
+\definecolor{clarksonGreen}{RGB}{0,52,21}
+\setbeamercolor{palette primary}{fg=clarksonGreen,bg=white}
+\setbeamercolor{palette secondary}{fg=clarksonGreen,bg=white}
+\setbeamercolor{palette tertiary}{fg=clarksonGreen,bg=white}
+\setbeamercolor{palette quaternary}{bg=clarksonGreen,fg=white}
+\setbeamercolor{block title}{fg=black,bg=black!15}
+\setbeamercolor{block body}{fg=black,bg=black!10}
+\setbeamercolor{titlelike}{bg=clarksonGreen,fg=white} % parent=palette quaternary}
+
+
+
+% Misc definitions that are nice to have
+\newcommand{\pd}{\partial}
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\fullInt}{\int^\infty_{-\infty}}
+\newcommand{\timeInt}{\int^T_0}
+\newcommand{\partialDeriv}[1]{\frac{\partial}{\partial #1}}
+\newcommand{\timeDeriv}{\frac{d}{dT}}
+\newcommand{\sDeriv}{\frac{d}{ds}}
+\newcommand{\lp}{\left(}
+\newcommand{\rp}{\right)}
+\newcommand{\tbar}{\bar{t}}
+\newcommand{\that}{\hat{t}}
+\newcommand{\Ahat}{{\hat{A}}}
+\newcommand{\gHat}{{\hat{g}}}
+\newcommand{\weight}{e^{-(\xi-\tbar/\sigma)^2}}
+\newcommand{\bweight}{e^{-(\xi-b)^2}}
+\newcommand{\bratio}{\frac{1}{4b}}
+\newcommand{\normSquared}{\|\Ahat\|^2_w}
+
+
+
+%\usepackage{pgfpages}
+%%\pgfpagesuselayout{resize}[border shrink=5mm,landscape]
+%\pgfpagesuselayout{2 on 1}[border shrink=5mm]
+
+
+
+\begin{document}
+
+\title{Mission Model}
+\subtitle{Software Development}
+\author{MADC Team}
+\institute{Clarkson University}
+%\date{8 July 2009}
+\date{14 June 2011}
+
+\begin{frame}
+  \titlepage
+  \begin{abstract}
+    Borad overview of the software development of the mission
+    model. The mission model is implemented in python with each agent
+    represented by a separate class. Underlying supporting classes
+    encapsulate the way information is exchanged and interpreted.
+  \end{abstract}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Schedule}
+
+  \begin{itemize}
+  \item Software Development (This discussion) 
+  \item Core and Implementation of the Network Model
+  \item Lunch
+  \item ???? - what goes here?
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Outline}
+  \tableofcontents[pausesection,hideallsubsections]
+\end{frame}
+
+
+
+\section{Conceptual Model}
+
+
+\begin{frame}
+  \frametitle{Conceptual Model}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Computational Model}
+  %\includegraphics[height=8cm]{compareNoiseNoNoise.png}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Why}
+
+  This is the subject of Todd and Pat's discussion which will follow.
+
+\end{frame}
+
+
+\section{Simulation Requirements}
+
+\begin{frame}
+  \frametitle{Simulation}
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Goals}
+
+  %\centerline{\includegraphics[height=6.0cm]{nearEquilibrium}}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Communication Goals}
+
+  %\centerline{\includegraphics[height=6.0cm]{awayEquilibrium}}
+
+
+\end{frame}
+
+
+\section{Implementation Details}
+
+\begin{frame}
+  \frametitle{Core}
+
+  Todd and Pat will discuss this.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Encapsulating Agent Communications}
+
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Data Exchange Considerations}
+  
+
+\end{frame}
+
+
+
+
+%\begin{frame}
+%  \frametitle{Test Cases}
+%
+%  $r=2$, $\alpha=0.5$.
+%
+%  \begin{columns}[t]
+%    \column{.5\textwidth}
+%    \centerline{\includegraphics[height=5.0cm]{meanError-r2-alpha0_5}}
+%
+%    \column{.5\textwidth}
+%    \centerline{\includegraphics[height=5.0cm]{varError-r2-alpha0_5}}
+%  \end{columns}
+%
+%\end{frame}
+
+
+
+%  \begin{columns}[t]
+%    
+%    \column{.5\textwidth}
+%    \begin{block}{Barney?}
+%      Is it okay to trust your kids with Barney?
+%    \end{block}
+%    \pause
+%  
+%    \column{.5\textwidth}
+%    \begin{block}{No, not Barney!}
+%      Probably not.
+%    \end{block}
+%
+%  \end{columns}
+%
+%
+%\end{frame}
+
+
+
+
+
+\begin{frame}
+  \frametitle{Acknowledgements}
+  Is this redundant? If not what should be here?
+\end{frame}
+
+
+
+\end{document}
