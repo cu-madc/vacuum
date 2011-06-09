@@ -274,7 +274,6 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-
         elif( (name=="Commander") and (type=="Vacuum Recommendation")) :
             # This is a message from Planner to send the
             # recommendation of a move to the commander. Define the
@@ -306,7 +305,6 @@ class XMLIncomingDIF (XMLParser) :
 
 
             incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
-
 
 
         elif( (name=="World") and (type=="Clean Grid")) :
@@ -448,7 +446,6 @@ class XMLIncomingDIF (XMLParser) :
 
                 if(self.DEBUG) :
                     print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
-
 
 
 

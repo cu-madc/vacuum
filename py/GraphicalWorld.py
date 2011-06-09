@@ -152,7 +152,6 @@ class  GraphicalWorld (World,Tk) :
         exit(0)
 
     def start(self) :
-
 	# Get the parameters from the inputs in the window.
         N = int(self.NValue.get())
         self.r = float(self.rValue.get())
@@ -172,6 +171,8 @@ class  GraphicalWorld (World,Tk) :
         self.draw()
         skip = 10;
         for i in range(N) :
+            #import time # DEBUG
+            #time.sleep(1) # DEBUG
             self.inc()
             #if(i%skip==0) :
 	    self.draw()

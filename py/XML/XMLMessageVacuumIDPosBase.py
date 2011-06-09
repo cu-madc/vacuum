@@ -314,7 +314,6 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
         self.xPosNode.appendChild(dimension)
 
 
-
     ## setyPositionNode
     #
     # Method to set the value of the prob. of a successful

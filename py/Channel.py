@@ -3,9 +3,9 @@
 #  Channel.py
 # 
 #   Created on: 2 Feb, 2011
-#       Author: Skufka - adapted by black
+#       Author: Skufka - adapted by black - adapted by PW
 # 
-#       class definition for the channel object
+#       class definition for the channel object not using sockets
 # 
 #  This material is based on research sponsored by DARPA under agreement
 #  number FA8750-10-2-0165. The U.S. Government is authorized to
@@ -55,7 +55,10 @@
 # 
 #  (license copied from http://www.opensource.org/licenses/bsd-license)
 # 
+#  ==========================================================================# 
 # 
+#  Helpful References:
+#    http://docs.python.org/library/socketserver.html
 # 
 #
 
@@ -106,6 +109,69 @@ from XML.XMLMessageVacuumAddExpenditureWorld import \
      XMLMessageVacuumAddExpenditureWorld
 
 
+# The xml classes used to define the messages being passed.
+from XML.XMLParser import XMLParser
+from XML.XMLIncomingDIF import XMLIncomingDIF
+from XML.XMLMessageNetwork import XMLMessageNetwork
+
+#from XML.XMLMessagePlannerReportVacuumOrders import \
+#     XMLMessagePlannerReportVacuumOrders
+
+#from XML.XMLMessageRecommendOrderCommander2Planner import \
+#     XMLMessageRecommendOrderCommander2Planner
+
+#from XML.XMLMessageRecommendOrderPlanner2Commander import \
+#     XMLMessageRecommendOrderPlanner2Commander
+
+from XML.XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
+
+from XML.XMLMessageMoveOrderCommanderVacuum import \
+     XMLMessageMoveOrderCommanderVacuum
+
+from XML.XMLMessageMoveOrderCommanderPlanner import \
+     XMLMessageMoveOrderCommanderPlanner
+
+from XML.XMLMessageGetReportVacuumCommander import \
+     XMLMessageGetReportVacuumCommander
+
+from XML.XMLMessageWorldStatus import \
+     XMLMessageWorldStatus
+
+from XML.XMLMessageWorldWetness import \
+     XMLMessageWorldWetness
+
+from XML.XMLMessageUpdateWorldPlanner import \
+     XMLMessageUpdateWorldPlanner
+
+from XML.XMLMessageUpdatePlannerSensor import \
+     XMLMessageUpdatePlannerSensor
+
+from XML.XMLMessageSensorWetness import \
+     XMLMessageSensorWetness
+
+from XML.XMLMessageSensorWetness import \
+     XMLMessageSensorWetness
+
+from XML.XMLMessageSensorStatus import \
+     XMLMessageSensorStatus
+
+from XML.XMLMessageVaccumMovedReportToPlanner import \
+     XMLMessageVaccumMovedReportToPlanner
+
+from XML.XMLMessageWorldVacuumCurrentTime import \
+     XMLMessageWorldVacuumCurrentTime
+
+from XML.XMLMessageVacuumAddExpenditureWorld import \
+     XMLMessageVacuumAddExpenditureWorld
+
+from XML.XMLMessageVacuumCleanWorld import \
+     XMLMessageVacuumCleanWorld
+
+## Channel
+#
+# Creates a channel, which is a medium through which simulated agents communicate.
+#
+# This channel uses local function calls, not sockets, for communication.
 class Channel:
 
     checkInfoType = False
