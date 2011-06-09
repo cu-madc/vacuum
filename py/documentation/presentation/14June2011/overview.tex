@@ -25,23 +25,8 @@
 
 
 % Misc definitions that are nice to have
-\newcommand{\pd}{\partial}
-\newcommand{\half}{\frac{1}{2}}
-\newcommand{\fullInt}{\int^\infty_{-\infty}}
-\newcommand{\timeInt}{\int^T_0}
-\newcommand{\partialDeriv}[1]{\frac{\partial}{\partial #1}}
-\newcommand{\timeDeriv}{\frac{d}{dT}}
-\newcommand{\sDeriv}{\frac{d}{ds}}
 \newcommand{\lp}{\left(}
 \newcommand{\rp}{\right)}
-\newcommand{\tbar}{\bar{t}}
-\newcommand{\that}{\hat{t}}
-\newcommand{\Ahat}{{\hat{A}}}
-\newcommand{\gHat}{{\hat{g}}}
-\newcommand{\weight}{e^{-(\xi-\tbar/\sigma)^2}}
-\newcommand{\bweight}{e^{-(\xi-b)^2}}
-\newcommand{\bratio}{\frac{1}{4b}}
-\newcommand{\normSquared}{\|\Ahat\|^2_w}
 
 
 
@@ -98,19 +83,31 @@
 \begin{frame}
   \frametitle{Conceptual Model}
 
+  \includegraphics[height=6cm]{conceptualWorld.png}
+
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Computational Model}
-  %\includegraphics[height=8cm]{compareNoiseNoNoise.png}
+  \only<1>{\includegraphics[height=6cm]{computationalMissionCore.png}}
+  \only<2>{\includegraphics[height=6cm]{computationalMissionPython.png}}
+  \only<3>{\includegraphics[height=6cm]{computationalMission.png}}
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Why}
 
-  This is the subject of Todd and Pat's discussion which will follow.
+  \only<2->{In a nutshell:}
+
+  \begin{itemize}
+  \item<1-> This is the subject of Todd and Pat's discussion which
+    will follow.
+  \item<2-> We need flexibile implementation.
+  \item<3-> We need flexible configurations and data management.
+  \end{itemize}
+  
 
 \end{frame}
 
@@ -118,25 +115,51 @@
 \section{Simulation Requirements}
 
 \begin{frame}
-  \frametitle{Simulation}
+  \frametitle{Simulation Requirements}
 
+  \begin{itemize}
+  \item Want to run multiple instances of a simulation. (Parallel
+    model evaluation.)
+  \item Need to get data quickly and easily.
+  \item Need to make changes during execution:
+    \begin{itemize}
+    \item Change a parameter set.
+    \item Stop a simulation
+    \item Start a simulation.
+    \item Query the state of a simulation via an external request.
+    \end{itemize}
+  \end{itemize}
 
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{Goals}
+  \frametitle{Application Goals}
 
-  %\centerline{\includegraphics[height=6.0cm]{nearEquilibrium}}
+  \begin{itemize}
+  \item Agents need to communicate with each other.
+  \item Communication interface should be through standard network
+    API's (ex: library calls through Python TCP classes.)
+  \item Access to data with minimal impact to the simulation but do it
+    in a distributed environment.
+  \item Make changes to the simulation while it is running.
+  \end{itemize}
 
 
 \end{frame}
 
 \begin{frame}
-  \frametitle{Communication Goals}
+  \frametitle{Network Goals}
 
-  %\centerline{\includegraphics[height=6.0cm]{awayEquilibrium}}
-
+  \begin{itemize}
+  \item Allow flexibility for a wide range of networks.
+  \item Be able to monitor the network in a way that is consistent
+    with ``real'' network monitoring tools.
+  \item Be able to configure the network with minimal \textit{a
+      priori} knowledge of the application.
+  \item Be able to exchange data in a seamless fashion with minimal
+    impact to the simulation.
+  \end{itemize}
 
 \end{frame}
 
@@ -154,12 +177,32 @@
 \begin{frame}
   \frametitle{Encapsulating Agent Communications}
 
+  Each agent has a mission and a communication channel:
+
+  \only<1>{\includegraphics[height=5.0cm]{agent}}
+  \only<2>{\includegraphics[height=5.0cm]{agentRouter}}
+  \only<3>{\includegraphics[height=5.0cm]{agentSocketRouter}}
 
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Data Exchange Considerations}
+
+  \begin{itemize}
+  \item Data exchange occurs over network.
+  \item Data exchange between agents within simulation should be
+    consistent with outside requests.
+  \item Want portable parser using industry standard formats.
+  \item Have investigated numerous approaches:
+    \begin{itemize}
+    \item HAL
+    \item GME
+    \item OWL
+    \end{itemize}
+  \item Currently using XML format based heavily on HAL-DIF.
+  \item OWL appears to offer the best alternative.
+  \end{itemize}
   
 
 \end{frame}
