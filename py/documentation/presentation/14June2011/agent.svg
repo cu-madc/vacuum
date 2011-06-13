@@ -15,7 +15,7 @@
    version="1.1"
    inkscape:version="0.48.0 r9654"
    sodipodi:docname="agent.svg"
-   inkscape:export-filename="/tmp/trial/vacuum/py/documentation/presentation/14June2011/agentSocketRouter.png"
+   inkscape:export-filename="/home/black/c++/madc/github/vacuum/py/documentation/presentation/14June2011/agentSocketRouter.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -28,15 +28,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.66"
-     inkscape:cx="286.19304"
-     inkscape:cy="641.21212"
+     inkscape:cx="299.8294"
+     inkscape:cy="457.87879"
      inkscape:document-units="px"
-     inkscape:current-layer="layer3"
+     inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="745"
-     inkscape:window-height="837"
-     inkscape:window-x="170"
-     inkscape:window-y="14"
+     inkscape:window-width="1016"
+     inkscape:window-height="1007"
+     inkscape:window-x="402"
+     inkscape:window-y="-3"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -67,121 +67,96 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="189.39394"
-       y="226.6046"
+       x="307.57574"
+       y="175.08945"
        id="text2987"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan2989"
-         x="189.39394"
-         y="226.6046">Agent</tspan></text>
+         x="307.57574"
+         y="175.08945">Agent</tspan></text>
     <rect
-       style="fill:#ececec;fill-opacity:0.92035403;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect2991"
-       width="209.09091"
-       height="253.0303"
-       x="137.87878"
-       y="247.81673" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="148.48485"
-       y="293.27127"
-       id="text2993"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan2995"
-         x="148.48485"
-         y="293.27127">Mission</tspan><tspan
-         sodipodi:role="line"
-         x="148.48485"
-         y="343.27127"
-         id="tspan2997">Code</tspan></text>
-    <rect
-       style="fill:#ececec;fill-opacity:0.92035403;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#ececec;fill-opacity:0.92035403;stroke:#000000;stroke-width:3.74108148;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect2999"
-       width="253.0303"
-       height="283.33334"
-       x="381.81818"
-       y="235.69551" />
+       width="294.02728"
+       height="379.17038"
+       x="292.67334"
+       y="219.0136" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="407.57574"
-       y="281.15005"
+       x="310.60605"
+       y="259.93793"
        id="text3001"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3003"
-         x="407.57574"
-         y="281.15005">Channel</tspan></text>
+         x="310.60605"
+         y="259.93793">Channel</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="SocketRouter"
      style="display:inline">
+    <path
+       style="fill:none;stroke:#800080;stroke-width:8.90679359;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 476.21097,457.36104 C 572.32255,565.29856 609.43014,606.9222 690.91454,694.33303"
+       id="path3812"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
     <rect
        style="fill:#808080;fill-opacity:0.92035403;stroke:#800080;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3032"
        width="209.09091"
        height="187.87878"
-       x="403.0303"
-       y="303.87732" />
+       x="306.06061"
+       y="272.05914" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="433.33331"
-       y="434.18036"
+       x="368.18179"
+       y="399.33188"
        id="text3034"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3036"
-         x="433.33331"
-         y="434.18036">Socket</tspan><tspan
+         x="368.18179"
+         y="399.33188">Socket</tspan><tspan
          sodipodi:role="line"
-         x="433.33331"
-         y="484.18036"
+         x="368.18179"
+         y="449.33188"
          id="tspan3038">Router</tspan></text>
-    <path
-       style="fill:none;stroke:#800080;stroke-width:8.90679359;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 464.08976,490.69437 112.64197,107.54015 70.24342,56.70457"
-       id="path3812"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccc" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer4"
-     inkscape:label="XML">
+     inkscape:label="XML"
+     style="display:inline">
+    <path
+       style="fill:none;stroke:#008000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 336.36364,509.93794 330.30303,349.33187"
+       id="path3868"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
     <rect
        style="fill:#b3b3b3;fill-opacity:0.92035403;stroke:#000000;stroke-width:8;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3090"
        width="165.15152"
        height="68.181816"
-       x="201.51515"
-       y="523.57434" />
+       x="328.78787"
+       y="509.93799" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="227.27274"
-       y="573.57428"
+       x="354.54547"
+       y="559.93793"
        id="text3860"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3862"
-         x="227.27274"
-         y="573.57428">Parser</tspan></text>
-    <path
-       style="fill:none;stroke:#008000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-       d="M 275.75758,522.05915 260.60606,500.84703 z"
-       id="path3866"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:none;stroke:#008000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-       d="m 356.06061,520.544 24.24242,-56.06061"
-       id="path3868"
-       inkscape:connector-curvature="0" />
+         x="354.54547"
+         y="559.93793">Parser</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
@@ -193,22 +168,56 @@
        id="rect3025"
        width="160.16379"
        height="62.309158"
-       x="421.21216"
-       y="322.05914"
+       x="322.72729"
+       y="291.7561"
        inkscape:transform-center-x="-72.727273"
        inkscape:transform-center-y="-50" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="431.81824"
-       y="365.9985"
+       x="333.33337"
+       y="335.69547"
        id="text3027"
        sodipodi:linespacing="125%"
        inkscape:transform-center-x="-71.522942"
        inkscape:transform-center-y="-51.512093"><tspan
          sodipodi:role="line"
          id="tspan3029"
-         x="431.81824"
-         y="365.9985">Router</tspan></text>
+         x="333.33337"
+         y="335.69547">Router</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="mission code"
+     style="display:inline">
+    <path
+       style="fill:none;stroke:#008000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 290.9091,526.60461 -95.45455,-100 z"
+       id="path3866"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
+    <rect
+       style="fill:#ececec;fill-opacity:0.92035403;stroke:#000000;stroke-width:1.85378897;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       id="rect2991"
+       width="179.00316"
+       height="112.85609"
+       x="100.60647"
+       y="320.54401" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       x="121.21212"
+       y="372.05914"
+       id="text2993"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2995"
+         x="121.21212"
+         y="372.05914">Mission</tspan><tspan
+         sodipodi:role="line"
+         x="121.21212"
+         y="422.05914"
+         id="tspan2997">Code</tspan></text>
   </g>
 </svg>

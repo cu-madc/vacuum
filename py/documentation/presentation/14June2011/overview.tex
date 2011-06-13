@@ -99,13 +99,13 @@
 \begin{frame}
   \frametitle{Why}
 
-  \only<2->{In a nutshell:}
+  {In a nutshell:}
 
   \begin{itemize}
   \item<1-> This is the subject of Todd and Pat's discussion which
     will follow.
   \item<2-> We need flexibile implementation.
-  \item<3-> We need flexible configurations and data management.
+  \item<2-> We need flexible configurations and data management.
   \end{itemize}
   
 
@@ -143,6 +143,8 @@
   \item Access to data with minimal impact to the simulation but do it
     in a distributed environment.
   \item Make changes to the simulation while it is running.
+  \item Implement the mission model on a wide range of computational
+    platforms.
   \end{itemize}
 
 
@@ -179,9 +181,9 @@
 
   Each agent has a mission and a communication channel:
 
-  \only<1>{\includegraphics[height=5.0cm]{agent}}
-  \only<2>{\includegraphics[height=5.0cm]{agentRouter}}
-  \only<3>{\includegraphics[height=5.0cm]{agentSocketRouter}}
+  \only<1>{\includegraphics[height=7.0cm]{agent}}
+  \only<2>{\includegraphics[height=7.0cm]{agentRouter}}
+  \only<3>{\includegraphics[height=7.0cm]{agentSocketRouter}}
 
 \end{frame}
 
@@ -192,7 +194,7 @@
   \begin{itemize}
   \item Data exchange occurs over network.
   \item Data exchange between agents within simulation should be
-    consistent with outside requests.
+    consistent with external requests.
   \item Want portable parser using industry standard formats.
   \item Have investigated numerous approaches:
     \begin{itemize}
