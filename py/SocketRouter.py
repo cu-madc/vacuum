@@ -90,16 +90,6 @@ class SocketRouter(Router):
             self.myComm = Comm()
 
 	    
-            class MyTCPHandler(SocketServer.BaseRequestHandler):
-                # The RequestHandler class for our server.
-                # It is instantiated once per connection to the server, and must
-                # override the handle() method to implement communication to the
-                # client.
-                def handle(self):
-                    # self.request is the TCP socket connected to the client
-                    message = self.server.myParent.myComm.readChunk(self.request)
-                    self.server.myParent.receiveXMLReportParseAndDecide(message)
-                    #print "Message dispatched!  Length: ",len(message) # DEBUG
 
 		    
             class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
@@ -110,7 +100,7 @@ class SocketRouter(Router):
 
             # Create and activate server; will keep running until interrupted by Ctrl-C
             for i in self.SERVERS_DETAILS :
-                server = ThreadedTCPServer((i[0], i[1]), MyTCPHandler)
+                server = ThreadedTCPServer((i[0], i[1]), LocalTCPHandler)
                 server.setParentClass(self)
                 # Start a thread with the server -- that thread will then start one
                 # more thread for each request
@@ -127,12 +117,6 @@ class SocketRouter(Router):
             self.myComm = Comm()  # instantiate variable-length string generator
 
 
-            class hostDataClass:
-                def __init__(self):
-                    Commander2Vacuums = None
-                    Commander2Planner = None
-                    Planner2Commander = None
-                    Vacuums2Commander = None
 
 		    
             self.hosts = hostDataClass()
@@ -150,23 +134,50 @@ class SocketRouter(Router):
         mySocket.send(self.myComm.makeChunk(message))
         mySocket.close()
 
-    ## initializeSockets
-    #
-    # Initialize variables for host tuples and prepare for socket communication
-    def initializeSockets(self,Commander2Vacuums=[], Vacuums2Commander=[], 
-                          Commander2Planner=None, Planner2Commander=None):
-        print "Debug: Initializing host data structure for socket communication." # DEBUG
-        #import socket
-        self.hosts.Commander2Vacuums = Commander2Vacuums
-        self.hosts.Vacuums2Commander = Vacuums2Commander
-        self.hosts.Commander2Planner = Commander2Planner
-        self.hosts.Planner2Commander = Planner2Commander
     
     ## genHostTuple
     #
     # This function is shorthand for creating host tuples
     def genHostTuple(hostName,hostPort):
         return (hostName,hostPort)
+
+
+
+
+########################################################################
+## TCP Handler class
+##
+## This class handles the tcp requests coming through the threaded
+## server class.
+class LocalTCPHandler (BaseRequestHandler): 
+
+    #def __init__(self):
+    #    #self.incomingTCP = theQueue
+    #    pass
+
+    def handle(self) :
+	socketInfo = socket.gethostbyaddr(self.client_address[0])
+	#if(PollingServer.DEBUG) :
+	#	print("Heard from {0}-{1}".format(self.client_address[0],socketInfo[0]))
+
+	message = self.request.recv(PollingServer.POLLING_SERVER_BUFFER_SIZE).strip()
+	#message = self.server.myParent.myComm.readChunk(self.request)
+	#if(PollingServer.DEBUG) :
+	#	print("Confirmed Client: {0}".format(message))
+	self.request.send("OK")
+
+	self.server.myParent.dataLock.acquire()
+	self.server.myParent.incomingTCP.put(message)
+
+	try:
+	    self.server.myParent.dataLock.notify()
+        except AttributeError:
+	    pass
+        self.server.myParent.dataLock.release()
+
+
+
+
 
 
 if (__name__ =='__main__') :
