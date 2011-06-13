@@ -65,6 +65,15 @@
 
 from Router import Router
 
+from Queue import Queue
+from SocketServer import *
+import socket
+import threading
+
+
+import re
+
+
 ## SocketChannel
 #
 # Creates a super class of the router, which is a medium through which
@@ -85,8 +94,6 @@ class SocketRouter(Router):
 
         if (self.acceptIncomingConnections) :
             from comm import Comm
-            import threading
-            import SocketServer
             self.myComm = Comm()
 
             # self.servers = []
@@ -106,12 +113,7 @@ class SocketRouter(Router):
         # initialize socket networking functionality, if going to be used
         if(self.sendOverTCP) :
             from comm import Comm    # import our variable-length string library
-            import socket         # import socket network communication library
             self.myComm = Comm()  # instantiate variable-length string generator
-
-
-
-		    
             self.hosts = hostDataClass()
 
 
@@ -170,7 +172,23 @@ class LocalTCPHandler (BaseRequestHandler):
 
 
 
-class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+########################################################################
+## Threaded Socket Server class
+##
+## This class keeps track of the incoming messages. It is run as a
+## separate thread.
+class ThreadedTCPServer (ThreadingMixIn, TCPServer): 
+
+
+    def __init__(self,connectionInfo,handler,parent) :
+	self.setParentClass(parent)
+        #ThreadingMixIn.__init__(self)
+	if(parent.DEBUG) :
+		print("Created the socket server class: {0}".format(connectionInfo))
+
+        TCPServer.__init__(self,connectionInfo,handler)
+
+
     def setParentClass(self,myParent):
 	self.myParent = myParent
 
