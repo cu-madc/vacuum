@@ -5,7 +5,8 @@
 #   Created on: 2 Feb, 2011
 #       Author: Skufka - adapted by black - adapted by PW
 # 
-#       class definition for the channel object using sockets
+#       class definition for a super class of the router object using
+#       sockets
 # 
 #  This material is based on research sponsored by DARPA under agreement
 #  number FA8750-10-2-0165. The U.S. Government is authorized to
@@ -62,14 +63,15 @@
 # 
 #
 
-from Channel import Channel
+from Router import Router
 
 ## SocketChannel
 #
-# Creates a channel, which is a medium through which simulated agents communicate.
+# Creates a super class of the router, which is a medium through which
+# simulated agents communicate.
 #
 # This channel uses TCP sockets for communication.
-class SocketChannel(Channel):
+class SocketRouter(Router):
 
     sendOverTCP = True # Send XML over TCP?  If not, uses local function calls
     sendBackplaneOverTCP = False # Send backplane data over TCP? If not, use local calls
@@ -77,25 +79,17 @@ class SocketChannel(Channel):
     SERVERS_DETAILS = [("localhost",9999)] # Array of servers to start [(host,port), ...]
     # Each server corresponds to a single simulated agent (commander, planner, etc.)
 
-    def __init__(self,world=None,vacuums=[],sensor=None,planner=None,commander=None) :
+    def __init__(self,channel) :
+	Router.__init__(self,channel)
 
-        self.setWorking(True)
-        self.setReliability(1.0)   # Probability of properly transmitting the
-                                   # message. Default is full reliability.
-        
-        self.delay = 0.0           # transmission delay - not yet implemented
-
-        self.setWorld(world)
-        self.vacuumArray = vacuums # array of object handles
-        self.setSensor(sensor)
-        self.setPlanner(planner)
-        self.setCommander(commander)
 
         if (self.acceptIncomingConnections) :
             from comm import Comm
             import threading
             import SocketServer
             self.myComm = Comm()
+
+	    
             class MyTCPHandler(SocketServer.BaseRequestHandler):
                 # The RequestHandler class for our server.
                 # It is instantiated once per connection to the server, and must
@@ -105,7 +99,9 @@ class SocketChannel(Channel):
                     # self.request is the TCP socket connected to the client
                     message = self.server.myParent.myComm.readChunk(self.request)
                     self.server.myParent.receiveXMLReportParseAndDecide(message)
-                    #print "Message dispatched!  Length: ",len(message) # DEBUG 
+                    #print "Message dispatched!  Length: ",len(message) # DEBUG
+
+		    
             class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
                 def setParentClass(self,myParent):
                     self.myParent = myParent
@@ -129,13 +125,20 @@ class SocketChannel(Channel):
             from comm import Comm    # import our variable-length string library
             import socket         # import socket network communication library
             self.myComm = Comm()  # instantiate variable-length string generator
+
+
             class hostDataClass:
                 def __init__(self):
                     Commander2Vacuums = None
                     Commander2Planner = None
                     Planner2Commander = None
                     Vacuums2Commander = None
+
+		    
             self.hosts = hostDataClass()
+
+
+
 
     ## sendMessageOverSocket
     #
@@ -171,14 +174,6 @@ if (__name__ =='__main__') :
     world.inc()
 
     chan = SocketChannel(world)
-    chan.initializeSockets((("127.0.0.1",9999,"C2V1"),
-                            ("127.0.0.1",9999,"C2V2"),
-                            ("127.0.0.1",9999,"C2V3")),
-                           (("127.0.0.1",9999,"V12C"),
-                            ("127.0.0.1",9999,"V22C"),
-                            ("127.0.0.1",9999,"V32C")),
-                           ("127.0.0.1",9999,"C2P"),
-                           ("127.0.0.1",9999,"P2C"))
  
     # Should add code to then test the communications.
     # Perhaps we could implement a DEBUG type message to send
