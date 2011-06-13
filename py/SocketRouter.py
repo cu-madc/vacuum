@@ -84,9 +84,16 @@ class SocketRouter(Router):
 
     sendOverTCP = True # Send XML over TCP?  If not, uses local function calls
     sendBackplaneOverTCP = False # Send backplane data over TCP? If not, use local calls
-    acceptIncomingConnections = True # Start servers to receive XML over TCP? 
-    SERVERS_DETAILS = [("localhost",9999)] # Array of servers to start [(host,port), ...]
-    # Each server corresponds to a single simulated agent (commander, planner, etc.)
+    acceptIncomingConnections = True # Start servers to receive XML over TCP?
+
+    
+    # Each agent has its own router and needs to keep information about its own network information.
+    POLLING_SERVER_DEFAULT_PORT=9999
+    DEBUG = True
+    POLLING_SERVER_BUFFER_SIZE = 4096
+    BUFFER_SIZE = 4096;                    # Max size of the buffer
+
+    
 
     def __init__(self,channel) :
 	Router.__init__(self,channel)
@@ -96,19 +103,29 @@ class SocketRouter(Router):
             from comm import Comm
             self.myComm = Comm()
 
-            # self.servers = []
 
-            # Create and activate server; will keep running until interrupted by Ctrl-C
-            for i in self.SERVERS_DETAILS :
-                server = ThreadedTCPServer((i[0], i[1]), LocalTCPHandler)
-                server.setParentClass(self)
-                # Start a thread with the server -- that thread will then start one
-                # more thread for each request
-                server_thread = threading.Thread(target=server.serve_forever)
-                # Exit the server thread when the main thread terminates
-                server_thread.setDaemon(True)
-                server_thread.start()
-                # self.servers.append(server)
+	self.incomingTCP = Queue()
+	
+	#  Variables for the state of the polling process
+	self.setRunning(startThread)
+
+
+	#  Variables used to keep track of the data.
+	self.incomingDataList = Queue()
+	self.dataLock = threading.Lock()
+
+
+	#  Initialize the port number to use
+	self.setPort(portNumber);
+	self.setHostname('localhost') #socket.gethostname())
+
+	if(startThread) :
+	    if(self.DEBUG) :
+		print("Starting socket server")
+	    self.createAndInitializeSocket()
+
+
+
 
         # initialize socket networking functionality, if going to be used
         if(self.sendOverTCP) :
@@ -130,11 +147,36 @@ class SocketRouter(Router):
         mySocket.close()
 
     
-    ## genHostTuple
-    #
-    # This function is shorthand for creating host tuples
-    def genHostTuple(hostName,hostPort):
-        return (hostName,hostPort)
+
+
+    def setRunning(self,value) :
+	#  Sets the value of the running variable.
+	self.keepCheckingQueue = value
+
+
+    def getRunning(self) :
+	#  Returns the value of the running variable.
+	return (self.keepCheckingQueue);
+
+
+    def setPort(self,value) :
+	# Sets the value of the port to use for the socket
+	self.serverPort = value;
+
+
+    def getPort(self) :
+	# Returns the value of the port used for the socket
+	return(self.serverPort);
+
+
+    def setHostname(self,value) :
+	# Sets the value of the port to use for the socket
+	self.hostname = value;
+
+
+    def getHostname(self) :
+	# Returns the value of the port used for the socket
+	return(self.hostname);
 
 
 
