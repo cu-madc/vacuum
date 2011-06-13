@@ -89,13 +89,6 @@ class SocketRouter(Router):
             import SocketServer
             self.myComm = Comm()
 
-	    
-
-		    
-            class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
-                def setParentClass(self,myParent):
-                    self.myParent = myParent
-
             # self.servers = []
 
             # Create and activate server; will keep running until interrupted by Ctrl-C
@@ -176,6 +169,10 @@ class LocalTCPHandler (BaseRequestHandler):
         self.server.myParent.dataLock.release()
 
 
+
+class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+    def setParentClass(self,myParent):
+	self.myParent = myParent
 
 
 
