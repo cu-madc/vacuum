@@ -95,7 +95,7 @@ class SocketRouter(Router):
 
     
 
-    def __init__(self,channel) :
+    def __init__(self,channel,startThread=False,portNumber=POLLING_SERVER_DEFAULT_PORT) :
 	Router.__init__(self,channel)
 
 
@@ -132,6 +132,133 @@ class SocketRouter(Router):
             from comm import Comm    # import our variable-length string library
             self.myComm = Comm()  # instantiate variable-length string generator
             self.hosts = hostDataClass()
+
+
+
+
+    def __del__(self):
+       # *********************************************************************
+       # * class destructor.
+       # ******************************************************************** */
+
+       if(self.DEBUG) :
+	       print("Shutting down the PollingServer object.");
+
+       #  Send an empty message to send to the open socket and shut it down.
+       self.setRunning(False);
+       #XMLSendLocal *mySender = new XMLSendLocal(getPort());
+       #mySender->sendNULLXMLTree();
+       #delete mySender;
+
+       if self.getRunning() :
+	       self.stopServerSocket()
+	       self.destroyMutex()
+	       print("Exiting the thread.")
+	       #pthread_exit(None);
+
+
+       #incomingDataList.clear();
+
+
+
+
+
+    def createAndInitializeSocket(self) :
+	# *********************************************************************
+	# Set up and create the socket used for waiting for information.
+	# If everything is okay returns zero. Otherwise it returns 1.
+	# ******************************************************************** **/
+
+	# Poll the queue periodically
+	self.setRunning(True)
+	threading.Timer(1.0, self.checkIncomingQueue).start()
+	if(self.DEBUG) :
+	    print("Timer started for checking the queue")
+
+
+	# Start the server on a separate thread.
+	#handler = LocalTCPHandler(self)
+	self.socketServer = IncomingSocketServer( \
+	    (self.getHostname(),self.getPort()),LocalTCPHandler,self)
+
+	self.serverThread = threading.Thread(target=self.socketServer.serve_forever)
+	self.serverThread.setDaemon(True)
+	self.serverThread.start()
+	if(self.DEBUG) :
+	    print("Started thread: {0} listening on {1}:{2}".format
+		  (self.serverThread.getName(),self.getHostname(),self.getPort()))
+
+
+
+
+
+    def stopServerSocket(self,printError=False):
+	####################################################################
+	## stopServerSocket(self,printError=False)
+	##
+	## Stop the existing socket server. 
+
+	self.setRunning(False)
+	if(self.DEBUG) :
+	    print("Stopping the server socket.")
+
+	try:
+	    self.socketServer.shutdown()
+	except:
+	    if(self.DEBUG) :
+		print("Error - unable to shut down the socket server.")
+	    return(False)
+
+	return(True)
+
+
+
+
+    ####################################################################
+    ## checkIncomingQueue(self)
+    ##
+    ## Routine to check the queue for any completed requests
+    def checkIncomingQueue(self) :
+
+	if(self.DEBUG) :
+		print("checking the incoming queue")
+
+	numberItems = 0
+	self.dataLock.acquire()
+	entry = None
+	while(not self.incomingTCP.empty()):
+	    # Something has been passed in from the interwebz
+	    entry = self.incomingTCP.get()
+	    if(self.DEBUG) :
+		    print("Incomging queue: {0}".format(entry))
+	    numberItems += 1
+
+
+	entry = None
+
+	try:
+	    self.dataLock.notify()
+	except AttributeError:
+	    pass
+
+	self.dataLock.release()
+
+	if(self.getRunning()) :
+	    threading.Timer(1.0, self.checkIncomingQueue).start()
+
+	return(numberItems);
+
+
+
+
+    def destroyMutex(self) :
+	# *********************************************************************
+	# Destory the mutex that has been created in the constructor.
+	# ******************************************************************** */
+
+	if(self.dataLock) :
+	    self.dataLock.release();
+	    self.dataLock = None
 
 
 
@@ -238,15 +365,38 @@ class ThreadedTCPServer (ThreadingMixIn, TCPServer):
 
 
 if (__name__ =='__main__') :
-    world = World()
-    world.inc()
+    import time
+    import sys
 
-    chan = SocketChannel(world)
- 
-    # Should add code to then test the communications.
-    # Perhaps we could implement a DEBUG type message to send
-    # as XML, which doesn't get passed?
+    if (len(sys.argv)==1) :
+	    sys.argv.append("client")
 
-    def silly(a, b) :
-        print("type: {0}\n{1}".format(type(a),b))
+    if (sys.argv[1]=="server") :
+	print("testing")
+	polling = SocketRouter(True)
+	steps = 4
+	while(steps>0) :
+	    time.sleep(4.0)
+	    steps -= 1
+	    print("Waiting Step {0}".format(10-steps))
+	polling.setRunning(False)
+
+    else :
+	print("client")
+	HOST, PORT = "localhost", SocketRouter.POLLING_SERVER_DEFAULT_PORT
+	data = "This is a test bubba" 
+
+	# Create a socket (SOCK_STREAM means a TCP socket)
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+	# Connect to server and send data
+	sock.connect((HOST, PORT))
+	sock.send(data + "\n")
+
+	# Receive data from the server and shut down
+	received = sock.recv(1024)
+	sock.close()
+
+	print("Sent:     {0}".format(data))
+	print("Received: {0}".format(received))
 
