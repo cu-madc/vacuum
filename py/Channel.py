@@ -69,6 +69,8 @@ from numpy.linalg import *
 #from Vacuum import Vacuum
 
 from Router import Router
+from SocketRouter import SocketRouter
+
 
 
 # The xml classes used to define the messages being passed.
@@ -189,7 +191,7 @@ class Channel:
         self.setPlanner(planner)
         self.setCommander(commander)
 
-	self.router = Router(self)
+	self.router = SocketRouter(self)
 	self.vacuum = None
 
 

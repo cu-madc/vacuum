@@ -64,7 +64,6 @@
 #
 
 from Router import Router
-
 from Queue import Queue
 from SocketServer import *
 import socket
@@ -82,8 +81,6 @@ import re
 # This channel uses TCP sockets for communication.
 class SocketRouter(Router):
 
-    sendOverTCP = False # Send XML over TCP?  If not, uses local function calls
-    sendBackplaneOverTCP = False # Send backplane data over TCP? If not, use local calls
     acceptIncomingConnections = True # Start servers to receive XML over TCP?
 
     
@@ -125,17 +122,6 @@ class SocketRouter(Router):
 	    self.createAndInitializeSocket()
 
 
-	else :
-	    self.createAndInitializeSocketForever()
-
-
-
-        # initialize socket networking functionality, if going to be used
-        if(self.sendOverTCP) :
-            from comm import Comm    # import our variable-length string library
-            self.myComm = Comm()  # instantiate variable-length string generator
-            self.hosts = hostDataClass()
-
 
 
 
@@ -154,10 +140,10 @@ class SocketRouter(Router):
        #delete mySender;
 
        if self.getRunning() :
-	       self.stopServerSocket()
-	       self.destroyMutex()
-	       print("Exiting the thread.")
-	       #pthread_exit(None);
+	   self.stopServerSocket()
+	   self.destroyMutex()
+	   print("Exiting the thread.")
+	   #pthread_exit(None);
 
 
        #incomingDataList.clear();
@@ -418,7 +404,13 @@ if (__name__ =='__main__') :
 
 	else :
 	    polling = SocketRouter(None,False)
-	    polling.checkIncomingQueue()
+	    try:
+		#polling.checkIncomingQueue()
+		polling.createAndInitializeSocketForever()
+
+	    except KeyboardInterrupt:
+		print("Stopping the server socket.")
+		polling.stopServerSocket()
 
     else :
 	print("client")
