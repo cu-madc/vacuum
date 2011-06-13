@@ -82,7 +82,7 @@ import re
 # This channel uses TCP sockets for communication.
 class SocketRouter(Router):
 
-    sendOverTCP = True # Send XML over TCP?  If not, uses local function calls
+    sendOverTCP = False # Send XML over TCP?  If not, uses local function calls
     sendBackplaneOverTCP = False # Send backplane data over TCP? If not, use local calls
     acceptIncomingConnections = True # Start servers to receive XML over TCP?
 
@@ -125,6 +125,9 @@ class SocketRouter(Router):
 	    self.createAndInitializeSocket()
 
 
+	else :
+	    self.createAndInitializeSocketForever()
+
 
 
         # initialize socket networking functionality, if going to be used
@@ -142,7 +145,7 @@ class SocketRouter(Router):
        # ******************************************************************** */
 
        if(self.DEBUG) :
-	       print("Shutting down the PollingServer object.");
+	       print("Shutting down the SocketRouter object.");
 
        #  Send an empty message to send to the open socket and shut it down.
        self.setRunning(False);
@@ -178,7 +181,7 @@ class SocketRouter(Router):
 
 	# Start the server on a separate thread.
 	#handler = LocalTCPHandler(self)
-	self.socketServer = IncomingSocketServer( \
+	self.socketServer = ThreadedTCPServer( \
 	    (self.getHostname(),self.getPort()),LocalTCPHandler,self)
 
 	self.serverThread = threading.Thread(target=self.socketServer.serve_forever)
@@ -188,7 +191,31 @@ class SocketRouter(Router):
 	    print("Started thread: {0} listening on {1}:{2}".format
 		  (self.serverThread.getName(),self.getHostname(),self.getPort()))
 
+	    
 
+
+    def createAndInitializeSocketForever(self) :
+	# *********************************************************************
+	# Set up and create the socket used for waiting for information.
+	# it will loop and wait on the socket "forever."
+	# ******************************************************************** **/
+
+	# Poll the queue periodically
+	self.setRunning(False)
+	if(self.DEBUG) :
+	    print("Timer started for checking the queue")
+
+
+	# Start the server and keep polling it.
+	self.socketServer = TCPServer( \
+	    (self.getHostname(),self.getPort()),LocalTCPHandler,self)
+
+	if(self.DEBUG) :
+	    print("Started thread, listening on {0}:{1}".format
+		  (self.getHostname(),self.getPort()))
+
+
+	self.socketServer.serve_forever()
 
 
 
@@ -230,7 +257,7 @@ class SocketRouter(Router):
 	    # Something has been passed in from the interwebz
 	    entry = self.incomingTCP.get()
 	    if(self.DEBUG) :
-		    print("Incomging queue: {0}".format(entry))
+		    print("Incoming queue: {0}".format(entry))
 	    numberItems += 1
 
 
@@ -321,23 +348,29 @@ class LocalTCPHandler (BaseRequestHandler):
 
     def handle(self) :
 	socketInfo = socket.gethostbyaddr(self.client_address[0])
-	#if(PollingServer.DEBUG) :
+	#if(SocketRouter.DEBUG) :
 	#	print("Heard from {0}-{1}".format(self.client_address[0],socketInfo[0]))
 
-	message = self.request.recv(PollingServer.POLLING_SERVER_BUFFER_SIZE).strip()
+	message = self.request.recv(SocketRouter.POLLING_SERVER_BUFFER_SIZE).strip()
 	#message = self.server.myParent.myComm.readChunk(self.request)
-	#if(PollingServer.DEBUG) :
-	#	print("Confirmed Client: {0}".format(message))
+	
+	if(SocketRouter.DEBUG) :
+		print("Confirmed Client: {0}".format(message))
+		
 	self.request.send("OK")
 
-	self.server.myParent.dataLock.acquire()
-	self.server.myParent.incomingTCP.put(message)
-
 	try:
-	    self.server.myParent.dataLock.notify()
-        except AttributeError:
+	    self.server.myParent.dataLock.acquire()
+	    self.server.myParent.incomingTCP.put(message)
+
+	    try:
+		self.server.myParent.dataLock.notify()
+	    except AttributeError:
+		pass
+	    self.server.myParent.dataLock.release()
+
+	except AttributeError:
 	    pass
-        self.server.myParent.dataLock.release()
 
 
 
@@ -373,13 +406,19 @@ if (__name__ =='__main__') :
 
     if (sys.argv[1]=="server") :
 	print("testing")
-	polling = SocketRouter(True)
-	steps = 4
-	while(steps>0) :
-	    time.sleep(4.0)
-	    steps -= 1
-	    print("Waiting Step {0}".format(10-steps))
-	polling.setRunning(False)
+
+	if(not True) :
+	    polling = SocketRouter(None,True)
+	    steps = 4
+	    while(steps>0) :
+		time.sleep(4.0)
+		steps -= 1
+		print("Waiting Step {0}".format(10-steps))
+	    polling.setRunning(False)
+
+	else :
+	    polling = SocketRouter(None,False)
+	    polling.checkIncomingQueue()
 
     else :
 	print("client")
