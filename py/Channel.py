@@ -236,11 +236,11 @@ class Channel:
 	return(self.vacuum)
 
     def setDebug(self,value) :
-	self.DEBUG = value
+	Channel.DEBUG = value
 	self.router.setDebug(value)
 
     def getDebug(self) :
-	return(self.DEBUG)
+	return(Channel.DEBUG)
 
     def addVacuum(self,vacuum,id,xpos,ypos) :
 
@@ -265,6 +265,9 @@ class Channel:
 
 
     def setNumberVacuums(self,number,x=0,y=0) :
+	
+	self.router.setNumberVacuums(number) # set the number of vacuums for the router.
+	
 	# Routine to set the number of vacuums that are being tracked.
 	if(number > len(self.vacuumArray)) :
 	    # There are more vacuums to be used than currently
@@ -300,9 +303,9 @@ class Channel:
     def receiveXMLReportParseAndDecide(self,xmlString) :
         dif = XMLIncomingDIF()
         info = dif.determineXMLInformation(xmlString)
-	if(self.checkInfoType) :
+	if(Channel.checkInfoType) :
 	    print("Got information: {0}".format(info.getMyInformationType()))
-	    self.checkInfoType = False
+	    Channel.checkInfoType = False
 
 
         if(info.getMyInformationType() ==
@@ -728,7 +731,7 @@ class Channel:
         report.setStatus(status)
         report.createRootNode()
 
-	#self.checkInfoType = True
+	#Channel.checkInfoType = True
 	#print("sending vacuum to commander")
 	self.router.sendString(Router.COMMANDER,report.xml2Char())
 	#self.receiveXMLReportParseAndDecide(report.xml2Char())
@@ -764,7 +767,7 @@ class Channel:
 	#print("Channel.sendMeasuredFromPlanner2Sensor: {0}".format(sensorData.getMyInformationType()))
         sensorData.createRootNode()
 
-	#self.checkInfoType = True
+	#Channel.checkInfoType = True
 	self.router.sendString(Router.SENSORARRAY,sensorData.xml2Char()) #,-1,True)
 	#self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
@@ -774,7 +777,7 @@ class Channel:
 	#print("Channel.sendStatusSensor2Planner: {0}".format(sensorData.getMyInformationType()))
         sensorData.createRootNode()
 
-	#self.checkInfoType = True
+	#Channel.checkInfoType = True
 	self.router.sendString(Router.PLANNER,sensorData.xml2Char()) #,-1,True)
 	#self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
@@ -813,7 +816,7 @@ class Channel:
 	#print("Channel.sendPlannerUpdateRequest: {0}".format(update.getMyInformationType()))
         update.createRootNode()
 
-	#self.checkInfoType = True
+	#Channel.checkInfoType = True
 	self.router.sendString(Router.PLANNER,update.xml2Char()) #,-1,True)
 	#self.receiveXMLReportParseAndDecide(update.xml2Char())
 

@@ -72,7 +72,24 @@ from Vacuum import Vacuum
 from Router import Router
 
 
+def setIPInformationAgents(agent,interfaces) :
+    for agentType, ipInfo in interfaces.iteritems():
+	agent.getChannel().getRouter().setHostInformation(agentType,ipInfo[0],ipInfo[1],None)
 
+
+def setIPInformationVacuum(agent,host,port,number) :
+    agent.getChannel().getRouter().setHostInformation(Router.VACUUM,host,port,number)
+
+
+
+# Set the host addressesd and ports for the different agents
+agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',1000],
+		   Router.PLANNER    :['10.0.1.11',1001],
+		   Router.COMMANDER  :['10.0.1.12',1002]}
+
+vacummInterfaces = [ ['10.0.1.13',1003],
+		     ['10.0.1.14',1004],
+		     ['10.0.1.15',1005]]
 
 # Set the rate and size for dirtfall
 r = 1.8
@@ -101,17 +118,14 @@ plan=Planner.spawnPlanner(r*s/float(N*N),r,s,accuracy,N)
 W.setPlanner(plan)
 
 command = Commander.spawnCommander()   # Commander(chan)
-command.getChannel().getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())
-command.getChannel().getRouter().setChannel(Router.PLANNER,plan.getChannel())
+
 command.getChannel().getRouter().setChannel(Router.WORLD,W.getChannel())
-
-plan.getChannel().getRouter().setChannel(Router.COMMANDER,command.getChannel())
-plan.getChannel().getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())
 plan.getChannel().getRouter().setChannel(Router.WORLD,W.getChannel())
-
-sensor.getChannel().getRouter().setChannel(Router.COMMANDER,command.getChannel())
-sensor.getChannel().getRouter().setChannel(Router.PLANNER,plan.getChannel())
 sensor.getChannel().getRouter().setChannel(Router.WORLD,W.getChannel())
+
+setIPInformationAgents(command,agentInterfaces)
+setIPInformationAgents(plan,agentInterfaces)
+setIPInformationAgents(sensor,agentInterfaces)
 
 #chan.setDebug(True)
 chan.getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())
@@ -123,19 +137,25 @@ chan.getRouter().setChannel(Router.PLANNER,plan.getChannel())
 # Create vacuums
 numVacs=3
 vacArray = []
+
+command.getChannel().setNumberVacuums(numVacs)
+plan.getChannel().setNumberVacuums(numVacs)
+sensor.getChannel().setNumberVacuums(numVacs)
+
 for i in range(numVacs) :
     #print("Initializing vacuum {0}".format(i))
     vacuum = Vacuum.spawnVacuum(i,0)
-    vacuum.getChannel().getRouter().setChannel(Router.COMMANDER,command.getChannel())
-    vacuum.getChannel().getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())
-    vacuum.getChannel().getRouter().setChannel(Router.PLANNER,plan.getChannel())
+    #print("\n\nNew Vacuum: {0}".format(vacuum))
+    vacuum.getChannel().setNumberVacuums(numVacs)
     vacArray.append(vacuum)
     pos = vacuum.getPosition()
     #chan.addVacuum(vacuum,i,pos[0],pos[1])
-    
-    plan.getChannel().getRouter().addVacuum(vacuum.getChannel(),i)
-    sensor.getChannel().getRouter().addVacuum(vacuum.getChannel(),i)
-    command.getChannel().getRouter().addVacuum(vacuum.getChannel(),i)
+
+    setIPInformationVacuum(plan,   vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    setIPInformationVacuum(sensor, vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    setIPInformationVacuum(command,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    setIPInformationAgents(vacuum, agentInterfaces)
+
     chan.getRouter().addVacuum(vacuum.getChannel(),i)
     vacuum.getChannel().sendPlannerVacuumMovedPosition(i,pos[0],pos[1])
 

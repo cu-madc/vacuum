@@ -84,7 +84,6 @@ class Router:
 	self.port_number  = ''
 
 
-
     def setReliability(self,value) :
         self.reliability = value
 
@@ -97,7 +96,7 @@ class Router:
 	self.agents[self.COMMANDER]['parent'] = commander
 
     def setPlanner(self,planner) :
-	if(self.DEBUG) :
+	if(Router.DEBUG) :
 	    print("Setting planner: {0}".format(planner))
 	self.agents[self.PLANNER]['parent'] = planner
 
@@ -111,7 +110,7 @@ class Router:
 	self.agents[self.WORLD]['parent'] = world
 
     def setChannel(self,type,channel) :
-	if(self.DEBUG) :
+	if(Router.DEBUG) :
 	    print("Setting channel: {0}-{1}".format(type,channel))
 
 	self.agents[type]['parent'] = channel
@@ -120,10 +119,10 @@ class Router:
 	return(self.agents[type]['parent'])
 
     def setDebug(self,value) :
-	self.DEBUG = value
+	Router.DEBUG = value
 
     def getDebug(self) :
-	return(self.DEBUG)
+	return(Router.DEBUG)
 
 
     def setHost(self,address) :
@@ -154,9 +153,12 @@ class Router:
     # the agents list.
     def setHostInformation(self,hostType,host,port,vacuumID):
 
+	#print("\n\n\nInitial Vacuums: {0}".format(self.vacuumArray))
+
 	if((hostType>-1) and (hostType<len(self.agents))) :
 
 	    if(hostType == self.VACUUM):
+		#print("this is a vacuum - {0}, {1}".format(vacuumID,len(self.vacuumArray)))
 
 		if((vacuumID>-1) and (vacuumID < len(self.vacuumArray))) :
 		    # This is a well formed message for a vacuum.
@@ -168,8 +170,10 @@ class Router:
 		self.agents[hostType]['host'] = host
 		self.agents[hostType]['port'] = port
 
-	#print(self.agents)
-	#print(self.vacuumArray)
+
+	if(Router.DEBUG) :
+	    print("Agents: {0}".format(self.agents))
+	    print("Vacuums: {0}".format(self.vacuumArray))
 
 
 

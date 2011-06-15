@@ -86,17 +86,17 @@ class SocketRouter(Router):
     
     # Each agent has its own router and needs to keep information about its own network information.
     POLLING_SERVER_DEFAULT_PORT=9999
-    DEBUG = True
     POLLING_SERVER_BUFFER_SIZE = 4096
-    BUFFER_SIZE = 4096;                    # Max size of the buffer
+    DEBUG = True
+
 
     
 
-    def __init__(self,channel,startThread=False,portNumber=POLLING_SERVER_DEFAULT_PORT,hostname='localhost') :
+    def __init__(self,channel,startThread=False,portNumber=SocketRouter.POLLING_SERVER_DEFAULT_PORT,hostname='localhost') :
 	Router.__init__(self,channel)
 
 
-        if (self.acceptIncomingConnections) :
+        if (SocketRouter.acceptIncomingConnections) :
             from comm import Comm
             self.myComm = Comm()
 
@@ -117,7 +117,7 @@ class SocketRouter(Router):
 	self.setHostname(hostname) #socket.gethostname())
 
 	if(startThread) :
-	    if(self.DEBUG) :
+	    if(SocketRouter.DEBUG) :
 		print("Starting socket server")
 	    self.createAndInitializeSocket()
 
@@ -130,7 +130,7 @@ class SocketRouter(Router):
        # * class destructor.
        # ******************************************************************** */
 
-       if(self.DEBUG) :
+       if(SocketRouter.DEBUG) :
 	       print("Shutting down the SocketRouter object.");
 
        #  Send an empty message to send to the open socket and shut it down.
@@ -161,7 +161,7 @@ class SocketRouter(Router):
 	# Poll the queue periodically
 	self.setRunning(True)
 	threading.Timer(1.0, self.checkIncomingQueue).start()
-	if(self.DEBUG) :
+	if(SocketRouter.DEBUG) :
 	    print("Timer started for checking the queue")
 
 
@@ -173,7 +173,7 @@ class SocketRouter(Router):
 	self.serverThread = threading.Thread(target=self.socketServer.serve_forever)
 	self.serverThread.setDaemon(True)
 	self.serverThread.start()
-	if(self.DEBUG) :
+	if(SocketRouter.DEBUG) :
 	    print("Started thread: {0} listening on {1}:{2}".format
 		  (self.serverThread.getName(),self.getHostname(),self.getPort()))
 
@@ -188,7 +188,7 @@ class SocketRouter(Router):
 
 	# Poll the queue periodically
 	self.setRunning(False)
-	if(self.DEBUG) :
+	if(SocketRouter.DEBUG) :
 	    print("Timer started for checking the queue")
 
 
@@ -197,7 +197,7 @@ class SocketRouter(Router):
 	    (self.getHostname(),self.getPort()),LocalTCPHandler,self)
 	print(self.socketServer)
 
-	if(self.DEBUG) :
+	if(SocketRouter.DEBUG) :
 	    print("Started thread, listening on {0}:{1}".format
 		  (self.getHostname(),self.getPort()))
 
@@ -227,13 +227,13 @@ class SocketRouter(Router):
 	## Stop the existing socket server. 
 
 	self.setRunning(False)
-	if(self.DEBUG) :
+	if(SocketRouter.DEBUG) :
 	    print("Stopping the server socket.")
 
 	try:
 	    self.socketServer.shutdown()
 	except:
-	    if(self.DEBUG) :
+	    if(SocketRouter.DEBUG) :
 		print("Error - unable to shut down the socket server.")
 	    return(False)
 
@@ -248,8 +248,8 @@ class SocketRouter(Router):
     ## Routine to check the queue for any completed requests
     def checkIncomingQueue(self) :
 
-	if(self.DEBUG) :
-		print("checking the incoming queue")
+	if(SocketRouter.DEBUG) :
+	    print("checking the incoming queue")
 
 	numberItems = 0
 	self.dataLock.acquire()
@@ -257,8 +257,8 @@ class SocketRouter(Router):
 	while(not self.incomingTCP.empty()):
 	    # Something has been passed in from the interwebz
 	    entry = self.incomingTCP.get()
-	    if(self.DEBUG) :
-		    print("Incoming queue: {0}".format(entry))
+	    if(SocketRouter.DEBUG) :
+		print("Incoming queue: {0}".format(entry))
 	    numberItems += 1
 
 
@@ -397,7 +397,7 @@ class ThreadedTCPServer (ThreadingMixIn, TCPServer):
     def __init__(self,connectionInfo,handler,parent) :
 	self.setParentClass(parent)
         #ThreadingMixIn.__init__(self)
-	if(parent.DEBUG) :
+	if(SocketRouter.DEBUG) :
 		print("Created the socket server class: {0}".format(connectionInfo))
 
         TCPServer.__init__(self,connectionInfo,handler)
