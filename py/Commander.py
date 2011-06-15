@@ -65,13 +65,16 @@ from numpy.linalg import *
 
 from World import World
 from Channel import Channel
+from Router import Router
+from Agent import Agent
 
-class Commander :
+
+class Commander (Agent) :
     
     # command and control object
 
     def __init__(self,channel=None) : 
-
+	Agent.__init__(self,Router.COMMANDER)
         self.setWorking(True)
         self.setChannel(channel) # handle to planner
 
@@ -82,12 +85,6 @@ class Commander :
 
     def getWorking(self) :
         return(self.isWorking)
-
-    def getChannel(self) :
-        return(self.channel)
-
-    def setChannel(self,value) :
-        self.channel = value
 
 
     def getReport(self,xPos,yPos,status,IDnum) :

@@ -64,14 +64,16 @@ from numpy.linalg import *
 
 from Channel import Channel
 from Router import Router
+from Agent import Agent
 
 
-class Vacuum : 
+class Vacuum (Agent): 
     # robot vaccum object
 
 
     def __init__(self,IDnum,currentTime=0.0,channel=None) : #class constructor
-
+	Agent.__init__(self,Router.VACUUM)
+	
         self.xPos   = 0
         self.yPos   = 0
         self.setStatus(3)                     # 1 - moving, 2-cleaning, 3-waiting, 4-repairing
@@ -94,7 +96,6 @@ class Vacuum :
 
         self.Moisture = None
 
-	self.setMyType(Router.VACUUM)
 
     def setWorking(self,value) :
         self.isWorking = value
@@ -102,17 +103,8 @@ class Vacuum :
     def getWorking(self) :
         return(self.isWorking)
 
-    def setMyType(self,type) :
-	self.myType = type
-
-    def getMyType(self) :
-	return(self.myType)
-
-    def getChannel(self) :
-        return(self.channel)
-
     def setChannel(self,value) :
-        self.channel = value
+        Agent.setChannel(self,value)
         if(self.channel) :
             pos = self.getPosition()
             self.channel.sendPlannerVacuumMovedPosition(self.IDnum,pos[0],pos[1])

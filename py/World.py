@@ -66,22 +66,22 @@ from numpy.linalg import *
 
 from Channel import Channel
 from Router import Router
+from Agent import Agent
 
-class  World :
+class  World (Agent):
 
 
 
     def __init__(self,r=1.0,s=1.0,v=1.0,cloudsize=1.0) :
-
+	Agent.__init__(self,Router.WORLD)
         self.time = 0
     
         self.N=5                   # %size of grid
         self.sensor = None         # data as recorded on sensor
-        self.channel = None        # handle to the channel for sending info.
         self.expenditure = 0.0     # cummulative funds expended since last reset
         self.numberVacuums = 0     # No vacuums assigned yet.
         self.intializeVariables(r,s,v,cloudsize)
-	self.setMyType(Router.WORLD)
+
     
     def intializeVariables(self,r,s,v,cloudsize) :
         # initialize the variables this class keeps track of (input rate and size constants)
@@ -160,12 +160,6 @@ class  World :
     def incrementVacuumCount(self):
         self.numberVacuums += 1;
         
-    def setChannel(self,value) :
-        self.channel = value
-
-    def getChannel(self) :
-        return(self.channel)
-
 
     def setDirtRate(self,r) :
         self.r = r                 # rate constant for - events per unit time(world wide)
@@ -179,12 +173,6 @@ class  World :
 
     def setRainSize(self,cloudsize) :
         self.cloudsize = cloudsize # average size of rain event
-
-    def setMyType(self,type) :
-	self.myType = type
-
-    def getMyType(self) :
-	return(self.myType)
 
     def addVacuum(self,vacuum) :
 	# This is a dummy method. It is assumed to be overridden by a

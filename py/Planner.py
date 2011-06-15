@@ -67,12 +67,14 @@ from World import World
 from SensorArray import SensorArray
 from Channel import Channel
 from Router import Router
+from Agent import Agent
 
-class Planner :
+class Planner (Agent) :
 
 
     def __init__(self,errGrowth,unnormalizeDirtRate,unnormalizeDirtSize,accuracy,N) :
-        
+        Agent.__init__(self,Router.PLANNER)
+	
         # define the
         #     variance growth parameter,
         #     average dirt fall,
@@ -94,10 +96,6 @@ class Planner :
 	self.normalizeDirtRate()
 
 
-        # Define the other objects that need to be tracked.
-        self.setChannel(None)
-	self.setMyType(Router.PLANNER)
-
         self.setWorking(True)
         self.vacuumlocation = []
         
@@ -112,12 +110,6 @@ class Planner :
 
     def getNumber(self) :
         return(self.N)
-
-    def setMyType(self,type) :
-	self.myType = type
-
-    def getMyType(self) :
-	return(self.myType)
 
     def setAccuracy(self,value) :
         self.sensorAccuracy = value
@@ -142,12 +134,6 @@ class Planner :
         
     def getArray(self) :
         return(self.worldview)
-
-    def setChannel(self,value) :
-        self.channel = value
-
-    def getChannel(self) :
-        return(self.channel)
 
     def getWet(self):
         return(self.wetview)

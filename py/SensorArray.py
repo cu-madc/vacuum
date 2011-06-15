@@ -65,11 +65,13 @@ from numpy.linalg import *
 
 from Channel import Channel
 from Router import Router
+from Agent import Agent
 
 
-class SensorArray :
+class SensorArray (Agent):
 
     def __init__(self,accuracy=0.0) :
+	Agent.__init__(self,Router.SENSORARRAY)
         # constructor (accuracy of measurement)
         self.accuracy=accuracy-float(int(accuracy))  #force to be within constraints
 
@@ -78,8 +80,6 @@ class SensorArray :
         self.Wet = zeros((self.N,self.N),dtype=float64)   # array of values for dirt levels
 
         self.setWorking(True)
-        self.setChannel(None)                             # handle to channel to planner
-	self.setMyType(Router.SENSORARRAY)
 
 
     def setWorking(self,value) :
@@ -87,13 +87,6 @@ class SensorArray :
 
     def getWorking(self):
         return(self.isWorking)
-
-
-    def setMyType(self,type) :
-	self.myType = type
-
-    def getMyType(self) :
-	return(self.myType)
 
 
 
