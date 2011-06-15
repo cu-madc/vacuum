@@ -77,18 +77,9 @@ class Router:
 	self.agents = [dict(),dict(),dict(),dict(),dict()]
 	self.vacuumArray = []     # array of object handles
 
-        self.setReliability(1.0)   # Probability of properly transmitting the
-                                   # message. Default is full reliability.
-
 	self.host_address = ''
 	self.port_number  = ''
 
-
-    def setReliability(self,value) :
-        self.reliability = value
-
-    def getReliability(self) :
-        return(self.reliability)
 
 
 

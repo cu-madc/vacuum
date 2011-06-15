@@ -80,3 +80,15 @@ class Agent :
     def getMyType(self) :
 	return(self.myType)
 
+
+    def setHostInformation(self,hostType,host,port,vacuumID=None) :
+
+	if(self.channel and self.channel.getRouter()) :
+	    self.channel.getRouter().setHostInformation(hostType,host,port,vacuumID)
+
+
+    def setRouterInformation(self,type,channel) :
+
+	if(self.channel and self.channel.getRouter()) :
+	    self.channel.getRouter().setChannel(type,channel)
+

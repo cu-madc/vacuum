@@ -74,11 +74,11 @@ from Router import Router
 
 def setIPInformationAgents(agent,interfaces) :
     for agentType, ipInfo in interfaces.iteritems():
-	agent.getChannel().getRouter().setHostInformation(agentType,ipInfo[0],ipInfo[1],None)
+	agent.setHostInformation(agentType,ipInfo[0],ipInfo[1],None)
 
 
 def setIPInformationVacuum(agent,host,port,number) :
-    agent.getChannel().getRouter().setHostInformation(Router.VACUUM,host,port,number)
+    agent.setHostInformation(Router.VACUUM,host,port,number)
 
 
 
@@ -119,18 +119,18 @@ W.setPlanner(plan)
 
 command = Commander.spawnCommander()   # Commander(chan)
 
-command.getChannel().getRouter().setChannel(Router.WORLD,W.getChannel())
-plan.getChannel().getRouter().setChannel(Router.WORLD,W.getChannel())
-sensor.getChannel().getRouter().setChannel(Router.WORLD,W.getChannel())
+command.setRouterInformation(Router.WORLD,W.getChannel())
+plan.setRouterInformation(Router.WORLD,W.getChannel())
+sensor.setRouterInformation(Router.WORLD,W.getChannel())
 
 setIPInformationAgents(command,agentInterfaces)
 setIPInformationAgents(plan,agentInterfaces)
 setIPInformationAgents(sensor,agentInterfaces)
 
 #chan.setDebug(True)
-chan.getRouter().setChannel(Router.SENSORARRAY,sensor.getChannel())
-chan.getRouter().setChannel(Router.COMMANDER,command.getChannel())
-chan.getRouter().setChannel(Router.PLANNER,plan.getChannel())
+chan.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
+chan.setRouterChannel(Router.COMMANDER,command.getChannel())
+chan.setRouterChannel(Router.PLANNER,plan.getChannel())
 
 
 

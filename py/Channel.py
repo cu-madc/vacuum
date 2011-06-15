@@ -242,6 +242,9 @@ class Channel:
     def getDebug(self) :
 	return(Channel.DEBUG)
 
+    def setRouterChannel(self,type,channel) :
+	self.router.setChannel(type,channel)
+
     def addVacuum(self,vacuum,id,xpos,ypos) :
 
 	if(vacuum != None):
