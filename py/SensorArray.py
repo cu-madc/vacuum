@@ -117,12 +117,6 @@ class SensorArray (Agent):
 		self.N -= 1
 
 
-    def getChannel(self) :
-        return(self.channel)
-
-    def setChannel(self,value) :
-        self.channel = value
-
     def getArray(self) :
         return(self.array)
 
