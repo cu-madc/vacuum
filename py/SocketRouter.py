@@ -195,13 +195,28 @@ class SocketRouter(Router):
 	# Start the server and keep polling it.
 	self.socketServer = TCPServer( \
 	    (self.getHostname(),self.getPort()),LocalTCPHandler,self)
+	print(self.socketServer)
 
 	if(self.DEBUG) :
 	    print("Started thread, listening on {0}:{1}".format
 		  (self.getHostname(),self.getPort()))
 
 
-	self.socketServer.serve_forever()
+	#self.socketServer.serve_forever()
+
+	check = TRUE
+	while(check) :
+	    self.socketServer.handle_request()
+	    check = FALSE
+
+
+	self.socketServer.socket.shutdown(socket.SHUT_RDWR)
+	self.socketServer.socket.close()
+
+	import sys
+	print("exit again")
+	sys.exit(0)
+
 
 
 
@@ -344,6 +359,11 @@ class LocalTCPHandler (BaseRequestHandler):
 		print("Confirmed Client: {0}".format(message))
 		
 	self.request.send("OK")
+	#self.server.stopServerSocket()
+	print(self.server)
+	#self.server.shutdown()
+
+
 
 	try:
 	    self.server.myParent.dataLock.acquire()
@@ -358,6 +378,8 @@ class LocalTCPHandler (BaseRequestHandler):
 	except AttributeError:
 	    pass
 
+
+	self.finish()
 
 
 ########################################################################
@@ -426,6 +448,7 @@ if (__name__ =='__main__') :
 
 	# Receive data from the server and shut down
 	received = sock.recv(1024)
+	sock.shutdown(socket.SHUT_RDWR)
 	sock.close()
 
 	print("Sent:     {0}".format(data))
