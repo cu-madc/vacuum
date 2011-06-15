@@ -92,7 +92,7 @@ class SocketRouter(Router):
 
     
 
-    def __init__(self,channel,startThread=False,portNumber=POLLING_SERVER_DEFAULT_PORT) :
+    def __init__(self,channel,startThread=False,portNumber=POLLING_SERVER_DEFAULT_PORT,hostname='localhost') :
 	Router.__init__(self,channel)
 
 
@@ -114,7 +114,7 @@ class SocketRouter(Router):
 
 	#  Initialize the port number to use
 	self.setPort(portNumber);
-	self.setHostname('localhost') #socket.gethostname())
+	self.setHostname(hostname) #socket.gethostname())
 
 	if(startThread) :
 	    if(self.DEBUG) :
@@ -204,10 +204,10 @@ class SocketRouter(Router):
 
 	#self.socketServer.serve_forever()
 
-	check = TRUE
+	check = True
 	while(check) :
 	    self.socketServer.handle_request()
-	    check = FALSE
+	    check = False
 
 
 	self.socketServer.socket.shutdown(socket.SHUT_RDWR)
@@ -348,7 +348,11 @@ class LocalTCPHandler (BaseRequestHandler):
     #    pass
 
     def handle(self) :
-	socketInfo = socket.gethostbyaddr(self.client_address[0])
+	try:
+	    socketInfo = socket.gethostbyaddr(self.client_address[0])
+	except:
+	    socketInfo = None
+	    
 	#if(SocketRouter.DEBUG) :
 	#	print("Heard from {0}-{1}".format(self.client_address[0],socketInfo[0]))
 
@@ -425,7 +429,7 @@ if (__name__ =='__main__') :
 	    polling.setRunning(False)
 
 	else :
-	    polling = SocketRouter(None,False)
+	    polling = SocketRouter(None,False,SocketRouter.POLLING_SERVER_DEFAULT_PORT,'10.0.1.18')
 	    try:
 		#polling.checkIncomingQueue()
 		polling.createAndInitializeSocketForever()
@@ -436,7 +440,7 @@ if (__name__ =='__main__') :
 
     else :
 	print("client")
-	HOST, PORT = "localhost", SocketRouter.POLLING_SERVER_DEFAULT_PORT
+	HOST, PORT = "10.0.1.18", SocketRouter.POLLING_SERVER_DEFAULT_PORT
 	data = "This is a test bubba" 
 
 	# Create a socket (SOCK_STREAM means a TCP socket)
