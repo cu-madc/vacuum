@@ -92,7 +92,7 @@ class SocketRouter(Router):
 
     
 
-    def __init__(self,channel,startThread=False,portNumber=SocketRouter.POLLING_SERVER_DEFAULT_PORT,hostname='localhost') :
+    def __init__(self,channel,startThread=False,portNumber=POLLING_SERVER_DEFAULT_PORT,hostname='localhost') :
 	Router.__init__(self,channel)
 
 

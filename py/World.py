@@ -65,6 +65,7 @@ from numpy import *
 from numpy.linalg import *
 
 from Channel import Channel
+from Router import Router
 
 class  World :
 
@@ -80,7 +81,7 @@ class  World :
         self.expenditure = 0.0     # cummulative funds expended since last reset
         self.numberVacuums = 0     # No vacuums assigned yet.
         self.intializeVariables(r,s,v,cloudsize)
-
+	self.setMyType(Router.WORLD)
     
     def intializeVariables(self,r,s,v,cloudsize) :
         # initialize the variables this class keeps track of (input rate and size constants)
@@ -178,6 +179,12 @@ class  World :
 
     def setRainSize(self,cloudsize) :
         self.cloudsize = cloudsize # average size of rain event
+
+    def setMyType(self,type) :
+	self.myType = type
+
+    def getMyType(self) :
+	return(self.myType)
 
     def addVacuum(self,vacuum) :
 	# This is a dummy method. It is assumed to be overridden by a

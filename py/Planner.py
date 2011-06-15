@@ -66,6 +66,7 @@ from numpy.linalg import *
 from World import World
 from SensorArray import SensorArray
 from Channel import Channel
+from Router import Router
 
 class Planner :
 
@@ -95,6 +96,7 @@ class Planner :
 
         # Define the other objects that need to be tracked.
         self.setChannel(None)
+	self.setMyType(Router.PLANNER)
 
         self.setWorking(True)
         self.vacuumlocation = []
@@ -110,6 +112,12 @@ class Planner :
 
     def getNumber(self) :
         return(self.N)
+
+    def setMyType(self,type) :
+	self.myType = type
+
+    def getMyType(self) :
+	return(self.myType)
 
     def setAccuracy(self,value) :
         self.sensorAccuracy = value

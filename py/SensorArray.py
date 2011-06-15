@@ -64,6 +64,7 @@ from numpy import *
 from numpy.linalg import *
 
 from Channel import Channel
+from Router import Router
 
 
 class SensorArray :
@@ -78,6 +79,7 @@ class SensorArray :
 
         self.setWorking(True)
         self.setChannel(None)                             # handle to channel to planner
+	self.setMyType(Router.SENSORARRAY)
 
 
     def setWorking(self,value) :
@@ -85,6 +87,14 @@ class SensorArray :
 
     def getWorking(self):
         return(self.isWorking)
+
+
+    def setMyType(self,type) :
+	self.myType = type
+
+    def getMyType(self) :
+	return(self.myType)
+
 
 
     def setGridSize(self,N):
@@ -176,9 +186,6 @@ class SensorArray :
 
 
 if (__name__ =='__main__') :
-    world = World()
-    world.randomDust()
-    sensor = SensorArray(0.2,world)
-    sensor.measure()
+    sensor = SensorArray(0.2)
     #print(sensor.array)
 

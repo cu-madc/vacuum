@@ -63,6 +63,8 @@ from numpy import *
 from numpy.linalg import *
 
 from Channel import Channel
+from Router import Router
+
 
 class Vacuum : 
     # robot vaccum object
@@ -92,12 +94,19 @@ class Vacuum :
 
         self.Moisture = None
 
+	self.setMyType(Router.VACUUM)
 
     def setWorking(self,value) :
         self.isWorking = value
 
     def getWorking(self) :
         return(self.isWorking)
+
+    def setMyType(self,type) :
+	self.myType = type
+
+    def getMyType(self) :
+	return(self.myType)
 
     def getChannel(self) :
         return(self.channel)
@@ -264,12 +273,5 @@ class Vacuum :
     
     
 if (__name__ =='__main__') :
-    from World import World
-    world = World()
-    world.inc()
 
     vacuum = Vacuum(1,0.0)
-    vacuum.move(1,1)
-    vacuum.moveAndClean(1,1)
-    vacuum.moveord(1,1)
-    vacuum.timeStep(1,1)
