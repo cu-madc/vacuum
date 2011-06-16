@@ -256,7 +256,11 @@ class Router:
 			self.vacuumArray[vacuumID].checkInfoType = True
 
 		    #print("Router.sendString vacuum array: {0}  channel: {1}".format(self.vacuumArray,self.channel))
-		    self.vacuumArray[vacuumID].receiveXMLReportParseAndDecide(message)
+		    if((vacuumID > -1) and (vacuumID < len(self.vacuumArray)) and self.vacuumArray[vacuumID]) :
+			self.vacuumArray[vacuumID].receiveXMLReportParseAndDecide(message)
+
+		    else :
+			print("Router.sendString bad vacuum id: {0}".format(vacuumID))
 
 
 	

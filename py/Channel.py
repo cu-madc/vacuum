@@ -352,8 +352,8 @@ class Channel:
             
             if(self.commander) :
                 pos = info.getPos()
-                #print("sending report to commander for {0} - {1},{2}".format(
-                #    info.getVacuumID(),pos[0],pos[1]))
+                print("Channel.receiveXMLReportParseAndDecide sending report to commander for {0} - {1},{2}".format(
+                    info.getVacuumID(),pos[0],pos[1]))
                 self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
 
 
@@ -769,7 +769,7 @@ class Channel:
         orders.createRootNode()
         orders.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
 
-	self.router.sendString(Router.VACUUM,orders.xml2Char(),IDnum)
+	self.router.sendString(Router.PLANNER,orders.xml2Char(),IDnum)
 	#self.router.sendString(Router.PLANNER,orders.xml2Char())
 	#self.receiveXMLReportParseAndDecide(orders.xml2Char())
 

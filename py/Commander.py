@@ -130,7 +130,7 @@ if (__name__ =='__main__') :
     vacuum = Vacuum.spawnVacuum(0,0)
     vacuum.getChannel().setNumberVacuums(1)
     vacuum.setRouterChannel(Router.COMMANDER,commander.getChannel())
-    commander.setRouterChannel(Router.VACUUM,vacuum.getChannel())
+    commander.setVacuumRouterInformation(vacuum.getChannel(),0,0,0)
 
     commander.getChannel().getRouter().setHostname("10.0.1.18")
     commander.getChannel().getRouter().setPort(5018)

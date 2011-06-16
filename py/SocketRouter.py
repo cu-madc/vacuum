@@ -193,7 +193,7 @@ class SocketRouter(Router):
 
 
 	# Start the server and keep polling it.
-	self.socketServer = TCPServer( \
+	self.socketServer = BasicTCPServer( \
 	    (self.getHostname(),self.getPort()),LocalTCPHandler,self)
 	print(self.socketServer)
 
@@ -344,9 +344,10 @@ class SocketRouter(Router):
 ## server class.
 class LocalTCPHandler (BaseRequestHandler): 
 
-    #def __init__(self):
+    #def __init__(self,parent):
+    #	BaseRequestHandler.__init__(self)
     #    #self.incomingTCP = theQueue
-    #    pass
+    #	self.parent = parent
 
     def handle(self) :
 	try:
@@ -369,8 +370,10 @@ class LocalTCPHandler (BaseRequestHandler):
 	#self.server.shutdown()
 
 
+	self.finish()
 
-	try:
+
+	if(self.server.threaded):
 	    self.server.myParent.dataLock.acquire()
 	    self.server.myParent.incomingTCP.put(message)
 
@@ -380,11 +383,11 @@ class LocalTCPHandler (BaseRequestHandler):
 		pass
 	    self.server.myParent.dataLock.release()
 
-	except AttributeError:
-	    pass
+	else:
+	    # This is a request that is coming into a blocking tcp server.
+	    self.server.myParent.channel.receiveXMLReportParseAndDecide(message)
+		
 
-
-	self.finish()
 
 
 ########################################################################
@@ -402,6 +405,30 @@ class ThreadedTCPServer (ThreadingMixIn, TCPServer):
 		print("Created the socket server class: {0}".format(connectionInfo))
 
         TCPServer.__init__(self,connectionInfo,handler)
+	self.threaded = True
+
+
+    def setParentClass(self,myParent):
+	self.myParent = myParent
+
+
+
+########################################################################
+## Basic Socket Server class
+##
+## This class keeps track of the incoming messages. It is a blocking
+## server.
+class BasicTCPServer (TCPServer): 
+
+
+    def __init__(self,connectionInfo,handler,parent) :
+	self.setParentClass(parent)
+        #ThreadingMixIn.__init__(self)
+	if(SocketRouter.DEBUG) :
+		print("Created the basic socket server class: {0}".format(connectionInfo))
+
+        TCPServer.__init__(self,connectionInfo,handler)
+	self.threaded = False
 
 
     def setParentClass(self,myParent):

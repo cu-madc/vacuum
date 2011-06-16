@@ -333,7 +333,8 @@ if (__name__ =='__main__') :
     planner.setRouterChannel(Router.VACUUM,vacuum.getChannel())
     planner.setVacuumLocation(0,0,0)
     
-    planner.recommendOrder(0,1,1)
+    #planner.recommendOrder(0,1,1)
+    planner.channel.sendRecommendOrderFromPlanner2Commander(1,2,0)
     #planner.inc()
     
 
