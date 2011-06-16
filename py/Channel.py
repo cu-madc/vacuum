@@ -180,13 +180,13 @@ class Channel:
     DEBUG = False
     
     
-    def __init__(self,world=None,vacuums=[],sensor=None,planner=None,commander=None) :
+    def __init__(self,world=None,sensor=None,planner=None,commander=None) :
 
         self.setWorking(True)        
         self.delay = 0.0           # transmission delay - not yet implemented
 
         self.setWorld(world)
-        self.vacuumArray = vacuums # array of object handles
+        self.vacuumArray = [] # array of object handles
         self.setSensor(sensor)
         self.setPlanner(planner)
         self.setCommander(commander)
@@ -245,6 +245,10 @@ class Channel:
     def setRouterChannel(self,type,channel) :
 	self.router.setChannel(type,channel)
 
+    def printChannelInformation(self,toPrint) :
+        print("Channel information {0}: {1} - {2}".format(toPrint,self,self.vacuumArray))
+
+
     def addVacuum(self,vacuum,id,xpos,ypos) :
 
 	if(vacuum != None):
@@ -260,8 +264,10 @@ class Channel:
             # There are not enough vacuum objects defined. Create
             # place holders.
             self.vacuumArray.append(None)
+
         self.vacuumArray[id] = vacuum
         self.sendPlannerVacuumMovedPosition(id,xpos,ypos)
+        #print("Channel.addVacuum - vacuum array: {0}".format(self.vacuumArray))
 
 	if (self.world):
 	    self.world.addVacuum(vacuum)
@@ -270,6 +276,7 @@ class Channel:
     def setNumberVacuums(self,number,x=0,y=0) :
 	
 	self.router.setNumberVacuums(number) # set the number of vacuums for the router.
+	#print("Channel.setNumbervacuums: {0} - {1}, {2}".format(len(self.vacuumArray),self.vacuumArray,self))
 	
 	# Routine to set the number of vacuums that are being tracked.
 	if(number > len(self.vacuumArray)) :
@@ -865,7 +872,7 @@ class Channel:
         newExpenditure.createRootNode()
         #print(newExpenditure.xml2Char())
 
-	self.router.sendString(Router.VACUUM,newExpenditure.xml2Char(),id)
+	self.router.sendString(Router.WORLD,newExpenditure.xml2Char(),id)
 	#self.receiveXMLReportParseAndDecide(newExpenditure.xml2Char())
 
 
@@ -881,7 +888,7 @@ class Channel:
         update.createRootNode()
         update.specifyInformationType(XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID)
 
-	self.router.sendString(Router.VACUUM,update.xml2Char(),idnum)
+	self.router.sendString(Router.WORLD,update.xml2Char(),idnum)
 	#self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 

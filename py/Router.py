@@ -80,8 +80,15 @@ class Router:
 	self.host_address = ''
 	self.port_number  = ''
 
+	self.setReliability(1.0)   # Probability of properly transmitting the
+                                   # message. Default is full reliability.
 
 
+    def setReliability(self,value) :
+        self.reliability = value
+
+    def getReliability(self) :
+        return(self.reliability)
 
     def setCommander(self,commander) :
 	self.agents[self.COMMANDER]['parent'] = commander
@@ -136,6 +143,10 @@ class Router:
             return(True)
         return(False)
 
+
+    def printHostInformation(self,toPrint) :
+        print("Host information {0} : {1}\nVacuums{2}".format(
+                toPrint,self.agents,self.vacuumArray))
 
 
     ## setHostInformation(self,hostType,host,port,vacuumID)
@@ -227,6 +238,7 @@ class Router:
 		    # IP iformation is available for this
 		    # agent. Send the information over the
 		    # network.
+		    print("TRYING\n\n\n")
 		    pass
 
 		elif(self.sendMessage()) :
@@ -237,6 +249,7 @@ class Router:
 			print("Router.sendString: {0}".format(vacuumID))
 			self.vacuumArray[vacuumID].checkInfoType = True
 
+		    #print("Router.sendString vacuum array: {0}  channel: {1}".format(self.vacuumArray,self.channel))
 		    self.vacuumArray[vacuumID].receiveXMLReportParseAndDecide(message)
 
 

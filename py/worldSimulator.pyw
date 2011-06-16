@@ -101,12 +101,14 @@ cloudsize = 20
 
 # Create the world and get the gridsize
 W = GraphicalWorld.spawnWorld(r,s,v,cloudsize);
+#print("World channel: {0}".format(W.getChannel()))
 N = W.getNumber() 
 
 # create and set the sensor
 
 accuracy = 0.4
 sensor = SensorArray.spawnSensorArray(accuracy)   #SensorArray(accuracy)
+#print("Sensor Channel: {0}".format(sensor.getChannel()))
 W.setSensor(sensor)
 
 # channel setup
@@ -115,55 +117,98 @@ chan = W.getChannel()   # TODO register the channel to the world
 
 # create the commander and planner
 plan=Planner.spawnPlanner(r*s/float(N*N),r,s,accuracy,N)
+#print("Planner channel: {0}".format(plan.getChannel()))
 W.setPlanner(plan)
 
 command = Commander.spawnCommander()   # Commander(chan)
+#print("Comander channel: {0}".format(command.getChannel()))
 
 command.setRouterInformation(Router.WORLD,W.getChannel())
 plan.setRouterInformation(Router.WORLD,W.getChannel())
 sensor.setRouterInformation(Router.WORLD,W.getChannel())
 
-setIPInformationAgents(command,agentInterfaces)
-setIPInformationAgents(plan,agentInterfaces)
-setIPInformationAgents(sensor,agentInterfaces)
+#setIPInformationAgents(command,agentInterfaces)
+#setIPInformationAgents(plan,agentInterfaces)
+#setIPInformationAgents(sensor,agentInterfaces)
+
+command.setRouterInformation(Router.COMMANDER,command.getChannel())
+command.setRouterInformation(Router.PLANNER,plan.getChannel())
+command.setRouterInformation(Router.SENSORARRAY,sensor.getChannel())
+command.setRouterInformation(Router.WORLD,W.getChannel())
+
+sensor.setRouterInformation(Router.COMMANDER,command.getChannel())
+sensor.setRouterInformation(Router.PLANNER,plan.getChannel())
+sensor.setRouterInformation(Router.SENSORARRAY,sensor.getChannel())
+sensor.setRouterInformation(Router.WORLD,W.getChannel())
+
+plan.setRouterInformation(Router.COMMANDER,command.getChannel())
+plan.setRouterInformation(Router.PLANNER,plan.getChannel())
+plan.setRouterInformation(Router.SENSORARRAY,sensor.getChannel())
+plan.setRouterInformation(Router.WORLD,W.getChannel())
 
 #chan.setDebug(True)
 chan.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
 chan.setRouterChannel(Router.COMMANDER,command.getChannel())
 chan.setRouterChannel(Router.PLANNER,plan.getChannel())
+chan.setRouterChannel(Router.WORLD,chan)
 
+#command.getChannel().printChannelInformation("commander ")
+#sensor.getChannel().printChannelInformation("sensor ")
+#plan.getChannel().printChannelInformation("planner")
+#W.getChannel().printChannelInformation("world")
 
 
 # Create vacuums
 numVacs=3
 vacArray = []
 
+#print("setting commander vacuums")
 command.getChannel().setNumberVacuums(numVacs)
+#print("setting planner vacuums")
 plan.getChannel().setNumberVacuums(numVacs)
+#print("setting sensor vacuums")
 sensor.getChannel().setNumberVacuums(numVacs)
+
 
 for i in range(numVacs) :
     #print("Initializing vacuum {0}".format(i))
     vacuum = Vacuum.spawnVacuum(i,0)
-    #print("\n\nNew Vacuum: {0}".format(vacuum))
+    #print("\n\nNew Vacuum: {0} - {1}, {2}".format(vacuum,vacuum.getChannel(),i))
     vacuum.getChannel().setNumberVacuums(numVacs)
     vacArray.append(vacuum)
     pos = vacuum.getPosition()
     #chan.addVacuum(vacuum,i,pos[0],pos[1])
 
-    setIPInformationVacuum(plan,   vacummInterfaces[i][0],vacummInterfaces[i][1],i)
-    setIPInformationVacuum(sensor, vacummInterfaces[i][0],vacummInterfaces[i][1],i)
-    setIPInformationVacuum(command,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
-    setIPInformationAgents(vacuum, agentInterfaces)
+    #setIPInformationVacuum(plan,   vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    #setIPInformationVacuum(sensor, vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    #setIPInformationVacuum(command,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    #setIPInformationAgents(vacuum, agentInterfaces)
+
+    vacuum.setRouterInformation(Router.COMMANDER,command.getChannel())
+    vacuum.setRouterInformation(Router.PLANNER,plan.getChannel())
+    vacuum.setRouterInformation(Router.SENSORARRAY,sensor.getChannel())
+    vacuum.setRouterInformation(Router.WORLD,W.getChannel())
+
+    command.setVacuumRouterInformation(vacuum.getChannel(),i)
+    sensor.setVacuumRouterInformation(vacuum.getChannel(),i)
+    plan.setVacuumRouterInformation(vacuum.getChannel(),i)
 
     chan.getRouter().addVacuum(vacuum.getChannel(),i)
     vacuum.getChannel().sendPlannerVacuumMovedPosition(i,pos[0],pos[1])
 
-    #print("going to add vacuum {0}".format(i))
+    #print("going to add vacuum {0} to the world".format(i))
     W.addVacuum(vacuum)
+
+#import sys
+#sys.exit(0)
+
 
 
 #W.printVacuumInfo(0)
+#command.printRouterInformation("commander")
+#sensor.printRouterInformation("sensor")
+#plan.printRouterInformation("planner")
+#W.printRouterInformation("world")
 
 
 

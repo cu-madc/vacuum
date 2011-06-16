@@ -62,6 +62,8 @@
 
 class Agent :
 
+    DEBUG = False
+
     def __init__(self,type) :
 	# Define the other objects that need to be tracked.
         self.setChannel(None)
@@ -92,3 +94,16 @@ class Agent :
 	if(self.channel and self.channel.getRouter()) :
 	    self.channel.getRouter().setChannel(type,channel)
 
+
+    def setVacuumRouterInformation(self,channel,vacuumID=None,xPos=0,yPos=0) :
+
+	if(self.channel) :
+	    if(Agent.DEBUG):
+		print("Adding vacuum: {0} - {1}".format(channel,vacuumID))
+            self.channel.addVacuum(channel,vacuumID,xPos,yPos)
+            self.channel.getRouter().addVacuum(channel,vacuumID)
+
+
+    def printRouterInformation(self,toPrint) :
+        if(self.channel) :
+            self.channel.getRouter().printHostInformation(toPrint)
