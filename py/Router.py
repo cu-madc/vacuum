@@ -231,7 +231,7 @@ class Router:
 
 	    if((vacuumID>-1) and (vacuumID < len(self.vacuumArray))) :
 		# This is a well formed message for a vacuum.
-		
+
 		if((type(self.vacuumArray[vacuumID]) is dict) and
 		   ('host' in self.vacuumArray[vacuumID]) and
 		   ('port' in self.vacuumArray[vacuumID])) :
@@ -255,19 +255,10 @@ class Router:
 
 	
 	elif('parent' in self.agents[destination]):
-	    # This is a message for an agent that is not a vacuum.
-	    
-	    if(self.agents[destination]['parent']) :
+		# This is a message for an agent that is not a vacuum.
 
-		if((type(self.agents[destination]) is dict) and
-		   ('host' in self.agents[destination]) and
-		   ('port' in self.agents[destination])) :
-		    # IP iformation is available for this
-		    # agent. Send the information over the
-		    # network.
-		    pass
+		if((self.agents[destination]['parent']) and (self.sendMessage())) :
 
-		elif(self.sendMessage()) :
 		    # The information held for this object is a
 		    # pointer to the agent's channel.
 
@@ -275,6 +266,17 @@ class Router:
 			self.agents[destination]['parent'].checkInfoType = True
 
 		    self.agents[destination]['parent'].receiveXMLReportParseAndDecide(message)
+
+
+	elif (('host' in self.agents[destination]) and
+	      ('port' in self.agents[destination])) :
+	    # IP iformation is available for this
+	    # agent. Send the information over the
+	    # network.
+	    print("TRYING!!!")
+
+
+
 
 
 
