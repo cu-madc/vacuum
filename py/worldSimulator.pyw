@@ -72,24 +72,6 @@ from Vacuum import Vacuum
 from Router import Router
 
 
-def setIPInformationAgents(agent,interfaces) :
-    for agentType, ipInfo in interfaces.iteritems():
-	agent.setHostInformation(agentType,ipInfo[0],ipInfo[1],None)
-
-
-def setIPInformationVacuum(agent,host,port,number) :
-    agent.setHostInformation(Router.VACUUM,host,port,number)
-
-
-
-# Set the host addressesd and ports for the different agents
-agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',1000],
-		   Router.PLANNER    :['10.0.1.11',1001],
-		   Router.COMMANDER  :['10.0.1.12',1002]}
-
-vacummInterfaces = [ ['10.0.1.13',1003],
-		     ['10.0.1.14',1004],
-		     ['10.0.1.15',1005]]
 
 # Set the rate and size for dirtfall
 r = 1.8
@@ -126,10 +108,6 @@ command = Commander.spawnCommander()   # Commander(chan)
 command.setRouterInformation(Router.WORLD,W.getChannel())
 plan.setRouterInformation(Router.WORLD,W.getChannel())
 sensor.setRouterInformation(Router.WORLD,W.getChannel())
-
-#setIPInformationAgents(command,agentInterfaces)
-#setIPInformationAgents(plan,agentInterfaces)
-#setIPInformationAgents(sensor,agentInterfaces)
 
 command.setRouterInformation(Router.COMMANDER,command.getChannel())
 command.setRouterInformation(Router.PLANNER,plan.getChannel())
@@ -178,11 +156,6 @@ for i in range(numVacs) :
     vacArray.append(vacuum)
     pos = vacuum.getPosition()
     #chan.addVacuum(vacuum,i,pos[0],pos[1])
-
-    #setIPInformationVacuum(plan,   vacummInterfaces[i][0],vacummInterfaces[i][1],i)
-    #setIPInformationVacuum(sensor, vacummInterfaces[i][0],vacummInterfaces[i][1],i)
-    #setIPInformationVacuum(command,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
-    #setIPInformationAgents(vacuum, agentInterfaces)
 
     vacuum.setRouterInformation(Router.COMMANDER,command.getChannel())
     vacuum.setRouterInformation(Router.PLANNER,plan.getChannel())
