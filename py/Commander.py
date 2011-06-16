@@ -118,4 +118,15 @@ class Commander (Agent) :
 
 
 if (__name__ =='__main__') :
+    from Vacuum import Vacuum
+    
     commander = Commander()
+    commander = Commander.spawnCommander()
+    commander.setHostInformation(Router.PLANNER,  "10.0.1.17",5017,None)
+    commander.setHostInformation(Router.COMMANDER,"10.0.1.18",5018,None)
+    commander.getChannel().setNumberVacuums(1)
+
+    vacuum = Vacuum.spawnVacuum(0,0)
+    vacuum.getChannel().setNumberVacuums(1)
+    vacuum.setRouterChannel(Router.COMMANDER,commander.getChannel())
+    commander.setRouterChannel(Router.VACUUM,vacuum.getChannel())

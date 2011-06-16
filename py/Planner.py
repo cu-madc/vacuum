@@ -282,7 +282,7 @@ class Planner (Agent) :
         if not self.getWorking() :
             return([])
 
-        #print("Planner.recommendOrder: {0} {1} {2}".format(id,xPos,yPos))
+        print("Planner.recommendOrder: {0} {1} {2}".format(id,xPos,yPos))
         if(len(self.vacuumlocation)>id) :
             self.setVacuumLocation(id,xPos,yPos)
         else :
@@ -303,7 +303,7 @@ class Planner (Agent) :
         I = argmax(A)
         xord = I/self.getNumber()
         yord = I%self.getNumber()
-        #print("view: {0}\n {1}: {2} {3} from {4} {5}".format(A,I,xord,yord,xPos,yPos))
+        print("view: {0}\n {1}: {2} {3} from {4} {5}".format(A,I,xord,yord,xPos,yPos))
         #raw_input("Press Enter to continue...")
         self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord,id)
     
@@ -319,16 +319,21 @@ class Planner (Agent) :
 
 
 if (__name__ =='__main__') :
-    planner = Planner(1.0,1.0,1.0,1.0,4)
-    #planner.inc()
-
-    print(planner.viewPrecision)
-
-    planner.setGridSize(8)
+    from Vacuum import Vacuum
     
-    print(planner.viewPrecision)
+    planner = Planner.spawnPlanner(1.0,1.0,1.0,1.0,5)
+    planner.setHostInformation(Router.COMMANDER,"10.0.1.18",5018,None)
+    planner.setHostInformation(Router.PLANNER,  "10.0.1.17",5017,None)
+    planner.getChannel().setNumberVacuums(1)
 
-    planner.setGridSize(3)
+    vacuum = Vacuum.spawnVacuum(0,0)
+    vacuum.getChannel().setNumberVacuums(1)
+    vacuum.setRouterChannel(Router.PLANNER,planner.getChannel())
+    planner.setRouterChannel(Router.VACUUM,vacuum.getChannel())
+    planner.setVacuumLocation(0,0,0)
+    
+    planner.recommendOrder(0,1,1)
+    #planner.inc()
+    
 
-    print(planner.viewPrecision)
     

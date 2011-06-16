@@ -238,7 +238,7 @@ class Router:
 		    # IP iformation is available for this
 		    # agent. Send the information over the
 		    # network.
-		    print("TRYING\n\n\n")
+		    print("TRYING{0}\n\n\n".format(1/1))
 		    pass
 
 		elif(self.sendMessage()) :
@@ -273,7 +273,7 @@ class Router:
 	    # IP iformation is available for this
 	    # agent. Send the information over the
 	    # network.
-	    print("TRYING!!!")
+	    print("SENDING TO {0} {1} ".format(self.agents[destination]['host'],self.agents[destination]['port']))
 
 
 

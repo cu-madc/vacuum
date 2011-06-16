@@ -266,7 +266,7 @@ class Channel:
             self.vacuumArray.append(None)
 
         self.vacuumArray[id] = vacuum
-        self.sendPlannerVacuumMovedPosition(id,xpos,ypos)
+        #self.sendPlannerVacuumMovedPosition(id,xpos,ypos) #TODO - should this be commented out?
         #print("Channel.addVacuum - vacuum array: {0}".format(self.vacuumArray))
 
 	if (self.world):
