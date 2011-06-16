@@ -64,16 +64,33 @@ from numpy import *
 from numpy.linalg import *
 
 
-from SocketChannel import SocketChannel
+from Channel import Channel
 from Commander import Commander
 from Planner import Planner
 from SensorArray import SensorArray
 from GraphicalWorld import GraphicalWorld
 from Vacuum import Vacuum
+from Router import Router
+
+
+def setIPInformationAgents(agent,interfaces) :
+    for agentType, ipInfo in interfaces.iteritems():
+	agent.setHostInformation(agentType,ipInfo[0],ipInfo[1],None)
+
+
+def setIPInformationVacuum(agent,host,port,number) :
+    agent.setHostInformation(Router.VACUUM,host,port,number)
 
 
 
+# Set the host addressesd and ports for the different agents
+agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',1000],
+		   Router.PLANNER    :['10.0.1.11',1001],
+		   Router.COMMANDER  :['10.0.1.12',1002]}
 
+vacummInterfaces = [ ['10.0.1.13',1003],
+		     ['10.0.1.14',1004],
+		     ['10.0.1.15',1005]]
 
 # Set the rate and size for dirtfall
 r = 1.8
@@ -84,88 +101,95 @@ v         = .2
 cloudsize = 20
 
 # Create the world and get the gridsize
-W = GraphicalWorld(r,s,v,cloudsize);
+W = GraphicalWorld.spawnWorld(r,s,v,cloudsize);
+#print("World channel: {0}".format(W.getChannel()))
 N = W.getNumber() 
 
 # create and set the sensor
 
 accuracy = 0.4
-sensor = SensorArray(accuracy)
+sensor = SensorArray.spawnSensorArray(accuracy)   #SensorArray(accuracy)
+#print("Sensor Channel: {0}".format(sensor.getChannel()))
 W.setSensor(sensor)
 
 # channel setup
-chan = SocketChannel(W);   # TODO register the channel to the world
+chan = W.getChannel()   # TODO register the channel to the world
 
 
 # create the commander and planner
-plan=Planner(r*s/float(N*N),r*s/float(N*N),accuracy,N);
-chan.setPlanner(plan)
-plan.setChannel(chan)
+plan=Planner.spawnPlanner(r*s/float(N*N),r,s,accuracy,N)
+#print("Planner channel: {0}".format(plan.getChannel()))
 W.setPlanner(plan)
-W.setChannel(chan)
 
-command=Commander(chan);
-chan.setCommander(command)
-sensor.setChannel(chan)
-chan.setSensor(sensor)
+command = Commander.spawnCommander()   # Commander(chan)
+#print("Comander channel: {0}".format(command.getChannel()))
+
+command.setRouterChannel(Router.WORLD,W.getChannel())
+plan.setRouterChannel(Router.WORLD,W.getChannel())
+sensor.setRouterChannel(Router.WORLD,W.getChannel())
+
+setIPInformationAgents(command,agentInterfaces)
+setIPInformationAgents(plan,agentInterfaces)
+setIPInformationAgents(sensor,agentInterfaces)
+
+
+#chan.setDebug(True)
+chan.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
+chan.setRouterChannel(Router.COMMANDER,command.getChannel())
+chan.setRouterChannel(Router.PLANNER,plan.getChannel())
+chan.setRouterChannel(Router.WORLD,chan)
+
 
 
 # Create vacuums
 numVacs=3
 vacArray = []
+
+#print("setting commander vacuums")
+command.getChannel().setNumberVacuums(numVacs)
+#print("setting planner vacuums")
+plan.getChannel().setNumberVacuums(numVacs)
+#print("setting sensor vacuums")
+sensor.getChannel().setNumberVacuums(numVacs)
+
+
 for i in range(numVacs) :
-    vacuum = Vacuum(i,1.0)
-    vacuum.setChannel(chan)
+    #print("Initializing vacuum {0}".format(i))
+    vacuum = Vacuum.spawnVacuum(i,0)
+    #print("\n\nNew Vacuum: {0} - {1}, {2}".format(vacuum,vacuum.getChannel(),i))
+    vacuum.getChannel().setNumberVacuums(numVacs)
     vacArray.append(vacuum)
     pos = vacuum.getPosition()
-    chan.addVacuum(vacuum,i,pos[0],pos[1])
-    W.incrementVacuumCount()
+    #chan.addVacuum(vacuum,i,pos[0],pos[1])
+
+    setIPInformationVacuum(plan,   vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    setIPInformationVacuum(sensor, vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    setIPInformationVacuum(command,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    setIPInformationAgents(vacuum, agentInterfaces)
+    vacuum.setRouterChannel(Router.WORLD,W.getChannel())
+    chan.getRouter().addVacuum(vacuum.getChannel(),i)
+    vacuum.getChannel().sendPlannerVacuumMovedPosition(i,pos[0],pos[1])
+
+    #print("going to add vacuum {0} to the world".format(i))
     W.addVacuum(vacuum)
 
+command.printRouterInformation("commander ")
+sensor.printRouterInformation("sensor ")
+plan.printRouterInformation("planner")
+W.getChannel().printChannelInformation("world")
 
-command.setNumberVacuums(len(vacArray))
 
-# Initialize networking
-chan.initializeSockets((("127.0.0.1",9999,"C2V1"),
-                        ("127.0.0.1",9999,"C2V2"),
-                        ("127.0.0.1",9999,"C2V3")), 
-                       (("127.0.0.1",9999,"V12C")
-                        ,("127.0.0.1",9999,"V22C"),
-                        ("127.0.0.1",9999,"V32C")),
-                       ("127.0.0.1",9999,"C2P"),
-                       ("127.0.0.1",9999,"P2C"))
+#import sys
+#sys.exit(0)
+
+
+
+#W.printVacuumInfo(0)
+#command.printRouterInformation("commander")
+#sensor.printRouterInformation("sensor")
+#plan.printRouterInformation("planner")
+#W.printRouterInformation("world")
+
+
 
 W.mainloop()
-exit(0)
-
-# testing (??)
-S=vacArray[1].missions;
-S1=vacArray[1].repairs;
-
-
-H = []
-R = []
-W.draw()
-skip = 10;
-for i in range(10000) :
-    W.inc()
-    if(i%skip==0) :
-       W.draw()
-    H.append(sum(sum(W.A)))
-    R.append(sum(W.Moisture>0))
-    
-print("Mean of H: {0}".format(mean(H)))
-
-try:
-    T_est=1000.0/(vacArray[1].missions-S)
-except ZeroDivisionError:
-    T_est = 0.0
-    
-S1=vacArray[1].repairs-S1;
-S=vacArray[1].missions-S;
-
-
-W.draw()
-W.mainloop()
-
-

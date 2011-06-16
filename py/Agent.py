@@ -89,7 +89,7 @@ class Agent :
 	    self.channel.getRouter().setHostInformation(hostType,host,port,vacuumID)
 
 
-    def setRouterInformation(self,type,channel) :
+    def setRouterChannel(self,type,channel) :
 
 	if(self.channel and self.channel.getRouter()) :
 	    self.channel.getRouter().setChannel(type,channel)

@@ -95,7 +95,7 @@ class Router:
 
     def setPlanner(self,planner) :
 	if(Router.DEBUG) :
-	    print("Setting planner: {0}".format(planner))
+	    print("Router, Setting planner: {0}".format(planner))
 	self.agents[self.PLANNER]['parent'] = planner
 
     def setSensorArray(self,sensorArray) :
@@ -109,7 +109,7 @@ class Router:
 
     def setChannel(self,type,channel) :
 	if(Router.DEBUG) :
-	    print("Setting channel: {0}-{1}".format(type,channel))
+	    print("Router, Setting channel: {0}-{1}".format(type,channel))
 
 	self.agents[type]['parent'] = channel
 
