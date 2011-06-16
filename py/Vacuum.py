@@ -260,6 +260,7 @@ class Vacuum (Agent):
 	vacuum = Vacuum(IDnum,currentTime,channel)
 	vacuum.setChannel(channel)
 	channel.setVacuum(vacuum)
+	channel.setMyAgent(vacuum)
 	return(vacuum)
 
     

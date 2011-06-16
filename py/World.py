@@ -246,6 +246,7 @@ class  World (Agent):
 	world = World(r,s,v,cloudsize)
 	channel = Channel(world)
 	world.setChannel(channel)
+	channel.setMyAgent(world)
 	return(world)
 
             

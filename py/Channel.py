@@ -194,6 +194,7 @@ class Channel:
 	self.router = SocketRouter(self)
 	self.vacuum = None
 
+	self.myAgent = None
 
 
     # Utility routines.
@@ -244,6 +245,12 @@ class Channel:
 
     def setRouterChannel(self,type,channel) :
 	self.router.setChannel(type,channel)
+
+    def setMyAgent(self,myAgent) :
+	self.myAgent = myAgent
+
+    def getMyAgent(self) :
+	return(self.myAgent)
 
     def printChannelInformation(self,toPrint) :
         print("Channel information {0}: {1} - {2}".format(toPrint,self,self.vacuumArray))

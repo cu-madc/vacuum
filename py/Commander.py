@@ -113,6 +113,7 @@ class Commander (Agent) :
 	channel = Channel()
 	commander = Commander(channel)
 	channel.setCommander(commander)
+	channel.setMyAgent(commander)
 	return(commander)
 
 
@@ -130,3 +131,7 @@ if (__name__ =='__main__') :
     vacuum.getChannel().setNumberVacuums(1)
     vacuum.setRouterChannel(Router.COMMANDER,commander.getChannel())
     commander.setRouterChannel(Router.VACUUM,vacuum.getChannel())
+
+    commander.getChannel().getRouter().setHostname("10.0.1.18")
+    commander.getChannel().getRouter().setPort(5018)
+    commander.getChannel().getRouter().createAndInitializeSocketForever()

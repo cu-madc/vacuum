@@ -165,6 +165,7 @@ class SensorArray (Agent):
 	sensor = SensorArray(accuracy)
 	sensor.setChannel(channel)
 	channel.setSensor(sensor)
+	channel.setMyAgent(sensor)
 	return(sensor)
 
 

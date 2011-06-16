@@ -315,6 +315,7 @@ class Planner (Agent) :
 	planner = Planner(errGrowth,unnormalizeDirtRate,unnormalizeDirtSize,accuracy,N)
 	planner.setChannel(channel)
 	channel.setPlanner(planner)
+	channel.setMyAgent(planner)
 	return(planner)
 
 

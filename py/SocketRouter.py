@@ -198,7 +198,7 @@ class SocketRouter(Router):
 	print(self.socketServer)
 
 	if(SocketRouter.DEBUG) :
-	    print("Started thread, listening on {0}:{1}".format
+	    print("Started listener, listening on {0}:{1}".format
 		  (self.getHostname(),self.getPort()))
 
 
@@ -295,10 +295,11 @@ class SocketRouter(Router):
     #
     # Sends message over TCP socket in our var len string format
     def sendMessageOverSocket(self,hostTuple,message) :
+	print("SocketRouter.sendMessageOverSocket - sending {0}".format(message))
         import socket
         mySocket = socket.socket()
         mySocket.connect((hostTuple[0],hostTuple[1]))
-        mySocket.send(self.myComm.makeChunk(message))
+        mySocket.send(message) #self.myComm.makeChunk(message))
         mySocket.close()
 
     

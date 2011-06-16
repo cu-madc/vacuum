@@ -133,6 +133,12 @@ class Router:
 	self.port_number  = port
 
 
+    ## sendMessageOverSocket
+    #
+    # This method is to be over ridden by a super class.
+    def sendMessageOverSocket(self,hostTuple,message) :
+	pass
+
     ## sendMessage(self)
     #
     # This generates a random number to determine if a message should
@@ -274,6 +280,8 @@ class Router:
 	    # agent. Send the information over the
 	    # network.
 	    print("SENDING TO {0} {1} ".format(self.agents[destination]['host'],self.agents[destination]['port']))
+	    self.sendMessageOverSocket([self.agents[destination]['host'],self.agents[destination]['port']],
+				       message)
 
 
 
