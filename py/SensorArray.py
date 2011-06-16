@@ -161,11 +161,9 @@ class SensorArray (Agent):
 
     @staticmethod
     def spawnSensorArray(accuracy=0.0) :
-	channel = Channel()
 	sensor = SensorArray(accuracy)
-	sensor.setChannel(channel)
+	channel = sensor.initializeChannel()
 	channel.setSensor(sensor)
-	channel.setMyAgent(sensor)
 	return(sensor)
 
 
@@ -174,6 +172,6 @@ class SensorArray (Agent):
 
 
 if (__name__ =='__main__') :
-    sensor = SensorArray(0.2)
+    sensor = SensorArray.spawnSensorArray(0.2)
     #print(sensor.array)
 

@@ -59,8 +59,9 @@
 # 
 # 
 
+from multiprocessing import Process
 
-class Agent :
+class Agent (Process):
 
     DEBUG = False
 
@@ -82,6 +83,9 @@ class Agent :
     def getMyType(self) :
 	return(self.myType)
 
+
+    def run(self) :
+	self.channel.getRouter().createAndInitializeSocketForever()
 
     def setHostInformation(self,hostType,host,port,vacuumID=None) :
 
@@ -107,3 +111,11 @@ class Agent :
     def printRouterInformation(self,toPrint) :
         if(self.channel) :
             self.channel.getRouter().printHostInformation(toPrint)
+
+
+    def initializeChannel(self):
+	from Channel import Channel
+	channel = Channel()
+	self.setChannel(channel)
+	channel.setMyAgent(self)
+	return(channel)

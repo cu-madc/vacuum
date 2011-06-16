@@ -110,10 +110,9 @@ class Commander (Agent) :
 
     @staticmethod
     def spawnCommander() :
-	channel = Channel()
-	commander = Commander(channel)
+	commander = Commander()
+	channel = commander.initializeChannel()
 	channel.setCommander(commander)
-	channel.setMyAgent(commander)
 	return(commander)
 
 

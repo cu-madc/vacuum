@@ -244,15 +244,13 @@ class  World (Agent):
     @staticmethod
     def spawnWorld(r=1.0,s=1.0,v=1.0,cloudsize=1.0) :
 	world = World(r,s,v,cloudsize)
-	channel = Channel(world)
-	world.setChannel(channel)
-	channel.setMyAgent(world)
+	channel = world.initializeChannel()
 	return(world)
 
             
             
 if (__name__ =='__main__') :
-    world = World()
+    world = World.spawnWorld()
     #world.inc()
     world.randomDust()
     world.randomMoisture()

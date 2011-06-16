@@ -254,13 +254,10 @@ class Vacuum (Agent):
                     
 
     @staticmethod
-    def spawnVacuum(IDnum,currentTime=0.0,channel=None) :
-	if(not channel) :
-	    channel = Channel()
-	vacuum = Vacuum(IDnum,currentTime,channel)
-	vacuum.setChannel(channel)
+    def spawnVacuum(IDnum,currentTime=0.0) :
+	vacuum = Vacuum(IDnum,currentTime,None)
+	channel = vacuum.initializeChannel()
 	channel.setVacuum(vacuum)
-	channel.setMyAgent(vacuum)
 	return(vacuum)
 
     

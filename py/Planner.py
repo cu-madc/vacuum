@@ -311,11 +311,9 @@ class Planner (Agent) :
 
     @staticmethod
     def spawnPlanner(errGrowth,unnormalizeDirtRate,unnormalizeDirtSize,accuracy,N) :
-	channel = Channel()
 	planner = Planner(errGrowth,unnormalizeDirtRate,unnormalizeDirtSize,accuracy,N)
-	planner.setChannel(channel)
+	channel = planner.initializeChannel()
 	channel.setPlanner(planner)
-	channel.setMyAgent(planner)
 	return(planner)
 
 
