@@ -67,6 +67,7 @@ class Agent (Process):
 
     def __init__(self,type) :
 	# Define the other objects that need to be tracked.
+	Process.__init__(self)
         self.setChannel(None)
 	self.setMyType(type)
 
@@ -86,6 +87,13 @@ class Agent (Process):
 
     def run(self) :
 	self.channel.getRouter().createAndInitializeSocketForever()
+
+    def setHostname(self,hostname) :
+        self.channel.getRouter().setHostname(hostname)
+
+    def setPort(self,port) :
+        self.channel.getRouter().setPort(port)
+
 
     def setHostInformation(self,hostType,host,port,vacuumID=None) :
 
@@ -119,3 +127,7 @@ class Agent (Process):
 	self.setChannel(channel)
 	channel.setMyAgent(self)
 	return(channel)
+
+
+    def run(self) :
+	self.channel.getRouter().createAndInitializeSocketForever()

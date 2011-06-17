@@ -68,6 +68,7 @@ from Queue import Queue
 from SocketServer import *
 import socket
 import threading
+import errno
 
 
 import re
@@ -207,7 +208,7 @@ class SocketRouter(Router):
 	check = True
 	while(check) :
 	    self.socketServer.handle_request()
-	    check = False
+	    #check = False
 
 
 	self.socketServer.socket.shutdown(socket.SHUT_RDWR)
@@ -295,11 +296,18 @@ class SocketRouter(Router):
     #
     # Sends message over TCP socket in our var len string format
     def sendMessageOverSocket(self,hostTuple,message) :
-	print("SocketRouter.sendMessageOverSocket - sending {0}".format(message))
+	print("SocketRouter.sendMessageOverSocket, {1}, {2} - sending:\n{0}".format(
+            message,hostTuple[0],hostTuple[1]))
         import socket
         mySocket = socket.socket()
-        mySocket.connect((hostTuple[0],hostTuple[1]))
-        mySocket.send(message) #self.myComm.makeChunk(message))
+        try:
+            mySocket.connect((hostTuple[0],hostTuple[1]))
+            mySocket.send(message) #self.myComm.makeChunk(message))
+
+        except EnvironmentError as exc:
+            if(exc.errno == errno.ECONNREFUSED):
+                print("SocketRouter.sendMessageOverSocket - Error trying to connect.")
+                
         mySocket.close()
 
     

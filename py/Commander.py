@@ -124,6 +124,9 @@ if (__name__ =='__main__') :
     commander = Commander.spawnCommander()
     commander.setHostInformation(Router.PLANNER,  "10.0.1.17",5017,None)
     commander.setHostInformation(Router.COMMANDER,"10.0.1.18",5018,None)
+    commander.setHostname("10.0.1.18")
+    commander.setPort(5018)
+
     commander.getChannel().setNumberVacuums(1)
 
     vacuum = Vacuum.spawnVacuum(0,0)
@@ -131,6 +134,6 @@ if (__name__ =='__main__') :
     vacuum.setRouterChannel(Router.COMMANDER,commander.getChannel())
     commander.setVacuumRouterInformation(vacuum.getChannel(),0,0,0)
 
-    commander.getChannel().getRouter().setHostname("10.0.1.18")
-    commander.getChannel().getRouter().setPort(5018)
-    commander.getChannel().getRouter().createAndInitializeSocketForever()
+    commander.start()
+    print("The commander is running")
+    commander.join()

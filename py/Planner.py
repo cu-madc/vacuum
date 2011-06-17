@@ -323,6 +323,8 @@ if (__name__ =='__main__') :
     planner = Planner.spawnPlanner(1.0,1.0,1.0,1.0,5)
     planner.setHostInformation(Router.COMMANDER,"10.0.1.18",5018,None)
     planner.setHostInformation(Router.PLANNER,  "10.0.1.17",5017,None)
+    planner.setHostname("10.0.1.17")
+    planner.setPort(5017)
     planner.getChannel().setNumberVacuums(1)
 
     vacuum = Vacuum.spawnVacuum(0,0)
@@ -332,7 +334,10 @@ if (__name__ =='__main__') :
     planner.setVacuumLocation(0,0,0)
     
     #planner.recommendOrder(0,1,1)
+    planner.start()
+    print("The planner is running")
     planner.channel.sendRecommendOrderFromPlanner2Commander(1,2,0)
+    planner.join()
     #planner.inc()
     
 
