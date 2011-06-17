@@ -194,6 +194,7 @@ class SocketRouter(Router):
 
 
 	# Start the server and keep polling it.
+	print("SocketRouter.createAndInitializeSocketForever - creating socket server {0}:{1}".format(self.getHostname(),self.getPort()))
 	self.socketServer = BasicTCPServer( \
 	    (self.getHostname(),self.getPort()),LocalTCPHandler,self)
 	print(self.socketServer)
@@ -307,6 +308,8 @@ class SocketRouter(Router):
         except EnvironmentError as exc:
             if(exc.errno == errno.ECONNREFUSED):
                 print("SocketRouter.sendMessageOverSocket - Error trying to connect.")
+	    else :
+		print("SocketRouter.sendMessageOverSocket - Unkown error trying to connect: {0}".format(exc.errno))
                 
         mySocket.close()
 

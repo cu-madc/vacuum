@@ -84,13 +84,14 @@ def setIPInformationVacuum(agent,host,port,number) :
 
 
 # Set the host addressesd and ports for the different agents
-agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',1000],
-		   Router.PLANNER    :['10.0.1.11',1001],
-		   Router.COMMANDER  :['10.0.1.12',1002]}
+agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+		   Router.PLANNER    :['10.0.1.11',10001],
+		   Router.COMMANDER  :['10.0.1.12',10002],
+		   Router.WORLD      :['10.0.1.13',10003]}
 
-vacummInterfaces = [ ['10.0.1.13',1003],
-		     ['10.0.1.14',1004],
-		     ['10.0.1.15',1005]]
+vacummInterfaces = [ ['10.0.1.14',1004],
+		     ['10.0.1.15',1005],
+		     ['10.0.1.16',1006]]
 
 # Set the rate and size for dirtfall
 r = 1.8
@@ -172,6 +173,9 @@ for i in range(numVacs) :
 
     #print("going to add vacuum {0} to the world".format(i))
     W.addVacuum(vacuum)
+    vacuum.setHostname(vacummInterfaces[i][0])
+    vacuum.setPort(vacummInterfaces[i][1])
+    vacuum.start()
 
 command.printRouterInformation("commander ")
 sensor.printRouterInformation("sensor ")
@@ -191,5 +195,19 @@ W.getChannel().printChannelInformation("world")
 #W.printRouterInformation("world")
 
 
+command.setHostname(agentInterfaces[Router.COMMANDER][0])
+command.setPort(agentInterfaces[Router.COMMANDER][1])
+command.start()
 
+sensor.setHostname(agentInterfaces[Router.SENSORARRAY][0])
+sensor.setPort(agentInterfaces[Router.SENSORARRAY][1])
+sensor.start()
+
+
+plan.setHostname(agentInterfaces[Router.PLANNER][0])
+plan.setPort(agentInterfaces[Router.PLANNER][1])
+plan.start()
+
+W.setHostname(agentInterfaces[Router.WORLD][0])
+W.setPort(agentInterfaces[Router.WORLD][1])
 W.mainloop()

@@ -122,10 +122,10 @@ if (__name__ =='__main__') :
     
     commander = Commander()
     commander = Commander.spawnCommander()
-    commander.setHostInformation(Router.PLANNER,  "10.0.1.17",5017,None)
-    commander.setHostInformation(Router.COMMANDER,"10.0.1.18",5018,None)
-    commander.setHostname("10.0.1.18")
-    commander.setPort(5018)
+    commander.setHostInformation(Router.PLANNER,  "10.0.1.11",1001,None)
+    commander.setHostInformation(Router.COMMANDER,"10.0.1.10",1000,None)
+    commander.setHostname("10.0.1.10")
+    commander.setPort(10000)
 
     commander.getChannel().setNumberVacuums(1)
 
