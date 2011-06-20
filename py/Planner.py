@@ -321,10 +321,10 @@ if (__name__ =='__main__') :
     from Vacuum import Vacuum
     
     planner = Planner.spawnPlanner(1.0,1.0,1.0,1.0,5)
-    planner.setHostInformation(Router.COMMANDER,"10.0.1.18",5018,None)
-    planner.setHostInformation(Router.PLANNER,  "10.0.1.17",5017,None)
-    planner.setHostname("10.0.1.17")
-    planner.setPort(5017)
+    planner.setHostInformation(Router.COMMANDER,"10.0.1.10",10000,None)
+    planner.setHostInformation(Router.PLANNER,  "10.0.1.11",10001,None)
+    planner.setHostname("10.0.1.11")
+    planner.setPort(10001)
     planner.getChannel().setNumberVacuums(1)
 
     vacuum = Vacuum.spawnVacuum(0,0)

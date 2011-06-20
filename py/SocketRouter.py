@@ -190,17 +190,17 @@ class SocketRouter(Router):
 	# Poll the queue periodically
 	self.setRunning(False)
 	if(SocketRouter.DEBUG) :
-	    print("Timer started for checking the queue")
+	    	print("SocketRouter.createAndInitializeSocketForever - creating socket server {0}:{1}".format
+		      (self.getHostname(),self.getPort()))
 
 
 	# Start the server and keep polling it.
-	print("SocketRouter.createAndInitializeSocketForever - creating socket server {0}:{1}".format(self.getHostname(),self.getPort()))
 	self.socketServer = BasicTCPServer( \
 	    (self.getHostname(),self.getPort()),LocalTCPHandler,self)
 	print(self.socketServer)
 
 	if(SocketRouter.DEBUG) :
-	    print("Started listener, listening on {0}:{1}".format
+	    print("SocketRouter.createAndInitializeSocketForever Started listener, listening on {0}:{1}".format
 		  (self.getHostname(),self.getPort()))
 
 

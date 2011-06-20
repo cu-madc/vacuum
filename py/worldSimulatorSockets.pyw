@@ -73,9 +73,6 @@ from Vacuum import Vacuum
 from Router import Router
 
 
-def setIPInformationAgents(agent,interfaces) :
-    for agentType, ipInfo in interfaces.iteritems():
-	agent.setHostInformation(agentType,ipInfo[0],ipInfo[1],None)
 
 
 def setIPInformationVacuum(agent,host,port,number) :
@@ -89,10 +86,14 @@ agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
 		   Router.COMMANDER  :['10.0.1.12',10002],
 		   Router.WORLD      :['10.0.1.13',10003]}
 
-vacummInterfaces = [ ['10.0.1.14',1004],
-		     ['10.0.1.15',1005],
-		     ['10.0.1.16',1006]]
+vacummInterfaces = [ ['10.0.1.14',10004],
+		     ['10.0.1.15',10005],
+		     ['10.0.1.16',10006]]
 
+# Set the other mission parameters
+numVacs=3
+
+# Set the parameters associated with the world.
 # Set the rate and size for dirtfall
 r = 1.8
 s = 12.0
@@ -101,39 +102,49 @@ s = 12.0
 v         = .2
 cloudsize = 20
 
+
 # Create the world and get the gridsize
 W = GraphicalWorld.spawnWorld(r,s,v,cloudsize);
 #print("World channel: {0}".format(W.getChannel()))
-N = W.getNumber() 
-
-# create and set the sensor
-
-accuracy = 0.4
-sensor = SensorArray.spawnSensorArray(accuracy)   #SensorArray(accuracy)
-#print("Sensor Channel: {0}".format(sensor.getChannel()))
-W.setSensor(sensor)
-
-# channel setup
+N = W.getNumber()
 chan = W.getChannel()   # TODO register the channel to the world
 
 
-# create the commander and planner
+
+# create and set the sensor
+accuracy = 0.4
+sensor = SensorArray.spawnSensorArray(accuracy)   #SensorArray(accuracy)
+#print("Sensor Channel: {0}".format(sensor.getChannel()))
+sensor.setRouterChannel(Router.WORLD,W.getChannel())
+W.setSensor(sensor)
+sensor.setIPInformation(agentInterfaces)
+sensor.getChannel().setNumberVacuums(numVacs)
+
+
+
+# create the planner
 plan=Planner.spawnPlanner(r*s/float(N*N),r,s,accuracy,N)
 #print("Planner channel: {0}".format(plan.getChannel()))
+plan.setRouterChannel(Router.WORLD,W.getChannel())
 W.setPlanner(plan)
+plan.setIPInformation(agentInterfaces)
+plan.getChannel().setNumberVacuums(numVacs)
 
+
+
+# create the commander
 command = Commander.spawnCommander()   # Commander(chan)
 #print("Comander channel: {0}".format(command.getChannel()))
-
 command.setRouterChannel(Router.WORLD,W.getChannel())
-plan.setRouterChannel(Router.WORLD,W.getChannel())
-sensor.setRouterChannel(Router.WORLD,W.getChannel())
-
-setIPInformationAgents(command,agentInterfaces)
-setIPInformationAgents(plan,agentInterfaces)
-setIPInformationAgents(sensor,agentInterfaces)
+command.setIPInformation(agentInterfaces)
+command.getChannel().setNumberVacuums(numVacs)
 
 
+
+
+# Set the channel that links each agent with the world. The world
+# sends information to the agents directly rather than use the
+# network.
 #chan.setDebug(True)
 chan.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
 chan.setRouterChannel(Router.COMMANDER,command.getChannel())
@@ -143,17 +154,7 @@ chan.setRouterChannel(Router.WORLD,chan)
 
 
 # Create vacuums
-numVacs=3
 vacArray = []
-
-#print("setting commander vacuums")
-command.getChannel().setNumberVacuums(numVacs)
-#print("setting planner vacuums")
-plan.getChannel().setNumberVacuums(numVacs)
-#print("setting sensor vacuums")
-sensor.getChannel().setNumberVacuums(numVacs)
-
-
 for i in range(numVacs) :
     #print("Initializing vacuum {0}".format(i))
     vacuum = Vacuum.spawnVacuum(i,0)
@@ -166,7 +167,7 @@ for i in range(numVacs) :
     setIPInformationVacuum(plan,   vacummInterfaces[i][0],vacummInterfaces[i][1],i)
     setIPInformationVacuum(sensor, vacummInterfaces[i][0],vacummInterfaces[i][1],i)
     setIPInformationVacuum(command,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
-    setIPInformationAgents(vacuum, agentInterfaces)
+    vacuum.setIPInformation(agentInterfaces)
     vacuum.setRouterChannel(Router.WORLD,W.getChannel())
     chan.getRouter().addVacuum(vacuum.getChannel(),i)
     vacuum.getChannel().sendPlannerVacuumMovedPosition(i,pos[0],pos[1])

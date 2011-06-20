@@ -131,3 +131,8 @@ class Agent (Process):
 
     def run(self) :
 	self.channel.getRouter().createAndInitializeSocketForever()
+
+
+    def setIPInformation(self,interfaces) :
+	for agentType, ipInfo in interfaces.iteritems():
+	    self.setHostInformation(agentType,ipInfo[0],ipInfo[1],None)
