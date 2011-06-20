@@ -89,9 +89,11 @@ class Agent (Process):
 	self.channel.getRouter().createAndInitializeSocketForever()
 
     def setHostname(self,hostname) :
+	#print("Setting agent hostname: {0}".format(hostname))
         self.channel.getRouter().setHostname(hostname)
 
     def setPort(self,port) :
+	#print("Setting agent port number: {0}".format(port))
         self.channel.getRouter().setPort(port)
 
 
@@ -130,6 +132,7 @@ class Agent (Process):
 
 
     def run(self) :
+	self.channel.getRouter().printThisHostInformation()
 	self.channel.getRouter().createAndInitializeSocketForever()
 
 

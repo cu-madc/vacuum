@@ -77,9 +77,6 @@ class Router:
 	self.agents = [dict(),dict(),dict(),dict(),dict()]
 	self.vacuumArray = []     # array of object handles
 
-	self.host_address = ''
-	self.port_number  = ''
-
 	self.setReliability(1.0)   # Probability of properly transmitting the
                                    # message. Default is full reliability.
 
@@ -123,14 +120,6 @@ class Router:
 	return(Router.DEBUG)
 
 
-    def setHost(self,address) :
-	#print("setting address: {0}".format(address))
-	self.host_address = address
-
-
-    def setPort(self,port) :
-	#print("setting port: {0}".format(port))
-	self.port_number  = port
 
 
     ## sendMessageOverSocket
@@ -244,8 +233,10 @@ class Router:
 		    # IP iformation is available for this
 		    # agent. Send the information over the
 		    # network.
-		    print("TRYING{0}\n\n\n".format(1/1))
-		    pass
+
+		    self.sendMessageOverSocket([self.vacuumArray[vacuumID]['host'],
+						self.vacuumArray[vacuumID]['port']],
+					       message)
 
 		elif(self.sendMessage()) :
 		    # The information held for this object is a
@@ -283,7 +274,7 @@ class Router:
 	    # IP iformation is available for this
 	    # agent. Send the information over the
 	    # network.
-	    print("SENDING TO {0} {1} ".format(self.agents[destination]['host'],self.agents[destination]['port']))
+	    #print("SENDING TO {0} {1} ".format(self.agents[destination]['host'],self.agents[destination]['port']))
 	    self.sendMessageOverSocket([self.agents[destination]['host'],self.agents[destination]['port']],
 				       message)
 

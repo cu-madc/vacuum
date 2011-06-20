@@ -88,7 +88,7 @@ class SocketRouter(Router):
     # Each agent has its own router and needs to keep information about its own network information.
     POLLING_SERVER_DEFAULT_PORT=9999
     POLLING_SERVER_BUFFER_SIZE = 4096
-    DEBUG = True
+    DEBUG = False
 
 
     
@@ -197,7 +197,7 @@ class SocketRouter(Router):
 	# Start the server and keep polling it.
 	self.socketServer = BasicTCPServer( \
 	    (self.getHostname(),self.getPort()),LocalTCPHandler,self)
-	print(self.socketServer)
+	#print(self.socketServer)
 
 	if(SocketRouter.DEBUG) :
 	    print("SocketRouter.createAndInitializeSocketForever Started listener, listening on {0}:{1}".format
@@ -297,8 +297,10 @@ class SocketRouter(Router):
     #
     # Sends message over TCP socket in our var len string format
     def sendMessageOverSocket(self,hostTuple,message) :
-	print("SocketRouter.sendMessageOverSocket, {1}, {2} - sending:\n{0}".format(
-            message,hostTuple[0],hostTuple[1]))
+	if(SocketRouter.DEBUG) :
+	    print("SocketRouter.sendMessageOverSocket, {1}, {2} - sending:\n{0}".format(
+		"",hostTuple[0],hostTuple[1])) # message
+	    
         import socket
         mySocket = socket.socket()
         try:
@@ -328,6 +330,7 @@ class SocketRouter(Router):
 
     def setPort(self,value) :
 	# Sets the value of the port to use for the socket
+	#print("Router - setting port: {0}".format(value))
 	self.serverPort = value;
 
 
@@ -338,6 +341,7 @@ class SocketRouter(Router):
 
     def setHostname(self,value) :
 	# Sets the value of the port to use for the socket
+	#print("Router - setting address: {0}".format(value))
 	self.hostname = value;
 
 
@@ -345,6 +349,10 @@ class SocketRouter(Router):
 	# Returns the value of the port used for the socket
 	return(self.hostname);
 
+
+
+    def printThisHostInformation(self) :
+	print("Host: {0} Port: {1}".format(self.hostname,self.serverPort))
 
 
 
@@ -355,6 +363,8 @@ class SocketRouter(Router):
 ## server class.
 class LocalTCPHandler (BaseRequestHandler): 
 
+    DEBUG = False
+    
     #def __init__(self,parent):
     #	BaseRequestHandler.__init__(self)
     #    #self.incomingTCP = theQueue
@@ -364,20 +374,20 @@ class LocalTCPHandler (BaseRequestHandler):
 	try:
 	    socketInfo = socket.gethostbyaddr(self.client_address[0])
 	except:
-	    socketInfo = None
+	    socketInfo = self.client_address[0]
 	    
-	#if(SocketRouter.DEBUG) :
-	#	print("Heard from {0}-{1}".format(self.client_address[0],socketInfo[0]))
+	if(LocalTCPHandler.DEBUG) :
+		print("Heard from {0}".format(socketInfo))
 
 	message = self.request.recv(SocketRouter.POLLING_SERVER_BUFFER_SIZE).strip()
 	#message = self.server.myParent.myComm.readChunk(self.request)
 	
-	if(SocketRouter.DEBUG) :
-		print("Confirmed Client: {0}".format(message))
+	#if(LocalTCPHandler.DEBUG) :
+	#     print("Confirmed Client: {0}".format(message))
 		
 	self.request.send("OK")
 	#self.server.stopServerSocket()
-	print(self.server)
+	#print(self.server)
 	#self.server.shutdown()
 
 
@@ -431,11 +441,12 @@ class ThreadedTCPServer (ThreadingMixIn, TCPServer):
 ## server.
 class BasicTCPServer (TCPServer): 
 
+    DEBUG = True
 
     def __init__(self,connectionInfo,handler,parent) :
 	self.setParentClass(parent)
         #ThreadingMixIn.__init__(self)
-	if(SocketRouter.DEBUG) :
+	if(BasicTCPServer.DEBUG) :
 		print("Created the basic socket server class: {0}".format(connectionInfo))
 
         TCPServer.__init__(self,connectionInfo,handler)

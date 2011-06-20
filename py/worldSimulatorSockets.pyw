@@ -75,8 +75,6 @@ from Router import Router
 
 
 
-def setIPInformationVacuum(agent,host,port,number) :
-    agent.setHostInformation(Router.VACUUM,host,port,number)
 
 
 
@@ -156,32 +154,36 @@ chan.setRouterChannel(Router.WORLD,chan)
 # Create vacuums
 vacArray = []
 for i in range(numVacs) :
-    #print("Initializing vacuum {0}".format(i))
+    print("Initializing vacuum {0}".format(i))
     vacuum = Vacuum.spawnVacuum(i,0)
-    #print("\n\nNew Vacuum: {0} - {1}, {2}".format(vacuum,vacuum.getChannel(),i))
+    print("New Vacuum: {0} - {1}, {2}".format(vacuum,id(vacuum),i))
     vacuum.getChannel().setNumberVacuums(numVacs)
     vacArray.append(vacuum)
     pos = vacuum.getPosition()
     #chan.addVacuum(vacuum,i,pos[0],pos[1])
+    plan.setVacuumLocation(i,pos[0],pos[1])
 
-    setIPInformationVacuum(plan,   vacummInterfaces[i][0],vacummInterfaces[i][1],i)
-    setIPInformationVacuum(sensor, vacummInterfaces[i][0],vacummInterfaces[i][1],i)
-    setIPInformationVacuum(command,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    plan.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    sensor.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    command.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    
     vacuum.setIPInformation(agentInterfaces)
     vacuum.setRouterChannel(Router.WORLD,W.getChannel())
     chan.getRouter().addVacuum(vacuum.getChannel(),i)
+    chan.addVacuum(vacuum,i,0,0)
     vacuum.getChannel().sendPlannerVacuumMovedPosition(i,pos[0],pos[1])
 
     #print("going to add vacuum {0} to the world".format(i))
     W.addVacuum(vacuum)
+    print("Setting vacuum {0} - {1}:{2}".format(i,vacummInterfaces[i][0],vacummInterfaces[i][1]))
     vacuum.setHostname(vacummInterfaces[i][0])
     vacuum.setPort(vacummInterfaces[i][1])
     vacuum.start()
 
-command.printRouterInformation("commander ")
-sensor.printRouterInformation("sensor ")
-plan.printRouterInformation("planner")
-W.getChannel().printChannelInformation("world")
+#command.printRouterInformation("commander ")
+#sensor.printRouterInformation("sensor ")
+#plan.printRouterInformation("planner")
+#W.getChannel().printChannelInformation("world")
 
 
 #import sys

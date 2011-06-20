@@ -71,6 +71,7 @@ from Agent import Agent
 
 class Planner (Agent) :
 
+    DEBUG = False
 
     def __init__(self,errGrowth,unnormalizeDirtRate,unnormalizeDirtSize,accuracy,N) :
         Agent.__init__(self,Router.PLANNER)
@@ -282,10 +283,13 @@ class Planner (Agent) :
         if not self.getWorking() :
             return([])
 
-        print("Planner.recommendOrder: {0} {1} {2}".format(id,xPos,yPos))
+	if(Planner.DEBUG) :
+	    print("Planner.recommendOrder: {0} {1} {2}".format(id,xPos,yPos))
+
         if(len(self.vacuumlocation)>id) :
             self.setVacuumLocation(id,xPos,yPos)
         else :
+	    #print("Location bigger than id")
             return
 
         A=self.worldview
@@ -303,7 +307,10 @@ class Planner (Agent) :
         I = argmax(A)
         xord = I/self.getNumber()
         yord = I%self.getNumber()
-        print("view: {0}\n {1}: {2} {3} from {4} {5}".format(A,I,xord,yord,xPos,yPos))
+
+	if(Planner.DEBUG) :
+	    print("view: {0}\n {1}: {2} {3} from {4} {5}".format(A,I,xord,yord,xPos,yPos))
+	    
         #raw_input("Press Enter to continue...")
         self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord,id)
     
@@ -321,7 +328,7 @@ if (__name__ =='__main__') :
     from Vacuum import Vacuum
     
     planner = Planner.spawnPlanner(1.0,1.0,1.0,1.0,5)
-    planner.setHostInformation(Router.COMMANDER,"10.0.1.10",10000,None)
+    planner.setHostInformation(Router.COMMANDER,"10.0.1.12",10002,None)
     planner.setHostInformation(Router.PLANNER,  "10.0.1.11",10001,None)
     planner.setHostname("10.0.1.11")
     planner.setPort(10001)

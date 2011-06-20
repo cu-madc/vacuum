@@ -73,6 +73,7 @@ class Vacuum (Agent):
 
     def __init__(self,IDnum,currentTime=0.0,channel=None) : #class constructor
 	Agent.__init__(self,Router.VACUUM)
+	print("Creating vacuum {0}/{1}".format(IDnum,id(self)))
 	
         self.xPos   = 0
         self.yPos   = 0
@@ -189,13 +190,14 @@ class Vacuum (Agent):
                 self.status=2;
 
             
-            self.queue=[]; # reset queue
+            ##?? self.queue=[]; # reset queue
 
 
            
     def moveord(self,xord,yord) :
         # update que for new location to clean
         self.queue.append([xord,yord])
+	print("Vacuum queue for {0} : {1} - {2}".format(self.IDnum,self.queue,id(self)))
         
         
     def timeStep(self,time,wetness) :
@@ -211,7 +213,7 @@ class Vacuum (Agent):
             
 
         self.time=time;
-        #print("time: {0} ID: {1} status: {2} queue: {3} ".format(time,self.IDnum,self.status,self.queue))
+        print("time: {0} ID: {1},{4} status: {2} queue: {3} ".format(time,self.IDnum,self.status,self.queue,id(self)))
             
         if (self.time>=self.timeDone) :
             # Vacuum operation is complete

@@ -352,8 +352,8 @@ class Channel:
             
             if(self.commander) :
                 pos = info.getPos()
-                print("Channel.receiveXMLReportParseAndDecide sending report to commander for {0} - {1},{2}".format(
-                    info.getVacuumID(),pos[0],pos[1]))
+                #print("Channel.receiveXMLReportParseAndDecide sending report to commander for {0} - {1},{2}".format(
+                #    info.getVacuumID(),pos[0],pos[1]))
                 self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
 
 
@@ -363,11 +363,12 @@ class Channel:
             
             pos = info.getPos()
             vacuumID = info.getVacuumID()
-            #print("sending report to vacuum for {0} - {1},{2}".format(
+            #print("Channel: sending report to vacuum for {0} - {1},{2}".format(
             #    info.getVacuumID(),pos[0],pos[1]))
 
             #if(vacuumID < len(self.vacuumArray)) :
 	    if(self.vacuum) :
+		#print("Moving this vacuum")
 		self.vacuum.moveord(pos[0],pos[1])
                 #self.vacuumArray[vacuumID].moveord(pos[0],pos[1])
 
@@ -720,7 +721,7 @@ class Channel:
     # into XML and passed the XML to the vacuum.
     def sendMoveOrderFromCommander2Vacuum(self,xPos,yPos,vacuumID) :
         
-        #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
+        #print("Sending to id: {0} pos: {1},{2}".format(vacuumID,xPos,yPos))
         #orders = XMLMessageMoveOrderCommanderVacuum()
         orders = XMLMessageVacuumIDPosBase()
         orders.setVacuumID(vacuumID)
