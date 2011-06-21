@@ -256,7 +256,7 @@ class Channel:
         print("Channel information {0}: {1} - {2}".format(toPrint,self,self.vacuumArray))
 
 
-    def addVacuum(self,vacuum,id,xpos,ypos) :
+    def addVacuum(self,vacuum,id,xpos,ypos,debug=False) :
 
 	if(vacuum != None):
 	    for definedVacuum in self.vacuumArray :
@@ -264,7 +264,8 @@ class Channel:
 		# get into this routine from a variety of places. It might
 		# be possible to have already called this routine.
 		if(vacuum == definedVacuum) :
-		    #print("Found this one...")
+		    if(debug):
+			print("Channel.addVacuum, Found this one...")
 		    return
 
         while(id>=len(self.vacuumArray)) :
@@ -274,10 +275,11 @@ class Channel:
 
         self.vacuumArray[id] = vacuum
         #self.sendPlannerVacuumMovedPosition(id,xpos,ypos) #TODO - should this be commented out?
-        #print("Channel.addVacuum - vacuum array: {0}".format(self.vacuumArray))
+	if(debug):
+	    print("Channel.addVacuum - vacuum array: {0}".format(self.vacuumArray))
 
-	if (self.world):
-	    self.world.addVacuum(vacuum)
+	if (vacuum and self.world):
+	    self.world.addVacuum(vacuum,debug)
 
 
     def setNumberVacuums(self,number,x=0,y=0) :
@@ -368,7 +370,7 @@ class Channel:
 
             #if(vacuumID < len(self.vacuumArray)) :
 	    if(self.vacuum) :
-		#print("Moving this vacuum")
+		#print("Moving this vacuum {0} - {1},{2}".format(vacuumID,pos[0],pos[1]))
 		self.vacuum.moveord(pos[0],pos[1])
                 #self.vacuumArray[vacuumID].moveord(pos[0],pos[1])
 

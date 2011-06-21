@@ -80,7 +80,24 @@ class  World (Agent):
         self.sensor = None         # data as recorded on sensor
         self.expenditure = 0.0     # cummulative funds expended since last reset
         self.numberVacuums = 0     # No vacuums assigned yet.
+	self.vacuumArray = []      # array of object handles
         self.intializeVariables(r,s,v,cloudsize)
+
+	self.setSensor(None)
+	self.setPlanner(None)
+
+
+    def setSensor(self,sensor) :
+        self.sensor = sensor
+
+    def getSensor(self) :
+        return(self.sensor)
+
+    def setPlanner(self,planner) :
+        self.planner = planner
+
+    def getPlanner(self) :
+        return(self.planner)
 
     
     def intializeVariables(self,r,s,v,cloudsize) :
@@ -100,6 +117,58 @@ class  World (Agent):
     def setNumberVacuums(self,number) :
 	# Routine to set the value that tracks the number of vacuums.
 	self.numberVacuums = number
+
+
+    def addVacuum(self,vacuum,debug=False) :
+        # routine to add a vacuum to the list of vacuums tracked by
+        # the world. This overrides the method of the same name in the
+        # base class.
+
+	if(debug) :
+	    print("About to add a Vacuum: {0}".format(vacuum))
+	    self.printVacuumInfo(0)
+
+
+	for definedVacuum in self.vacuumArray :
+	    # Check to see if this vacuum is already defined. We need
+	    # to do this because the channel adds a vacuum to the
+	    # world automatically. It is possible that the channel
+	    # already added this vacuum.
+	    if(vacuum == definedVacuum) :
+		if(debug) :
+		    print("Found this one...{0}".format(vacuum))
+		return
+	    
+        self.vacuumArray.append(vacuum)
+	self.setNumberVacuums(len(self.vacuumArray))
+	if(debug) :
+	    print("Adding Vacuum: {0}".format(vacuum))
+	    self.printVacuumInfo(0)
+
+    def deleteVacuum(self,vacuum):
+        # routine to delete a vacuum from the list of vacuums tracked
+        # by the world. This overrides the method of the same name in
+        # the base class.
+	for i in range(len(self.vacuumArray)):
+	    # Loop through all the vacuums
+	    if(self.vacuumArray[i]==vacuum):
+		# This is the one to delete.
+		self.vacuumArray.pop(i)
+		self.setNumberVacuums(len(self.vacuumArray))
+		return
+
+    def getVacuums(self) :
+        return(self.vacuumArray)
+
+
+    def printVacuumInfo(self,time) :
+	# Convencience routine for printing out the vacuum info - used
+	# for debugging.
+	j = 0
+	for vacuum in self.vacuumArray:
+	    print("{0} - {1} ({2})".format(j,vacuum,time))
+	    j += 1
+	print("\n\n")
 
 
     def setGridSize(self,N):
@@ -173,16 +242,6 @@ class  World (Agent):
 
     def setRainSize(self,cloudsize) :
         self.cloudsize = cloudsize # average size of rain event
-
-    def addVacuum(self,vacuum) :
-	# This is a dummy method. It is assumed to be overridden by a
-	# child class.
-	pass
-
-    def deleteVacuum(self,vacuum) :
-    	# This is a dummy method. It is assumed to be overridden by a
-	# child class.
-	pass
 
 
     def inc(self) :

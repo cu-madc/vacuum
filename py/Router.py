@@ -154,14 +154,15 @@ class Router:
 
 	if((hostType>-1) and (hostType<len(self.agents))) :
 
-	    if(hostType == self.VACUUM):
-		#print("this is a vacuum - {0}, {1}".format(vacuumID,len(self.vacuumArray)))
+	    if(hostType == Router.VACUUM):
 
 		if((vacuumID>-1) and (vacuumID < len(self.vacuumArray))) :
 		    # This is a well formed message for a vacuum.
 		    self.vacuumArray[vacuumID] = {'host':host,
 						  'port':port}
-					      
+
+		#print("Router.setHostInformation: this is a vacuum - {0}, {1}\n{2}".format(
+		#        vacuumID,self.vacuumArray,self.channel))
 
 	    else:
 		self.agents[hostType]['host'] = host
@@ -224,6 +225,7 @@ class Router:
 	    # This is a message for a vacuum. Need to check to see if
 	    # it has a proper ID.
 
+	    #print("Router.sendString, Send message to vacuum {0} , {1}".format(vacuumID,self.channel))
 	    if((vacuumID>-1) and (vacuumID < len(self.vacuumArray))) :
 		# This is a well formed message for a vacuum.
 
@@ -234,6 +236,8 @@ class Router:
 		    # agent. Send the information over the
 		    # network.
 
+		    #print("Router.sendString, Send message to vacuum {0} {1}".format(
+		    #      self.vacuumArray[vacuumID]['host'],self.vacuumArray[vacuumID]['port']))
 		    self.sendMessageOverSocket([self.vacuumArray[vacuumID]['host'],
 						self.vacuumArray[vacuumID]['port']],
 					       message)

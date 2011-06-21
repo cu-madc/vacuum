@@ -106,6 +106,7 @@ W = GraphicalWorld.spawnWorld(r,s,v,cloudsize);
 #print("World channel: {0}".format(W.getChannel()))
 N = W.getNumber()
 chan = W.getChannel()   # TODO register the channel to the world
+W.getChannel().setNumberVacuums(numVacs)
 
 
 
@@ -148,34 +149,36 @@ chan.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
 chan.setRouterChannel(Router.COMMANDER,command.getChannel())
 chan.setRouterChannel(Router.PLANNER,plan.getChannel())
 chan.setRouterChannel(Router.WORLD,chan)
-
+#print(chan)
 
 
 # Create vacuums
 vacArray = []
 for i in range(numVacs) :
-    print("Initializing vacuum {0}".format(i))
+    #print("Initializing vacuum {0}".format(i))
     vacuum = Vacuum.spawnVacuum(i,0)
-    print("New Vacuum: {0} - {1}, {2}".format(vacuum,id(vacuum),i))
+    #print("New Vacuum: {0} - {1}, {2}".format(vacuum,id(vacuum),i))
     vacuum.getChannel().setNumberVacuums(numVacs)
     vacArray.append(vacuum)
     pos = vacuum.getPosition()
-    #chan.addVacuum(vacuum,i,pos[0],pos[1])
+    chan.getRouter().addVacuum(vacuum.getChannel(),i)
+
+    #print("going to add vacuum {0} to the world".format(i))
+    #W.addVacuum(vacuum,True)
+
+
+    chan.addVacuum(vacuum,i,pos[0],pos[1],False)
     plan.setVacuumLocation(i,pos[0],pos[1])
 
     plan.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
     sensor.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
     command.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    W.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
     
     vacuum.setIPInformation(agentInterfaces)
     vacuum.setRouterChannel(Router.WORLD,W.getChannel())
-    chan.getRouter().addVacuum(vacuum.getChannel(),i)
-    chan.addVacuum(vacuum,i,0,0)
-    vacuum.getChannel().sendPlannerVacuumMovedPosition(i,pos[0],pos[1])
 
-    #print("going to add vacuum {0} to the world".format(i))
-    W.addVacuum(vacuum)
-    print("Setting vacuum {0} - {1}:{2}".format(i,vacummInterfaces[i][0],vacummInterfaces[i][1]))
+    #print("Setting vacuum {0} - {1}:{2}".format(i,vacummInterfaces[i][0],vacummInterfaces[i][1]))
     vacuum.setHostname(vacummInterfaces[i][0])
     vacuum.setPort(vacummInterfaces[i][1])
     vacuum.start()

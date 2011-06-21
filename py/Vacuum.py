@@ -73,7 +73,6 @@ class Vacuum (Agent):
 
     def __init__(self,IDnum,currentTime=0.0,channel=None) : #class constructor
 	Agent.__init__(self,Router.VACUUM)
-	print("Creating vacuum {0}/{1}".format(IDnum,id(self)))
 	
         self.xPos   = 0
         self.yPos   = 0
@@ -81,7 +80,7 @@ class Vacuum (Agent):
         self.initializeTime(currentTime)      # time it will be done with current operation
         self.setID(IDnum)
         self.range = 3                        # maximum distance that can be travelled 
-        self.queue  = []
+        self.moveQueue  = []
         self.setWorking(True)
 
         self.setChannel(channel)              #channel to commander
@@ -96,6 +95,7 @@ class Vacuum (Agent):
         self.time = 0;
 
         self.Moisture = None
+	#print("Creating vacuum {0}/{1}".format(IDnum,id(self.moveQueue)))
 
 
     def setWorking(self,value) :
@@ -190,14 +190,16 @@ class Vacuum (Agent):
                 self.status=2;
 
             
-            ##?? self.queue=[]; # reset queue
+            ##?? self.moveQueue=[]; # reset queue
 
 
            
     def moveord(self,xord,yord) :
         # update que for new location to clean
-        self.queue.append([xord,yord])
-	print("Vacuum queue for {0} : {1} - {2}".format(self.IDnum,self.queue,id(self)))
+        self.moveQueue.append([xord,yord])
+	#import random
+	#print("moveord {0} : {1} - {2}".format(self.IDnum,self.moveQueue,id(self.moveQueue)))
+	#print("Me: {0}".format(id(self)))
         
         
     def timeStep(self,time,wetness) :
@@ -213,7 +215,9 @@ class Vacuum (Agent):
             
 
         self.time=time;
-        print("time: {0} ID: {1},{4} status: {2} queue: {3} ".format(time,self.IDnum,self.status,self.queue,id(self)))
+        #print("timeStep: {0} ID: {1} [{4},{5}] status: {2} queue: {3} ".format(
+	#    time,self.IDnum,self.status,self.moveQueue,self.xPos,self.yPos))
+	#print("Me: {0}".format(id(self)))
             
         if (self.time>=self.timeDone) :
             # Vacuum operation is complete
@@ -228,7 +232,7 @@ class Vacuum (Agent):
                     self.xPos,self.yPos,2,self.getID());
                 
 
-            elif ((self.status==3) and (len(self.queue)==0)) :
+            elif ((self.status==3) and (len(self.moveQueue)==0)) :
                 # nothing in queue
                 self.channel.sendReportFromVacuum2Commander(
                     self.xPos,self.yPos,self.status,self.getID());
@@ -236,7 +240,8 @@ class Vacuum (Agent):
                 
             elif (self.status==3) :
                 # next job is in the queue
-                pos = self.queue.pop()
+                pos = self.moveQueue.pop()
+		#print("Vaccum.timeStep - moving vacuum to new pos: {0},{1}".format(pos[0],pos[1]))
                 self.moveAndClean(pos[0],pos[1]);
 
                 

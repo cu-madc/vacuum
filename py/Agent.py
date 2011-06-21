@@ -132,7 +132,7 @@ class Agent (Process):
 
 
     def run(self) :
-	self.channel.getRouter().printThisHostInformation()
+	#self.channel.getRouter().printThisHostInformation()
 	self.channel.getRouter().createAndInitializeSocketForever()
 
 

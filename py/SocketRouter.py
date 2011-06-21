@@ -418,12 +418,13 @@ class LocalTCPHandler (BaseRequestHandler):
 ## separate thread.
 class ThreadedTCPServer (ThreadingMixIn, TCPServer): 
 
+    DEBUG = False
 
     def __init__(self,connectionInfo,handler,parent) :
 	self.setParentClass(parent)
         #ThreadingMixIn.__init__(self)
-	if(SocketRouter.DEBUG) :
-		print("Created the socket server class: {0}".format(connectionInfo))
+	if(ThreadedTCPServer.DEBUG) :
+		print("Created the threaded socket server class: {0}".format(connectionInfo))
 
         TCPServer.__init__(self,connectionInfo,handler)
 	self.threaded = True
@@ -441,7 +442,7 @@ class ThreadedTCPServer (ThreadingMixIn, TCPServer):
 ## server.
 class BasicTCPServer (TCPServer): 
 
-    DEBUG = True
+    DEBUG = False
 
     def __init__(self,connectionInfo,handler,parent) :
 	self.setParentClass(parent)
