@@ -59,7 +59,7 @@
 # 
 # 
 
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 
 class Agent (Process):
 
@@ -70,6 +70,7 @@ class Agent (Process):
 	Process.__init__(self)
         self.setChannel(None)
 	self.setMyType(type)
+	self.queue = Queue()
 
 
     def setChannel(self,value) :

@@ -117,7 +117,17 @@ class Vacuum (Agent):
         return(self.Moisture)
 
     def getPosition(self) :
-        return([self.xPos,self.yPos])
+	if(self.queue.empty()):
+	    return([self.xPos,self.yPos])
+
+	else:
+	    while(not self.queue.empty()):
+		pos = self.queue.get()
+		
+	    self.xPos = pos[0]
+	    self.yPos = pos[1]
+
+	return([self.xPos,self.yPos])
 
     def setPosition(self,pos) :
         self.xPos = pos[0]
@@ -257,7 +267,9 @@ class Vacuum (Agent):
                 if ((self.status==2) and (self.Moisture(self.xPos,self.yPos)>0)) :
                     # region still wet
                     # assume world will dry, then 8 more time units to complete cleaning
-                    self.timeDone=self.time+self.timeToClean 
+                    self.timeDone=self.time+self.timeToClean
+
+	    self.queue.put([self.xPos,self.yPos])
                     
 
     @staticmethod
