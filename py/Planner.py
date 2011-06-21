@@ -125,6 +125,9 @@ class Planner (Agent) :
         return(self.isWorking)
 
     def getWorldView(self) :
+	while(not self.queue.empty()):
+	    self.worldview = self.queue.get()
+
         return(self.worldview)
 
     def getDirtLevels(self):
@@ -134,6 +137,10 @@ class Planner (Agent) :
         self.dirtLevels = value
         
     def getArray(self) :
+	while(not self.queue.empty()):
+	    self.worldview = self.queue.get()
+
+	#print(self.worldview)
         return(self.worldview)
 
     def getWet(self):
@@ -243,8 +250,9 @@ class Planner (Agent) :
         # update levels based on sensor information
         # (Bayesian update - see wikipedia page for now)
         if len(self.dirtLevels) == 0 :
-            # no data available  
+            # no data available
             self.worldview=mu_0; # adjust dirt ONLY FOR DYNAMICS
+	    
         else :
             # data available 
             # bayes update on dirt  
@@ -253,6 +261,9 @@ class Planner (Agent) :
             self.worldview=(tau_0*mu_0+tau*mu)/(tau_0+tau);            # update assuming normal
             self.viewPrecision=tau+tau_0;
             # see http://en.wikipedia.org/wiki/Conjugate_prior for details.
+
+	#print(self.worldview)
+	self.queue.put(self.worldview)
 
             
     def receiveReport(self,x,y) :
