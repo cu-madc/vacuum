@@ -110,12 +110,19 @@ class  GraphicalWorld (World,Tk) :
         self.cloudSize = float(self.cloudSizeValue.get())
 
         self.intializeVariables(self.r,self.s,self.v,self.cloudsize)
+
+	from XML.XMLMessageExternalCommand import XMLMessageExternalCommand
+	parameter = XMLMessageExternalCommand()
+	parameter.setParameterValue(XMLMessageExternalCommand.RESTART)
+	parameter.createRootNode()
         for vacuum in self.vacuumArray:
 	    # Turn on each of the vacuums - i.e. reset the vacuum.
 	    # print("GraphicalWorld.start - Vacuum: {0}".format(vacuum))
-            vacuum.setWorking(True)
-            vacuum.setStatus(3)
-            vacuum.initializeTime(0.0)
+            #vacuum.setWorking(True)
+            #vacuum.setStatus(3)
+            #vacuum.initializeTime(0.0)
+	    self.channel.getRouter().sendString(
+		Router.VACUUM,parameter.xml2Char(False),vacuum.getID())
 
         H = []
         R = []

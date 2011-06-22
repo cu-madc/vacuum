@@ -640,9 +640,35 @@ class Channel:
 			pass
 
 		elif(item == XMLMessageExternalCommand.RESTART) :
-		    print("restart: {0}".format(item))
+		    #print("restart: {0}".format(item))
 		    if(self.world) :
 			pass
+
+
+	            if(self.sensor) :
+			#self.sensor.shutdownServer()
+			pass
+		    
+		    if(self.planner):
+			#self.planner.shutdownServer()
+			pass
+
+		    if(self.commander) :
+			#self.commander.shutdownServer()
+			pass
+
+		    if(self.vacuum) :
+			#self.vacuum.shutdownServer()
+			self.vacuum.setWorking(True)
+			self.vacuum.setStatus(3)
+			self.vacuum.initializeTime(0.0)
+
+
+		    if(self.world) :
+			#self.world.shutdownServer()
+			pass
+
+
 
 		elif(item == XMLMessageExternalCommand.RESET) :
 		    print("reset: {0}".format(item))
