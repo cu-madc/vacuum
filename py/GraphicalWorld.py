@@ -100,21 +100,6 @@ class  GraphicalWorld (World,Tk) :
         self.menuBar.add_cascade(label="File",menu=self.fileMenu)
 
 
-    def quit(self) :
-	from XML.XMLMessageExternalCommand import XMLMessageExternalCommand
-
-	parameter = XMLMessageExternalCommand()
-	parameter.setParameterValue(XMLMessageExternalCommand.EXIT)
-	parameter.createRootNode()
-	#print(parameter.xml2Char(True))
-	self.channel.getRouter().sendString(Router.SENSORARRAY,parameter.xml2Char(False))
-	self.channel.getRouter().sendString(Router.PLANNER,parameter.xml2Char(False))
-	self.channel.getRouter().sendString(Router.COMMANDER,parameter.xml2Char(False))
-
-	for definedVacuum in self.vacuumArray :
-	    self.channel.getRouter().sendString(Router.VACUUM,parameter.xml2Char(False),definedVacuum.getID())
-		    
-        exit(0)
 
     def start(self) :
 	# Get the parameters from the inputs in the window.
