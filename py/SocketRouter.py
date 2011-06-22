@@ -74,7 +74,7 @@ import errno
 import re
 
 
-## SocketChannel
+## SocketRouter
 #
 # Creates a super class of the router, which is a medium through which
 # simulated agents communicate.
@@ -161,7 +161,7 @@ class SocketRouter(Router):
 
 	# Poll the queue periodically
 	self.setRunning(True)
-	threading.Timer(1.0, self.checkIncomingQueue).start()
+	#threading.Timer(1.0, self.checkIncomingQueue).start()
 	if(SocketRouter.DEBUG) :
 	    print("Timer started for checking the queue")
 
@@ -262,6 +262,8 @@ class SocketRouter(Router):
 	    if(SocketRouter.DEBUG) :
 		print("Incoming queue: {0}".format(entry))
 	    numberItems += 1
+	    self.channel.receiveXMLReportParseAndDecide(entry)
+
 
 
 	entry = None
@@ -273,8 +275,8 @@ class SocketRouter(Router):
 
 	self.dataLock.release()
 
-	if(self.getRunning()) :
-	    threading.Timer(1.0, self.checkIncomingQueue).start()
+	#if(self.getRunning()) :
+	#    threading.Timer(1.0, self.checkIncomingQueue).start()
 
 	return(numberItems);
 

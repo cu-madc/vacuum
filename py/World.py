@@ -246,6 +246,9 @@ class  World (Agent):
 
     def inc(self) :
         # Take a single time step of the simulated world
+
+	# First check the queue for pending requests
+	self.getChannel().getRouter().checkIncomingQueue()
             
         # dustfall procedure -----
         t=self.time;               # start time

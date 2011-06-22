@@ -219,4 +219,5 @@ plan.start()
 
 W.setHostname(agentInterfaces[Router.WORLD][0])
 W.setPort(agentInterfaces[Router.WORLD][1])
+W.getChannel().getRouter().createAndInitializeSocket()
 W.mainloop()
