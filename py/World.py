@@ -124,6 +124,22 @@ class  World (Agent):
 	self.setRainRate(v)          # rate constant for RAIN events - events per unit
 	                             # time (world wide)
 	self.setRainSize(cloudsize)  # average size of rain event
+
+
+	# Send all of these paramaters off to the agents
+	if(self.channel) :
+	    from XML.XMLMessageExternalParameter import XMLMessageExternalParameter
+	    parameter = XMLMessageExternalParameter()
+	    parameter.setParameterValue(XMLMessageExternalParameter.DUST_RATE,r)
+	    parameter.setParameterValue(XMLMessageExternalParameter.RAIN_RATE,v)
+	    parameter.setParameterValue(XMLMessageExternalParameter.DUST_SIZE,s)
+	    parameter.setParameterValue(XMLMessageExternalParameter.RAIN_SIZE,cloudsize)
+	    parameter.createRootNode()
+
+	    self.channel.getRouter().sendString(Router.SENSORARRAY,parameter.xml2Char(False))
+	    self.channel.getRouter().sendString(Router.PLANNER,parameter.xml2Char(False))
+	    self.channel.getRouter().sendString(Router.COMMANDER,parameter.xml2Char(False))
+
 	
 
         self.A = zeros((self.N,self.N),dtype=float64)        # array of values for dirt levels

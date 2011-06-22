@@ -113,6 +113,8 @@ from XML.XMLMessageVacuumAddExpenditureWorld import \
 from XML.XMLMessageExternalCommand import \
      XMLMessageExternalCommand     
 
+from XML.XMLMessageExternalParameter import \
+     XMLMessageExternalParameter
 
 # The xml classes used to define the messages being passed.
 from XML.XMLParser import XMLParser
