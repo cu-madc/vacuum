@@ -107,7 +107,7 @@ W = GraphicalWorld.spawnWorld(r,s,v,cloudsize);
 N = W.getNumber()
 chan = W.getChannel()   # TODO register the channel to the world
 W.getChannel().setNumberVacuums(numVacs)
-
+W.setIPInformation(agentInterfaces)
 
 
 # create and set the sensor

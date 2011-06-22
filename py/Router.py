@@ -220,12 +220,16 @@ class Router:
 	#    # This is not a valid destination. Just return.
 	#    return
 
+	if(debug):
+	    print("Dest: {0} - {1}".format(destination,self.agents[destination]))
+
 
 	if(destination == self.VACUUM):
 	    # This is a message for a vacuum. Need to check to see if
 	    # it has a proper ID.
 
-	    #print("Router.sendString, Send message to vacuum {0} , {1}".format(vacuumID,self.channel))
+	    if(debug):
+		print("Router.sendString, Send message to vacuum {0} , {1}".format(vacuumID,self.channel))
 	    if((vacuumID>-1) and (vacuumID < len(self.vacuumArray))) :
 		# This is a well formed message for a vacuum.
 
@@ -236,8 +240,9 @@ class Router:
 		    # agent. Send the information over the
 		    # network.
 
-		    #print("Router.sendString, Send message to vacuum {0} {1}".format(
-		    #      self.vacuumArray[vacuumID]['host'],self.vacuumArray[vacuumID]['port']))
+		    if(debug) :
+			print("Router.sendString, Send tcp message to vacuum {0} {1}".format(
+			    self.vacuumArray[vacuumID]['host'],self.vacuumArray[vacuumID]['port']))
 		    self.sendMessageOverSocket([self.vacuumArray[vacuumID]['host'],
 						self.vacuumArray[vacuumID]['port']],
 					       message)
@@ -258,9 +263,23 @@ class Router:
 			print("Router.sendString bad vacuum id: {0}".format(vacuumID))
 
 
-	
+
+	elif (('host' in self.agents[destination]) and
+	      ('port' in self.agents[destination])) :
+	    # IP iformation is available for this
+	    # agent. Send the information over the
+	    # network.
+
+	    if(debug) :
+		print("SENDING TO {0} {1} ".format(self.agents[destination]['host'],self.agents[destination]['port']))
+	    self.sendMessageOverSocket([self.agents[destination]['host'],self.agents[destination]['port']],
+				       message)
+
+
 	elif('parent' in self.agents[destination]):
 		# This is a message for an agent that is not a vacuum.
+		if(debug):
+		    print("Sending to an agent directly: {0}".format(self.agents[destination]))
 
 		if((self.agents[destination]['parent']) and (self.sendMessage())) :
 
@@ -268,22 +287,14 @@ class Router:
 		    # pointer to the agent's channel.
 
 		    if(debug) :
+			print("Send message directly to agent")
 			self.agents[destination]['parent'].checkInfoType = True
 
 		    self.agents[destination]['parent'].receiveXMLReportParseAndDecide(message)
 
 
-	elif (('host' in self.agents[destination]) and
-	      ('port' in self.agents[destination])) :
-	    # IP iformation is available for this
-	    # agent. Send the information over the
-	    # network.
-	    #print("SENDING TO {0} {1} ".format(self.agents[destination]['host'],self.agents[destination]['port']))
-	    self.sendMessageOverSocket([self.agents[destination]['host'],self.agents[destination]['port']],
-				       message)
-
-
-
+	elif(debug) :
+	    print("Router.sendMessage: Message not sent?")
 
 
 

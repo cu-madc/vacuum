@@ -808,8 +808,8 @@ class Channel:
     def sendWorldStatusToSensor(self,A) :
         worldData = XMLMessageWorldStatus(A)
         worldData.createRootNode()
-
-	self.router.sendString(Router.SENSORARRAY,worldData.xml2Char())
+	#print("Channel.sendWorldStatusToSensor: sending data")
+	self.router.sendString(Router.SENSORARRAY,worldData.xml2Char(),-1)
 	#self.receiveXMLReportParseAndDecide(worldData.xml2Char())
 
 

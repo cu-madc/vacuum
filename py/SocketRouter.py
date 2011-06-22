@@ -309,7 +309,8 @@ class SocketRouter(Router):
 
         except EnvironmentError as exc:
             if(exc.errno == errno.ECONNREFUSED):
-                print("SocketRouter.sendMessageOverSocket - Error trying to connect.")
+                print("SocketRouter.sendMessageOverSocket - Error trying to connect - {0}:{1}".format(
+		    hostTuple[0],hostTuple[1]))
 	    else :
 		print("SocketRouter.sendMessageOverSocket - Unkown error trying to connect: {0}".format(exc.errno))
                 

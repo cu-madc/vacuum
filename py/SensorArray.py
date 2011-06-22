@@ -125,6 +125,7 @@ class SensorArray (Agent):
 
     def setArray(self,value) :
         self.array = value
+	#print(self.array)
 	if(self.queueUse) :
 	    self.queue.put(self.array)
 
@@ -150,7 +151,7 @@ class SensorArray (Agent):
             #print(actualdata)
             noisyView =self.array*(
                 1.0+2.0*self.accuracy*(random.rand(self.N*self.N).reshape(self.N,self.N)-0.5))
-            #print(self.array)
+            #print("SensorArray.measure:\n{0}".format(self.array))
             self.channel.sendStatusSensor2Planner(noisyView)
          
             self.Wet = self.Wet>0;
