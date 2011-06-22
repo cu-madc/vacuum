@@ -71,6 +71,7 @@ class Agent (Process):
         self.setChannel(None)
 	self.setMyType(type)
 	self.queue = Queue()
+	self.queueUse = False
 
 
     def setChannel(self,value) :
@@ -84,6 +85,12 @@ class Agent (Process):
 
     def getMyType(self) :
 	return(self.myType)
+
+    def setQueueUse(self,value) :
+	self.queueUse = value
+
+    def getQueueUse(self) :
+	return(queueUse)
 
 
     def run(self) :

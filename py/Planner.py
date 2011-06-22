@@ -263,7 +263,8 @@ class Planner (Agent) :
             # see http://en.wikipedia.org/wiki/Conjugate_prior for details.
 
 	#print(self.worldview)
-	self.queue.put(self.worldview)
+	if(self.queueUse) :
+	    self.queue.put(self.worldview)
 
             
     def receiveReport(self,x,y) :

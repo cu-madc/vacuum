@@ -118,6 +118,7 @@ sensor.setRouterChannel(Router.WORLD,W.getChannel())
 W.setSensor(sensor)
 sensor.setIPInformation(agentInterfaces)
 sensor.getChannel().setNumberVacuums(numVacs)
+sensor.setQueueUse(True)
 
 
 
@@ -128,6 +129,7 @@ plan.setRouterChannel(Router.WORLD,W.getChannel())
 W.setPlanner(plan)
 plan.setIPInformation(agentInterfaces)
 plan.getChannel().setNumberVacuums(numVacs)
+plan.setQueueUse(True)
 
 
 
@@ -159,6 +161,7 @@ for i in range(numVacs) :
     vacuum = Vacuum.spawnVacuum(i,0)
     #print("New Vacuum: {0} - {1}, {2}".format(vacuum,id(vacuum),i))
     vacuum.getChannel().setNumberVacuums(numVacs)
+    vacuum.setQueueUse(True)
     vacArray.append(vacuum)
     pos = vacuum.getPosition()
     chan.getRouter().addVacuum(vacuum.getChannel(),i)

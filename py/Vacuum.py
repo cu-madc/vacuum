@@ -269,7 +269,8 @@ class Vacuum (Agent):
                     # assume world will dry, then 8 more time units to complete cleaning
                     self.timeDone=self.time+self.timeToClean
 
-	    self.queue.put([self.xPos,self.yPos])
+	    if(self.queueUse) :
+		self.queue.put([self.xPos,self.yPos])
                     
 
     @staticmethod

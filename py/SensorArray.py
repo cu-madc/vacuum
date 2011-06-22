@@ -125,7 +125,8 @@ class SensorArray (Agent):
 
     def setArray(self,value) :
         self.array = value
-	self.queue.put(self.array)
+	if(self.queueUse) :
+	    self.queue.put(self.array)
 
     def getWet(self) :
         return(self.Wet)
