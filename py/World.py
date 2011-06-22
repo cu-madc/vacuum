@@ -77,7 +77,6 @@ class  World (Agent):
         self.time = 0
     
         self.N=5                   # %size of grid
-        self.sensor = None         # data as recorded on sensor
         self.expenditure = 0.0     # cummulative funds expended since last reset
         self.numberVacuums = 0     # No vacuums assigned yet.
 	self.vacuumArray = []      # array of object handles

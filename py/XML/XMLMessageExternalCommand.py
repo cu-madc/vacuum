@@ -72,13 +72,15 @@ class XMLMessageExternalCommand (XMLParser) :
 	  START, \
 	  RESTART, \
 	  RESET, \
-	  POLL = range(5)
+	  POLL, \
+	  EXIT = range(6)
 
     ParameterTitles = {STOP:'stop execution', \
                        START:'start execution', \
                        RESTART:'restart execution', \
                        RESET:'reset', \
-                       POLL:'poll'}
+                       POLL:'poll',
+		       EXIT:'exit'}
 
     def __init__(self) :
 	XMLParser.__init__(self)

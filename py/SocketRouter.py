@@ -106,6 +106,7 @@ class SocketRouter(Router):
 	
 	#  Variables for the state of the polling process
 	self.setRunning(startThread)
+	self.socketServer = None
 
 
 	#  Variables used to keep track of the data.
@@ -188,13 +189,13 @@ class SocketRouter(Router):
 	# ******************************************************************** **/
 
 	# Poll the queue periodically
-	self.setRunning(False)
+	self.setRunning(True)
 	if(SocketRouter.DEBUG) :
 	    	print("SocketRouter.createAndInitializeSocketForever - creating socket server {0}:{1}".format
 		      (self.getHostname(),self.getPort()))
 
 
-	# Start the server and keep polling it.
+	# Start the server and set the handler.
 	self.socketServer = BasicTCPServer( \
 	    (self.getHostname(),self.getPort()),LocalTCPHandler,self)
 	#print(self.socketServer)
@@ -206,18 +207,16 @@ class SocketRouter(Router):
 
 	#self.socketServer.serve_forever()
 
-	check = True
-	while(check) :
+	while(self.getRunning()) :
 	    self.socketServer.handle_request()
-	    #check = False
 
 
 	self.socketServer.socket.shutdown(socket.SHUT_RDWR)
 	self.socketServer.socket.close()
 
-	import sys
+	#import sys
 	print("exit again")
-	sys.exit(0)
+	#sys.exit(0)
 
 
 

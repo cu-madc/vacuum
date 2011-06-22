@@ -110,6 +110,9 @@ from XML.XMLMessageWorldVacuumCurrentTime import \
 from XML.XMLMessageVacuumAddExpenditureWorld import \
      XMLMessageVacuumAddExpenditureWorld
 
+from XML.XMLMessageExternalCommand import \
+     XMLMessageExternalCommand     
+
 
 # The xml classes used to define the messages being passed.
 from XML.XMLParser import XMLParser
@@ -651,6 +654,23 @@ class Channel:
 		    if(self.world) :
 			pass
 
+		elif(item == XMLMessageExternalCommand.EXIT) :
+		    #print("exit: {0}".format(item))
+
+		    if(self.sensor) :
+			self.sensor.shutdownServer()
+		    
+		    if(self.planner):
+			self.planner.shutdownServer()
+
+		    if(self.commander) :
+			self.commander.shutdownServer()
+
+		    if(self.vacuum) :
+			self.vacuum.shutdownServer()
+
+		    if(self.world) :
+			self.world.shutdownServer()
 
 
     ## sendVacuumReportFromCommander2Planner

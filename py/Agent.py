@@ -147,3 +147,8 @@ class Agent (Process):
     def setIPInformation(self,interfaces) :
 	for agentType, ipInfo in interfaces.iteritems():
 	    self.setHostInformation(agentType,ipInfo[0],ipInfo[1],None)
+
+    def shutdownServer(self) :
+	if(self.channel and self.channel.getRouter()) :
+	    self.channel.getRouter().stopServerSocket()
+
