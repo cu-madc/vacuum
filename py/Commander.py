@@ -75,16 +75,7 @@ class Commander (Agent) :
 
     def __init__(self,channel=None) : 
 	Agent.__init__(self,Router.COMMANDER)
-        self.setWorking(True)
         self.setChannel(channel) # handle to planner
-
-
-    def setWorking(self,value) :
-        self.isWorking = value
-
-
-    def getWorking(self) :
-        return(self.isWorking)
 
 
     def getReport(self,xPos,yPos,status,IDnum) :

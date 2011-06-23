@@ -73,6 +73,8 @@ class Agent (Process):
 	self.queue = Queue()
 	self.queueUse = False
 
+	self.setWorking(True)
+
 
     def setChannel(self,value) :
         self.channel = value
@@ -91,6 +93,13 @@ class Agent (Process):
 
     def getQueueUse(self) :
 	return(queueUse)
+
+
+    def setWorking(self,value) :
+        self.isWorking = value
+
+    def getWorking(self) :
+        return(self.isWorking)
 
 
     def run(self) :

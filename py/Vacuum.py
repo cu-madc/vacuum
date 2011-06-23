@@ -81,7 +81,6 @@ class Vacuum (Agent):
         self.setID(IDnum)
         self.range = 3                        # maximum distance that can be travelled 
         self.moveQueue  = []
-        self.setWorking(True)
 
         self.setChannel(channel)              #channel to commander
         self.timeToClean=8;
@@ -98,11 +97,6 @@ class Vacuum (Agent):
 	#print("Creating vacuum {0}/{1}".format(IDnum,id(self.moveQueue)))
 
 
-    def setWorking(self,value) :
-        self.isWorking = value
-
-    def getWorking(self) :
-        return(self.isWorking)
 
     def setChannel(self,value) :
         Agent.setChannel(self,value)

@@ -97,7 +97,6 @@ class Planner (Agent) :
 	self.normalizeDirtRate()
 
 
-        self.setWorking(True)
         self.vacuumlocation = []
         
         #create distance matrix
@@ -118,11 +117,6 @@ class Planner (Agent) :
     def getAccuracy(self) :
         return(self.sensorAccuracy)
     
-    def setWorking(self,value) :
-        self.isWorking = value
-
-    def getWorking(self) :
-        return(self.isWorking)
 
     def getWorldView(self) :
 	while(not self.queue.empty()):

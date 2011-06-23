@@ -79,14 +79,6 @@ class SensorArray (Agent):
         self.array = zeros((self.N,self.N),dtype=float64) # array of values for dirt levels
         self.Wet = zeros((self.N,self.N),dtype=float64)   # array of values for dirt levels
 
-        self.setWorking(True)
-
-
-    def setWorking(self,value) :
-        self.isWorking = value
-
-    def getWorking(self):
-        return(self.isWorking)
 
 
 
