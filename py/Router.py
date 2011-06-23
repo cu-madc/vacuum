@@ -221,7 +221,10 @@ class Router:
 	#    return
 
 	if(debug):
-	    print("Dest: {0} - {1}".format(destination,self.agents[destination]))
+	    if(destination == self.VACUUM):
+		print("Send to Vacuum:  {0}".format(self.vacuumArray))
+	    else :
+		print("Dest: {0} - {1}".format(destination,self.agents[destination]))
 
 
 	if(destination == self.VACUUM):
@@ -230,6 +233,7 @@ class Router:
 
 	    if(debug):
 		print("Router.sendString, Send message to vacuum {0} , {1}".format(vacuumID,self.channel))
+		
 	    if((vacuumID>-1) and (vacuumID < len(self.vacuumArray))) :
 		# This is a well formed message for a vacuum.
 
@@ -257,6 +261,9 @@ class Router:
 
 		    #print("Router.sendString vacuum array: {0}  channel: {1}".format(self.vacuumArray,self.channel))
 		    if((vacuumID > -1) and (vacuumID < len(self.vacuumArray)) and self.vacuumArray[vacuumID]) :
+			if(debug):
+			    print("Sending message to {0}".format(self.vacuumArray[vacuumID]))
+			    
 			self.vacuumArray[vacuumID].receiveXMLReportParseAndDecide(message)
 
 		    else :

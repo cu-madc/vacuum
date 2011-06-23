@@ -917,7 +917,7 @@ class Channel:
         #print(newTime.xml2Char())
 
 	#print("Channel.sendVacuumWorldTime - {0}".format(id))
-	self.router.sendString(Router.VACUUM,newTime.xml2Char(),id)
+	self.router.sendString(Router.VACUUM,newTime.xml2Char(),id,False)
 	#self.receiveXMLReportParseAndDecide(newTime.xml2Char())
 
 

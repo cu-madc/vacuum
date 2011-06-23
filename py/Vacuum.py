@@ -214,7 +214,7 @@ class Vacuum (Agent):
         
     def timeStep(self,time,wetness) :
         #vacuum action on each world time increment
-        #print("ID: {0} Time: {1} working: {2} pos: {3},{4} wetness:\n{5}".format\
+        #print("Vacuum.timeStep ID: {0} Time: {1} working: {2} pos: {3},{4} wetness:\n{5}".format\
         #     (self.getID(),time,self.isWorking,self.xPos,self.yPos,wetness))
 
         self.setWetness(wetness)
