@@ -151,7 +151,7 @@ class SensorArray (Agent):
             #print(actualdata)
             noisyView =self.array*(
                 1.0+2.0*self.accuracy*(random.rand(self.N*self.N).reshape(self.N,self.N)-0.5))
-            #print("SensorArray.measure:\n{0}".format(self.array))
+            #print("SensorArray.measure:\n{0}\n{1}\n\n".format(self.array,noisyView))
             self.channel.sendStatusSensor2Planner(noisyView)
          
             self.Wet = self.Wet>0;

@@ -452,7 +452,6 @@ class Channel:
         elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_STATUS) :
 	    #print("Send world status to the sensor.")
             if(self.sensor) :
-		#print("Channel.receiveXMLReportParseAndDecide - sending status.")
                 # let the sensor know the world status.
 		# print("Channel.receiveXMLReportParseAndDecide-XMLParser.MESSAGE_WORLD_STATUS")
                 self.sensor.setArray(info.getMatrixFromArray())
