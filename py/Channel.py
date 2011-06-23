@@ -801,7 +801,7 @@ class Channel:
 
 	#Channel.checkInfoType = True
 	#print("sending vacuum to commander")
-	self.router.sendString(Router.COMMANDER,report.xml2Char())
+	self.router.sendString(Router.COMMANDER,report.xml2Char(),-1,False)
 	#self.receiveXMLReportParseAndDecide(report.xml2Char())
 
 

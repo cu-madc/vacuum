@@ -73,148 +73,88 @@ from Router import Router
 
 
 
+
 # Set the rate and size for dirtfall
-r = 1.8
-s = 12.0
+r = 0.5
+s = 10.0
 
 # Set the rate constant and size for rain
-v         = .2
+v         = .1
 cloudsize = 20
 
 # Create the world and get the gridsize
 W = GraphicalWorld.spawnWorld(r,s,v,cloudsize);
-#print("World channel: {0}".format(W.getChannel()))
-N = W.getNumber() 
+N = W.getNumber()
+chan = W.getChannel()
+
 
 # create and set the sensor
-
 accuracy = 0.4
-sensor = SensorArray.spawnSensorArray(accuracy)   #SensorArray(accuracy)
-#print("Sensor Channel: {0}".format(sensor.getChannel()))
+sensor = SensorArray.spawnSensorArray(accuracy)
 W.setSensor(sensor)
 
-# channel setup
-chan = W.getChannel()   # TODO register the channel to the world
 
-
-# create the commander and planner
+# create the planner
 plan=Planner.spawnPlanner(r*s/float(N*N),r,s,accuracy,N)
-#print("Planner channel: {0}".format(plan.getChannel()))
 W.setPlanner(plan)
 
-command = Commander.spawnCommander()   # Commander(chan)
-#print("Comander channel: {0}".format(command.getChannel()))
 
-command.setRouterChannel(Router.WORLD,W.getChannel())
-plan.setRouterChannel(Router.WORLD,W.getChannel())
-sensor.setRouterChannel(Router.WORLD,W.getChannel())
-
-command.setRouterChannel(Router.COMMANDER,command.getChannel())
-command.setRouterChannel(Router.PLANNER,plan.getChannel())
-command.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
-command.setRouterChannel(Router.WORLD,W.getChannel())
-
-sensor.setRouterChannel(Router.COMMANDER,command.getChannel())
-sensor.setRouterChannel(Router.PLANNER,plan.getChannel())
-sensor.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
-sensor.setRouterChannel(Router.WORLD,W.getChannel())
-
-plan.setRouterChannel(Router.COMMANDER,command.getChannel())
-plan.setRouterChannel(Router.PLANNER,plan.getChannel())
-plan.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
-plan.setRouterChannel(Router.WORLD,W.getChannel())
-
-#chan.setDebug(True)
-chan.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
-chan.setRouterChannel(Router.COMMANDER,command.getChannel())
-chan.setRouterChannel(Router.PLANNER,plan.getChannel())
-chan.setRouterChannel(Router.WORLD,chan)
-
-#command.getChannel().printChannelInformation("commander ")
-#sensor.getChannel().printChannelInformation("sensor ")
-#plan.getChannel().printChannelInformation("planner")
-#W.getChannel().printChannelInformation("world")
+# create the commander
+command = Commander.spawnCommander()  
+#W.setCommander(command)
 
 
 # Create vacuums
 numVacs=3
 vacArray = []
-
-#print("setting commander vacuums")
-command.getChannel().setNumberVacuums(numVacs)
-#print("setting planner vacuums")
-plan.getChannel().setNumberVacuums(numVacs)
-#print("setting sensor vacuums")
-sensor.getChannel().setNumberVacuums(numVacs)
-
-
 for i in range(numVacs) :
-    #print("Initializing vacuum {0}".format(i))
     vacuum = Vacuum.spawnVacuum(i,0)
-    #print("\n\nNew Vacuum: {0} - {1}, {2}".format(vacuum,vacuum.getChannel(),i))
-    vacuum.getChannel().setNumberVacuums(numVacs)
     vacArray.append(vacuum)
-    pos = vacuum.getPosition()
-    #chan.addVacuum(vacuum,i,pos[0],pos[1])
+    W.addVacuum(vacuum)
+    vacuum.getChannel().setNumberVacuums(numVacs)
 
+    pos = vacuum.getPosition()
+    chan.getRouter().addVacuum(vacuum.getChannel(),i)
+    chan.addVacuum(vacuum,i,pos[0],pos[1],False)
+
+    plan.setVacuumLocation(i,pos[0],pos[1])
+
+    plan.setVacuumRouterInformation(vacuum.getChannel(),i,pos[0],pos[1])
+    command.setVacuumRouterInformation(vacuum.getChannel(),i,pos[0],pos[1])
+    sensor.setVacuumRouterInformation(vacuum.getChannel(),i,pos[0],pos[1])
+
+    vacuum.setRouterChannel(Router.WORLD,W.getChannel())
     vacuum.setRouterChannel(Router.COMMANDER,command.getChannel())
     vacuum.setRouterChannel(Router.PLANNER,plan.getChannel())
     vacuum.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
-    vacuum.setRouterChannel(Router.WORLD,W.getChannel())
-
-    command.setVacuumRouterInformation(vacuum.getChannel(),i)
-    sensor.setVacuumRouterInformation(vacuum.getChannel(),i)
-    plan.setVacuumRouterInformation(vacuum.getChannel(),i)
-
-    chan.getRouter().addVacuum(vacuum.getChannel(),i)
-    vacuum.getChannel().sendPlannerVacuumMovedPosition(i,pos[0],pos[1])
-
-    #print("going to add vacuum {0} to the world".format(i))
-    W.addVacuum(vacuum)
-
-#import sys
-#sys.exit(0)
 
 
-
-#W.printVacuumInfo(0)
-#command.printRouterInformation("commander")
-#sensor.printRouterInformation("sensor")
-#plan.printRouterInformation("planner")
-#W.printRouterInformation("world")
+    #vacuum.registerWorld(W,command)
 
 
+# Set the channel pointers for the sensor array
+sensor.setRouterChannel(Router.WORLD,W.getChannel())
+sensor.setRouterChannel(Router.COMMANDER,command.getChannel())
+sensor.setRouterChannel(Router.PLANNER,plan.getChannel())
 
-W.mainloop()
-exit(0)
+# Set the channel pointers for the planner
+plan.setRouterChannel(Router.WORLD,W.getChannel())
+plan.setRouterChannel(Router.COMMANDER,command.getChannel())
+plan.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
 
-# testing (??)
-S=vacArray[1].missions;
-S1=vacArray[1].repairs;
+# Set the channel pointers for the commander
+command.setRouterChannel(Router.WORLD,W.getChannel())
+command.setRouterChannel(Router.PLANNER,plan.getChannel())
+command.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
+
+# Set the channel pointers for the world
+W.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
+W.setRouterChannel(Router.PLANNER,plan.getChannel())
+W.setRouterChannel(Router.COMMANDER,command.getChannel())
 
 
 H = []
 R = []
-W.draw()
-skip = 10;
-for i in range(10000) :
-    W.inc()
-    if(i%skip==0) :
-       W.draw()
-    H.append(sum(sum(W.A)))
-    R.append(sum(W.Moisture>0))
-    
-print("Mean of H: {0}".format(mean(H)))
-
-try:
-    T_est=1000.0/(vacArray[1].missions-S)
-except ZeroDivisionError:
-    T_est = 0.0
-    
-S1=vacArray[1].repairs-S1;
-S=vacArray[1].missions-S;
-
-
 W.draw()
 W.mainloop()
 

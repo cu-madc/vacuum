@@ -244,6 +244,7 @@ class Vacuum (Agent):
 
             elif ((self.status==3) and (len(self.moveQueue)==0)) :
                 # nothing in queue
+		#print("Vacuum.timeStep - sending report to vacuum")
                 self.channel.sendReportFromVacuum2Commander(
                     self.xPos,self.yPos,self.status,self.getID());
 
