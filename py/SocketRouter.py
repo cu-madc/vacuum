@@ -248,9 +248,9 @@ class SocketRouter(Router):
     ## checkIncomingQueue(self)
     ##
     ## Routine to check the queue for any completed requests
-    def checkIncomingQueue(self) :
+    def checkIncomingQueue(self,debug=False) :
 
-	if(SocketRouter.DEBUG) :
+	if(SocketRouter.DEBUG or debug) :
 	    print("checking the incoming queue")
 
 	numberItems = 0
@@ -259,7 +259,7 @@ class SocketRouter(Router):
 	while(not self.incomingTCP.empty()):
 	    # Something has been passed in from the interwebz
 	    entry = self.incomingTCP.get()
-	    if(SocketRouter.DEBUG) :
+	    if(SocketRouter.DEBUG or debug) :
 		print("Incoming queue: {0}".format(entry))
 	    numberItems += 1
 	    self.channel.receiveXMLReportParseAndDecide(entry)

@@ -168,5 +168,5 @@ class Agent (Process):
 
 
 
-    def checkIncomingQueue(self) :
-	self.getChannel().getRouter().checkIncomingQueue()
+    def checkIncomingQueue(self,debug=False) :
+	self.getChannel().getRouter().checkIncomingQueue(debug)
