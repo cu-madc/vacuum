@@ -80,18 +80,24 @@ class Agent (Process):
 	    print("Agent.__del__: {0}".format(self.getMyType()))
 
 
+    # This is for setting/getting the channel used by this agent.
     def setChannel(self,value) :
         self.channel = value
 
     def getChannel(self) :
         return(self.channel)
 
+
+    # This is for setting/getting the type of agent this is. The types
+    # are kept track of in the Router class.
     def setMyType(self,type) :
 	self.myType = type
 
     def getMyType(self) :
 	return(self.myType)
 
+    # This is for setting/getting the thread safe queue used for
+    # exchanging information to/from the world.
     def setQueueUse(self,value) :
 	self.queueUse = value
 
@@ -99,6 +105,7 @@ class Agent (Process):
 	return(queueUse)
 
 
+    # This is used to set/get whether or not this agent is working.
     def setWorking(self,value) :
         self.isWorking = value
 
@@ -106,9 +113,15 @@ class Agent (Process):
         return(self.isWorking)
 
 
+    # call this routine when you want to poll the hostname/socket
+    # assigned to this agent. This is called when the start method is
+    # called and will spawn a new agent. It should not be called
+    # directly.
     def run(self) :
 	self.channel.getRouter().createAndInitializeSocketForever()
 
+
+    # For specifying the hostname/port number used by this agent. 
     def setHostname(self,hostname) :
 	#print("Setting agent hostname: {0}".format(hostname))
         self.channel.getRouter().setHostname(hostname)
@@ -118,18 +131,20 @@ class Agent (Process):
         self.channel.getRouter().setPort(port)
 
 
+    # This is for setting the host information for other agents.
     def setHostInformation(self,hostType,host,port,vacuumID=None) :
 
 	if(self.channel and self.channel.getRouter()) :
 	    self.channel.getRouter().setHostInformation(hostType,host,port,vacuumID)
 
-
+    # This is for setting the channel information for other agents.
     def setRouterChannel(self,type,channel) :
 
 	if(self.channel and self.channel.getRouter()) :
 	    self.channel.getRouter().setChannel(type,channel)
 
 
+    # This is for setting the channel information for a vacuum.
     def setVacuumRouterInformation(self,channel,vacuumID=None,xPos=0,yPos=0) :
 
 	if(self.channel) :
@@ -139,11 +154,14 @@ class Agent (Process):
             self.channel.getRouter().addVacuum(channel,vacuumID)
 
 
+    # This is used for printing out debug information about the router.
     def printRouterInformation(self,toPrint) :
         if(self.channel) :
             self.channel.getRouter().printHostInformation(toPrint)
 
 
+    # Helper routine to create a channel and assign it to this
+    # agent. Used for creating a new agent.
     def initializeChannel(self):
 	from Channel import Channel
 	channel = Channel()
@@ -152,21 +170,22 @@ class Agent (Process):
 	return(channel)
 
 
-    def run(self) :
-	#self.channel.getRouter().printThisHostInformation()
-	self.channel.getRouter().createAndInitializeSocketForever()
 
-
+    # This is for setting the tcp information for a dictionary of
+    # objects. this way the ip information can be set in one
+    # dictionary and changed all at one time.
     def setIPInformation(self,interfaces) :
 	for agentType, ipInfo in interfaces.iteritems():
 	    self.setHostInformation(agentType,ipInfo[0],ipInfo[1],None)
 
+    # Tell the router to shut down its socket.
     def shutdownServer(self) :
 	if(self.channel and self.channel.getRouter()) :
 	    #print("Agent.shutdownServer - shutting down server: {0}".format(self.getMyType()))
 	    self.channel.getRouter().stopServerSocket(self.getMyType())
 
 
-
+    # Tell the channel to check its queue for commands that have come
+    # in from another agent or the world.
     def checkIncomingQueue(self,debug=False) :
 	self.getChannel().getRouter().checkIncomingQueue(debug)
