@@ -98,6 +98,7 @@ class  GraphicalWorld (World,Tk) :
         self.fileMenu.add_command(label="Start",command=self.start)
         self.fileMenu.add_command(label="Quit",command=self.quit)
         self.menuBar.add_cascade(label="File",menu=self.fileMenu)
+	self.protocol("WM_DELETE_WINDOW", self.quit)
 
 
 

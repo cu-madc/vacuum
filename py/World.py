@@ -106,12 +106,15 @@ class  World (Agent):
 	parameter.setParameterValue(XMLMessageExternalCommand.EXIT)
 	parameter.createRootNode()
 	#print(parameter.xml2Char(True))
+	#print("World.quit - Sending exit string to agents.")
 	self.channel.sendString(Router.SENSORARRAY,parameter.xml2Char(False))
 	self.channel.sendString(Router.PLANNER,parameter.xml2Char(False))
 	self.channel.sendString(Router.COMMANDER,parameter.xml2Char(False))
-
+	
 	for definedVacuum in self.vacuumArray :
 	    self.channel.sendString(Router.VACUUM,parameter.xml2Char(False),definedVacuum.getID())
+	    definedVacuum.checkIncomingQueue()
+	    
 		    
         exit(0)
 

@@ -75,6 +75,10 @@ class Agent (Process):
 
 	self.setWorking(True)
 
+    def __del__(self) :
+	if(Agent.DEBUG):
+	    print("Agent.__del__: {0}".format(self.getMyType()))
+
 
     def setChannel(self,value) :
         self.channel = value
@@ -159,5 +163,10 @@ class Agent (Process):
 
     def shutdownServer(self) :
 	if(self.channel and self.channel.getRouter()) :
-	    self.channel.getRouter().stopServerSocket(self.getMyType(),True)
+	    #print("Agent.shutdownServer - shutting down server: {0}".format(self.getMyType()))
+	    self.channel.getRouter().stopServerSocket(self.getMyType())
 
+
+
+    def checkIncomingQueue(self) :
+	self.getChannel().getRouter().checkIncomingQueue()

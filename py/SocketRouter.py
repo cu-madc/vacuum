@@ -215,27 +215,28 @@ class SocketRouter(Router):
 	self.socketServer.socket.close()
 
 	#import sys
-	print("exit again")
+	#print("exit again")
  	#sys.exit(0)
 
 
 
 
-    def stopServerSocket(self,type,printError=False):
+    def stopServerSocket(self,type,printError=False,debug=False):
 	####################################################################
 	## stopServerSocket(self,type,printError=False)
 	##
 	## Stop the existing socket server. 
 
 	self.setRunning(False)
-	if(SocketRouter.DEBUG) :
-	    print("Stopping the server socket: {0}".format(type))
+	if(debug) :
+	    print("SocketRouter.stopServerSocket: Stopping the server socket: {0}".format(type))
 
 	try:
-	    self.socketServer.shutdown()
+	    self.socketServer.shutdown(socket.SHUT_RDWR)
+	    self.socketServer.close()
 	except:
-	    if(SocketRouter.DEBUG) :
-		print("Error - unable to shut down the socket server.")
+	    if(SocketRouter.DEBUG or printError) :
+		print("SocketRouter.stopServerSocket: Error - unable to shut down the socket server.")
 	    return(False)
 
 	return(True)

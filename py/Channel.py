@@ -686,21 +686,26 @@ class Channel:
 			pass
 
 		elif(item == XMLMessageExternalCommand.EXIT) :
-		    print("exit: {0}".format(item))
+		    #print("exit: {0}".format(item))
 
 		    if(self.sensor) :
+			#print("Shutting down the server")
 			self.sensor.shutdownServer()
 		    
 		    if(self.planner):
+			#print("Shutting down the planner")
 			self.planner.shutdownServer()
 
 		    if(self.commander) :
+			#print("Shutting down the commander")
 			self.commander.shutdownServer()
 
 		    if(self.vacuum) :
+			#print("Shutting down the vacuum")
 			self.vacuum.shutdownServer()
 
 		    if(self.world) :
+			#print("Shutting down the world")
 			self.world.shutdownServer()
 
 
