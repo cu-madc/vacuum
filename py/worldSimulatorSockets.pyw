@@ -167,7 +167,7 @@ for i in range(numVacs) :
     chan.getRouter().addVacuum(vacuum.getChannel(),i)
 
     #print("going to add vacuum {0} to the world".format(i))
-    #W.addVacuum(vacuum,True)
+    W.addVacuum(vacuum,False)
 
 
     chan.addVacuum(vacuum,i,pos[0],pos[1],False)
@@ -176,7 +176,7 @@ for i in range(numVacs) :
     plan.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
     sensor.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
     command.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
-    W.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    #W.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
     
     vacuum.setIPInformation(agentInterfaces)
     vacuum.setRouterChannel(Router.WORLD,W.getChannel())
@@ -184,7 +184,8 @@ for i in range(numVacs) :
     #print("Setting vacuum {0} - {1}:{2}".format(i,vacummInterfaces[i][0],vacummInterfaces[i][1]))
     vacuum.setHostname(vacummInterfaces[i][0])
     vacuum.setPort(vacummInterfaces[i][1])
-    vacuum.start()
+    #vacuum.start()
+    vacuum.getChannel().getRouter().createAndInitializeSocket()
 
 #command.printRouterInformation("commander ")
 #sensor.printRouterInformation("sensor ")

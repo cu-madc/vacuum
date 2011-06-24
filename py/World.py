@@ -106,12 +106,12 @@ class  World (Agent):
 	parameter.setParameterValue(XMLMessageExternalCommand.EXIT)
 	parameter.createRootNode()
 	#print(parameter.xml2Char(True))
-	self.channel.getRouter().sendString(Router.SENSORARRAY,parameter.xml2Char(False))
-	self.channel.getRouter().sendString(Router.PLANNER,parameter.xml2Char(False))
-	self.channel.getRouter().sendString(Router.COMMANDER,parameter.xml2Char(False))
+	self.channel.sendString(Router.SENSORARRAY,parameter.xml2Char(False))
+	self.channel.sendString(Router.PLANNER,parameter.xml2Char(False))
+	self.channel.sendString(Router.COMMANDER,parameter.xml2Char(False))
 
 	for definedVacuum in self.vacuumArray :
-	    self.channel.getRouter().sendString(Router.VACUUM,parameter.xml2Char(False),definedVacuum.getID())
+	    self.channel.sendString(Router.VACUUM,parameter.xml2Char(False),definedVacuum.getID())
 		    
         exit(0)
 
@@ -136,9 +136,9 @@ class  World (Agent):
 	    parameter.setParameterValue(XMLMessageExternalParameter.RAIN_SIZE,cloudsize)
 	    parameter.createRootNode()
 
-	    self.channel.getRouter().sendString(Router.SENSORARRAY,parameter.xml2Char(False))
-	    self.channel.getRouter().sendString(Router.PLANNER,parameter.xml2Char(False))
-	    self.channel.getRouter().sendString(Router.COMMANDER,parameter.xml2Char(False))
+	    self.channel.sendString(Router.SENSORARRAY,parameter.xml2Char(False))
+	    self.channel.sendString(Router.PLANNER,parameter.xml2Char(False))
+	    self.channel.sendString(Router.COMMANDER,parameter.xml2Char(False))
 
 	
 

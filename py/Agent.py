@@ -159,5 +159,5 @@ class Agent (Process):
 
     def shutdownServer(self) :
 	if(self.channel and self.channel.getRouter()) :
-	    self.channel.getRouter().stopServerSocket()
+	    self.channel.getRouter().stopServerSocket(self.getMyType(),True)
 

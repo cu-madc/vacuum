@@ -142,7 +142,7 @@ class SocketRouter(Router):
        #delete mySender;
 
        if self.getRunning() :
-	   self.stopServerSocket()
+	   self.stopServerSocket(-1,False)
 	   self.destroyMutex()
 	   print("Exiting the thread.")
 	   #pthread_exit(None);
@@ -221,15 +221,15 @@ class SocketRouter(Router):
 
 
 
-    def stopServerSocket(self,printError=False):
+    def stopServerSocket(self,type,printError=False):
 	####################################################################
-	## stopServerSocket(self,printError=False)
+	## stopServerSocket(self,type,printError=False)
 	##
 	## Stop the existing socket server. 
 
 	self.setRunning(False)
 	if(SocketRouter.DEBUG) :
-	    print("Stopping the server socket.")
+	    print("Stopping the server socket: {0}".format(type))
 
 	try:
 	    self.socketServer.shutdown()
@@ -489,7 +489,7 @@ if (__name__ =='__main__') :
 
 	    except KeyboardInterrupt:
 		print("Stopping the server socket.")
-		polling.stopServerSocket()
+		polling.stopServerSocket(-1,False)
 
     else :
 	print("client")

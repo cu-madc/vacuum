@@ -211,6 +211,7 @@ class Vacuum (Agent):
         #print("Vacuum.timeStep ID: {0} Time: {1} working: {2} pos: {3},{4} wetness:\n{5}".format\
         #     (self.getID(),time,self.isWorking,self.xPos,self.yPos,wetness))
 
+	self.getChannel().getRouter().checkIncomingQueue()
         self.setWetness(wetness)
 
         if (not self.isWorking) :

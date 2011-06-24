@@ -261,6 +261,10 @@ class Channel:
         print("Channel information {0}: {1} - {2}".format(toPrint,self,self.vacuumArray))
 
 
+    def sendString(self,type,message,id=-1,debug=False) :
+	if(self.router) :
+	    self.router.sendString(type,message,id,debug)
+
     def addVacuum(self,vacuum,id,xpos,ypos,debug=False) :
 
 	if(vacuum != None):
@@ -682,7 +686,7 @@ class Channel:
 			pass
 
 		elif(item == XMLMessageExternalCommand.EXIT) :
-		    #print("exit: {0}".format(item))
+		    print("exit: {0}".format(item))
 
 		    if(self.sensor) :
 			self.sensor.shutdownServer()
@@ -716,7 +720,7 @@ class Channel:
         network.createRootNode()
         network.specifyInformationType(XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
 
-	self.router.sendString(Router.PLANNER,network.xml2Char())
+	self.sendString(Router.PLANNER,network.xml2Char())
 	#self.receiveXMLReportParseAndDecide(network.xml2Char())
 
 
@@ -738,7 +742,7 @@ class Channel:
         orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
         
 
-	self.router.sendString(Router.PLANNER,orders.xml2Char())
+	self.sendString(Router.PLANNER,orders.xml2Char())
 	#self.receiveXMLReportParseAndDecide(orders.xml2Char())
             
 
@@ -758,7 +762,7 @@ class Channel:
         orders.createRootNode()
         orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
 
-	self.router.sendString(Router.COMMANDER,orders.xml2Char())
+	self.sendString(Router.COMMANDER,orders.xml2Char())
 	#self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
@@ -778,7 +782,7 @@ class Channel:
         orders.createRootNode()
         orders.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM)
 
-	self.router.sendString(Router.VACUUM,orders.xml2Char(),vacuumID)
+	self.sendString(Router.VACUUM,orders.xml2Char(),vacuumID)
 	#self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
@@ -800,7 +804,7 @@ class Channel:
 
 	#Channel.checkInfoType = True
 	#print("sending vacuum to commander")
-	self.router.sendString(Router.COMMANDER,report.xml2Char(),-1,False)
+	self.sendString(Router.COMMANDER,report.xml2Char(),-1,False)
 	#self.receiveXMLReportParseAndDecide(report.xml2Char())
 
 
@@ -819,8 +823,8 @@ class Channel:
         orders.createRootNode()
         orders.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
 
-	self.router.sendString(Router.PLANNER,orders.xml2Char(),IDnum)
-	#self.router.sendString(Router.PLANNER,orders.xml2Char())
+	self.sendString(Router.PLANNER,orders.xml2Char(),IDnum)
+	#self.sendString(Router.PLANNER,orders.xml2Char())
 	#self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
 
@@ -835,7 +839,7 @@ class Channel:
         sensorData.createRootNode()
 
 	#Channel.checkInfoType = True
-	self.router.sendString(Router.SENSORARRAY,sensorData.xml2Char()) #,-1,True)
+	self.sendString(Router.SENSORARRAY,sensorData.xml2Char()) #,-1,True)
 	#self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
@@ -845,7 +849,7 @@ class Channel:
         sensorData.createRootNode()
 
 	#Channel.checkInfoType = True
-	self.router.sendString(Router.PLANNER,sensorData.xml2Char()) #,-1,True)
+	self.sendString(Router.PLANNER,sensorData.xml2Char()) #,-1,True)
 	#self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
@@ -856,7 +860,7 @@ class Channel:
         worldData = XMLMessageWorldStatus(A)
         worldData.createRootNode()
 	#print("Channel.sendWorldStatusToSensor: sending data")
-	self.router.sendString(Router.SENSORARRAY,worldData.xml2Char(),-1)
+	self.sendString(Router.SENSORARRAY,worldData.xml2Char(),-1)
 	#self.receiveXMLReportParseAndDecide(worldData.xml2Char())
 
 
@@ -868,7 +872,7 @@ class Channel:
         worldWetness = XMLMessageWorldWetness(Moisture)
         worldWetness.createRootNode()
 
-	self.router.sendString(Router.SENSORARRAY,worldWetness.xml2Char())
+	self.sendString(Router.SENSORARRAY,worldWetness.xml2Char())
 	#self.receiveXMLReportParseAndDecide(worldWetness.xml2Char())
 
 
@@ -884,7 +888,7 @@ class Channel:
         update.createRootNode()
 
 	#Channel.checkInfoType = True
-	self.router.sendString(Router.PLANNER,update.xml2Char()) #,-1,True)
+	self.sendString(Router.PLANNER,update.xml2Char()) #,-1,True)
 	#self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
@@ -900,7 +904,7 @@ class Channel:
         update.createRootNode()
         update.specifyInformationType(XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER)
 
-	self.router.sendString(Router.PLANNER,update.xml2Char())
+	self.sendString(Router.PLANNER,update.xml2Char())
 	#self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
@@ -916,7 +920,7 @@ class Channel:
         #print(newTime.xml2Char())
 
 	#print("Channel.sendVacuumWorldTime - {0}".format(id))
-	self.router.sendString(Router.VACUUM,newTime.xml2Char(),id,False)
+	self.sendString(Router.VACUUM,newTime.xml2Char(),id,False)
 	#self.receiveXMLReportParseAndDecide(newTime.xml2Char())
 
 
@@ -929,7 +933,7 @@ class Channel:
         newExpenditure.createRootNode()
         #print(newExpenditure.xml2Char())
 
-	self.router.sendString(Router.WORLD,newExpenditure.xml2Char(),id)
+	self.sendString(Router.WORLD,newExpenditure.xml2Char(),id)
 	#self.receiveXMLReportParseAndDecide(newExpenditure.xml2Char())
 
 
@@ -945,7 +949,7 @@ class Channel:
         update.createRootNode()
         update.specifyInformationType(XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID)
 
-	self.router.sendString(Router.WORLD,update.xml2Char(),idnum)
+	self.sendString(Router.WORLD,update.xml2Char(),idnum)
 	#self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
