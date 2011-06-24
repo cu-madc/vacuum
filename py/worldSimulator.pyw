@@ -104,25 +104,30 @@ command = Commander.spawnCommander()
 #W.setCommander(command)
 
 
-# Create vacuums
+# Create the vacuums
 numVacs=3
 vacArray = []
 for i in range(numVacs) :
-    vacuum = Vacuum.spawnVacuum(i,0)
-    vacArray.append(vacuum)
-    W.addVacuum(vacuum)
-    vacuum.getChannel().setNumberVacuums(numVacs)
+    vacuum = Vacuum.spawnVacuum(i,0)               # Create the next vacuum 
+    vacArray.append(vacuum)                        # Add it to the list that I am keeping
+    W.addVacuum(vacuum)                            # Add it to the world's list  
+    vacuum.getChannel().setNumberVacuums(numVacs)  # Let the vacuum know how many others there will be
 
-    pos = vacuum.getPosition()
-    chan.getRouter().addVacuum(vacuum.getChannel(),i)
-    chan.addVacuum(vacuum,i,pos[0],pos[1],False)
+    pos = vacuum.getPosition()                        # Get this one's position.
+    chan.getRouter().addVacuum(vacuum.getChannel(),i) # Add the vac's channel to the world's list 
+    chan.addVacuum(vacuum,i,pos[0],pos[1],False)      # Let the channel know its position.
 
+    # Let the planner know the relevant information about the vacuum.
     plan.setVacuumLocation(i,pos[0],pos[1])
-
     plan.setVacuumRouterInformation(vacuum.getChannel(),i,pos[0],pos[1])
+
+    # Let the commander know the relevant information about the vacuum.
     command.setVacuumRouterInformation(vacuum.getChannel(),i,pos[0],pos[1])
+
+    # Let the sensor know the relevant information about the vacuum.
     sensor.setVacuumRouterInformation(vacuum.getChannel(),i,pos[0],pos[1])
 
+    # Let the Vacuum know the relevant information about all of the other agents.
     vacuum.setRouterChannel(Router.WORLD,W.getChannel())
     vacuum.setRouterChannel(Router.COMMANDER,command.getChannel())
     vacuum.setRouterChannel(Router.PLANNER,plan.getChannel())
@@ -153,6 +158,7 @@ W.setRouterChannel(Router.PLANNER,plan.getChannel())
 W.setRouterChannel(Router.COMMANDER,command.getChannel())
 
 
+# Create the window and enter the event polling loop for the window manager.
 H = []
 R = []
 W.draw()
