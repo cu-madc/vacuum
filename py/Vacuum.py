@@ -111,15 +111,19 @@ class Vacuum (Agent):
         return(self.Moisture)
 
     def getPosition(self) :
+	# routine to determine the current position of the vacuum.
+	
 	if(self.queue.empty()):
+	    # the queue is empty. Just return the current position.
 	    return([self.xPos,self.yPos])
 
 	else:
+	    # There are requests in the queue. Empty it out and use
+	    # the latest valid request.
 	    while(not self.queue.empty()):
 		pos = self.queue.get()
-		
-	    self.xPos = pos[0]
-	    self.yPos = pos[1]
+		self.move(pos[0],pos[1])
+
 
 	return([self.xPos,self.yPos])
 
@@ -147,17 +151,14 @@ class Vacuum (Agent):
     def move(self,x,y) :
         # allow for movment of vacuum without cleaning
 
-        if (not self.isWorking):
-            # not functioning
-            return
-
-        
-        ordered_distance=abs(self.xPos-x)+abs(self.yPos-y)
-        if (ordered_distance <= self.range) :
-            self.setPosition([x,y]);
-            self.channel.sendVacuumWorldExpenditure(self.moveCost,self.IDnum)
-            self.timeDone += 1;
-            self.status=1;
+        if (self.isWorking):
+            # this vacuum is functioning
+	    ordered_distance=abs(self.xPos-x)+abs(self.yPos-y)
+	    if (ordered_distance <= self.range) :
+		self.setPosition([x,y]);
+		self.channel.sendVacuumWorldExpenditure(self.moveCost,self.IDnum)
+		#self.timeDone += 1;
+		#self.status=1;
 
 
 
@@ -269,6 +270,8 @@ class Vacuum (Agent):
 		self.queue.put([self.xPos,self.yPos])
                     
 
+    # Static method that is used as a helper to make it easier to
+    # create a vacuum object.
     @staticmethod
     def spawnVacuum(IDnum,currentTime=0.0) :
 	vacuum = Vacuum(IDnum,currentTime,None)

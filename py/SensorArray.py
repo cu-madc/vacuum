@@ -156,7 +156,8 @@ class SensorArray (Agent):
 
         return(None)
 
-
+    # Static method that is used as a helper to make it easier to
+    # create a sensor array object.
     @staticmethod
     def spawnSensorArray(accuracy=0.0) :
 	sensor = SensorArray(accuracy)

@@ -102,26 +102,29 @@ class  World (Agent):
     def quit(self) :
 	from XML.XMLMessageExternalCommand import XMLMessageExternalCommand
 
+	# Send a set of exit commands to the different agents. First
+	# create the message itself.
 	parameter = XMLMessageExternalCommand()
 	parameter.setParameterValue(XMLMessageExternalCommand.EXIT)
 	parameter.createRootNode()
-	#print(parameter.xml2Char(True))
-	#print("World.quit - Sending exit string to agents.")
+
+	# Send the message to each agent.
 	self.channel.sendString(Router.SENSORARRAY,parameter.xml2Char(False))
 	self.channel.sendString(Router.PLANNER,parameter.xml2Char(False))
 	self.channel.sendString(Router.COMMANDER,parameter.xml2Char(False))
 	
 	for definedVacuum in self.vacuumArray :
+	    # Send the message to each vacuum
 	    self.channel.sendString(Router.VACUUM,parameter.xml2Char(False),definedVacuum.getID())
-	    definedVacuum.checkIncomingQueue()
+	    definedVacuum.checkIncomingQueue()  # Make sure the vacuum processes its world queue.
 	    
 		    
-        exit(0)
+        exit(0) # Say bye bye!
 
     
     def intializeVariables(self,r,s,v,cloudsize) :
         # initialize the variables this class keeps track of (input rate and size constants)
-        self.time=0;
+        self.time=0;                 # The initial time is zero.
 	self.setDirtRate(r)          # rate constant for - events per unit time(world wide)
 	self.setDirtSize(s)          # size constant for exponential distribution of sizes
 	self.setRainRate(v)          # rate constant for RAIN events - events per unit
@@ -283,7 +286,10 @@ class  World (Agent):
         # Take a single time step of the simulated world
 
 	# First check the queue for pending requests
-	self.getChannel().getRouter().checkIncomingQueue()
+	self.getChannel().getRouter().checkIncomingQueue()   # check to see if there is any
+	                                                     # information that is waiting to
+							     # process. This could be from the
+							     # vacuums.
             
         # dustfall procedure -----
         t=self.time;               # start time
@@ -327,19 +333,24 @@ class  World (Agent):
             # end rainfall
 
 
+	# Let the sensor know the current state of the world.
         self.channel.sendWorldWetnessToSensor(self.Moisture)
         self.channel.sendPlannerUpdateRequest()
 
+	# Make sure that the vacuums update themselves.
         for vacuum in range(self.numberVacuums):
 	    #print("World.inc: Sending to vacuum {0}".format(vacuum))
             self.channel.sendVacuumWorldTime(T,vacuum,self.Moisture)
 
 
+	# Check the message queue one last time just in case something
+	# came in during the intermediate execution.
 	self.getChannel().getRouter().checkIncomingQueue()
         self.time=T;
 
 
-
+    # Static method that is used as a helper to make it easier to
+    # create a world object.
     @staticmethod
     def spawnWorld(r=1.0,s=1.0,v=1.0,cloudsize=1.0) :
 	world = World(r,s,v,cloudsize)

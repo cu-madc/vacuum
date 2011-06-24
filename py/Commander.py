@@ -99,6 +99,8 @@ class Commander (Agent) :
         self.channel.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
 
 
+    # Static method that is used as a helper to make it easier to
+    # create a commander object.
     @staticmethod
     def spawnCommander() :
 	commander = Commander()

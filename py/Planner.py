@@ -321,7 +321,8 @@ class Planner (Agent) :
         self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord,id)
     
 
-
+    # Static method that is used as a helper to make it easier to
+    # create a planner object.
     @staticmethod
     def spawnPlanner(errGrowth,unnormalizeDirtRate,unnormalizeDirtSize,accuracy,N) :
 	planner = Planner(errGrowth,unnormalizeDirtRate,unnormalizeDirtSize,accuracy,N)
