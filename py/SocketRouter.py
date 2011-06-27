@@ -398,6 +398,7 @@ class LocalTCPHandler (BaseRequestHandler):
 
 
 	if(self.server.threaded):
+	    #print("Lock requested: {0}".format(self.server.myParent))
 	    self.server.myParent.dataLock.acquire()
 	    self.server.myParent.incomingTCP.put(message)
 
@@ -406,6 +407,7 @@ class LocalTCPHandler (BaseRequestHandler):
 	    except AttributeError:
 		pass
 	    self.server.myParent.dataLock.release()
+	    #print("Lock released:  {0}".format(self.server.myParent))
 
 	else:
 	    # This is a request that is coming into a blocking tcp server.
