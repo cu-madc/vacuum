@@ -200,6 +200,75 @@ class XMLMessageCreator (XMLParser) :
 
 
 
+    ## getMatrixFromArray
+    #
+    # Routine to traverse the current tree and search for a set of
+    # dimensions that have array elements. All of the array elements
+    # are returned in an array
+    def getMatrixFromArray(self) :
+
+        # Set the default value of the array.
+        A = None
+
+        # Get the start of the dimensions.
+        nodes = self.getChildWithName(self.getBuffer(),"dimensions")
+        if(nodes) :
+
+            # The dimensions was found. Determine the number of rows
+            # and columns.
+            columns = self.getChildWithName([nodes],"NumberColumns")
+            rows    = self.getChildWithName([nodes],"NumberRows")
+
+            if( rows and columns) :
+                # the rows and columns was found. Allocate the array.
+                numCols = int(columns[2]);
+                numRows = int(rows[2]);
+                A = zeros((numRows,numCols),dtype=float64)
+
+                # Go through the whole set of dimensions and get the
+                # coresponding entry in the array.
+                for dimension in nodes[3]:
+                    if(dimension[0] == "dimension") :
+
+                        thisRow = -1;
+                        thisCol = -1;
+                        thisVal = None;
+                        for leaf in dimension[3]:
+                            
+                            if(leaf[0] == "row") :
+                                thisRow = int(leaf[2])
+
+                            elif(leaf[0] == "column") :
+                                thisCol = int(leaf[2])
+
+                            elif(leaf[0] == "value") :
+                                thisVal = float64(leaf[2])
+                                
+                        if((thisRow>=0) and (thisCol>=0) and thisVal) :
+                            A[thisRow,thisCol] = thisVal
+
+
+        return(A)
+
+
+
+
+
+
+
+    ## getValueOfNode
+    #
+    # Routine to get the value of a node. It searches the subnodes and
+    # returns the first child of text type.
+    def getValueOfNode(self,node) :
+        for leaf in node :
+            for detail in leaf.childNodes:
+                if(detail.nodeType == Document.TEXT_NODE) :
+                    # This is the row to be used.
+                    return(detail.nodeValue)
+
+
+
 
     ## updateValue(self,valueName,newValue)
     # 

@@ -101,7 +101,6 @@ if (__name__ =='__main__') :
     A = random.rand(1.0,5,5)[0]
     worldData = XMLMessageWorldWetness(A)
     worldData.createRootNode()
-    worldData.setMatrixFromXML()
     print("Array:\n{0}".format(worldData.xml2Char()))
 
     sensorData = XMLMessageWorldWetness()

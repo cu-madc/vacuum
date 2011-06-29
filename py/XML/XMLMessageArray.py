@@ -65,18 +65,18 @@ from numpy.linalg import *
 
 from xml.dom.minidom import Document
 #from XMLIncomingDIF import XMLIncomingDIF
-from XMLParser import XMLParser
+#from XMLParser import XMLParser
+from XMLMessageCreator import XMLMessageCreator
 
 
-class XMLMessageArray (XMLParser) :
+
+class XMLMessageArray (XMLMessageCreator) :
 
     DEBUG = False
 
     def __init__(self,A=None) :
-        XMLParser.__init__(self)
+        XMLMessageCreator.__init__(self)
         self.setArray(A)
-	self.dimensionsNode = None
-	self.objectClassNode = None
 	self.arrayNode = None
 
 
@@ -91,24 +91,6 @@ class XMLMessageArray (XMLParser) :
         if(self.DEBUG) :
             print("The array:\n{0}".format(self.A))
         
-
-    def createRootNode(self) :
-	# Method to create the root node in the xml tree. Sets the
-        #  scheme information as well.
-        #
-
-	self.cleanUpDocument()
-        self.doc = Document()
-	self.root_node = self.doc.createElement("objectModel");
-        self.doc.appendChild(self.root_node)
-
-        self.root_node.setAttribute("xmlns","http://standards.ieee.org/IEEE1516-2010")
-        self.root_node.setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance")
-        self.root_node.setAttribute("xsi:schemaLocation","http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd")
-
-        self.createObjectClass()
-
-
 
 
     def createObjectClassNodes(self,nodeName,nodeType) :
@@ -137,9 +119,7 @@ class XMLMessageArray (XMLParser) :
         # Creates the dimensions node in the xml tree. It adds the
         # objectClass node as a child of the dimensions node. Finally
         # a "name" node is added as a child of the dimensions node.
-
-        self.dimensionsNode = self.doc.createElement("dimensions")
-        self.objectClassNode.appendChild(self.dimensionsNode)
+	XMLMessageCreator.createDimensions(self)
         self.setArrayNode()
         
 
@@ -213,173 +193,18 @@ class XMLMessageArray (XMLParser) :
 
 
 
-
-    def updateValue(self,valueName,newValue) :
-        # Method to change the network ID node to reflect the current
-        # value of the network id.
-
-        if(self.dimensionsNode) :
-            nodes = self.dimensionsNode.getElementsByTagName("dimension")
-            if(nodes.length>0) :
-
-                for dimension in nodes :
-                    # Get the value of the network ID in the tree and set
-                    # it for this instance
-                    networks = dimension.getElementsByTagName("name");
-                    for network in networks:
-                        for detail in network.childNodes:
-                            if((detail.nodeType == Document.TEXT_NODE) and
-                               (detail.nodeValue == valueName)) :
-                                    # This dimension node is for the network id
-                                    values = dimension.getElementsByTagName("value");
-                                    for value in values:
-                                        for id in value.childNodes:
-                                            if(id.nodeType == Document.TEXT_NODE) :
-                                                id.nodeValue = newValue
-
-
-    def setMatrixFromXML(self) :
-        # Method to pull out the matrix data from the XML tree.
-
-        if(self.dimensionsNode) :
-            nodes = self.dimensionsNode.getElementsByTagName("dimensions")
-            if(nodes.length>0) :
-
-                for dimension in nodes :
-                    # Get the value of this leaf in the tree. This
-                    # should include a row number, a column number,
-                    # and the value of the matrix.
-                    row = dimension.getElementsByTagName("row");
-                    col = dimension.getElementsByTagName("column");
-                    value = dimension.getElementsByTagName("value");
-
-                    rowNum = int(self.getValueOfNode(row))
-                    colNum = int(self.getValueOfNode(col))
-                    arrayVal = float64(self.getValueOfNode(value))
-                    self.A[rowNum,colNum] = arrayVal
-
-
-    def getValueOfNode(self,node) :
-        for leaf in node :
-            for detail in leaf.childNodes:
-                if(detail.nodeType == Document.TEXT_NODE) :
-                    # This is the row to be used.
-                    return(detail.nodeValue)
-
-
-    def getMatrixFromArray(self) :
-
-        # Set the default value of the array.
-        A = None
-
-        # Get the start of the dimensions.
-        nodes = self.getChildWithName(self.getBuffer(),"dimensions")
-        if(nodes) :
-
-            # The dimensions was found. Determine the number of rows
-            # and columns.
-            columns = self.getChildWithName([nodes],"NumberColumns")
-            rows    = self.getChildWithName([nodes],"NumberRows")
-
-            if( rows and columns) :
-                # the rows and columns was found. Allocate the array.
-                numCols = int(columns[2]);
-                numRows = int(rows[2]);
-                A = zeros((numRows,numCols),dtype=float64)
-
-                # Go through the whole set of dimensions and get the
-                # coresponding entry in the array.
-                for dimension in nodes[3]:
-                    if(dimension[0] == "dimension") :
-
-                        thisRow = -1;
-                        thisCol = -1;
-                        thisVal = None;
-                        for leaf in dimension[3]:
-                            
-                            if(leaf[0] == "row") :
-                                thisRow = int(leaf[2])
-
-                            elif(leaf[0] == "column") :
-                                thisCol = int(leaf[2])
-
-                            elif(leaf[0] == "value") :
-                                thisVal = float64(leaf[2])
-                                
-                        if((thisRow>=0) and (thisCol>=0) and thisVal) :
-                            A[thisRow,thisCol] = thisVal
-
-
-        return(A)
-
-
-
-
-
-    def copyXMLTree(self,existingDocument) :
-        # Copy the given parsed XML tree into the local tree. Also set
-        # the relevant nodes that this class tracks from the tree.
-
-        self.root_node = existingDocument.cloneNode(True)
-
-	if(self.root_node) :
-            nodes = self.root_node.getElementsByTagName("objectClass")
-            if(nodes.length==1) :
-                self.objectClassNode = nodes.item(0)
-
-                nodes = self.root_node.getElementsByTagName("dimensions")
-                if(nodes.length==1) :
-                    self.dimensionsNode = nodes.item(0)
-
-                    # Get the value of the network ID in the tree and set
-                    # it for this instance
-                    nodes = self.dimensionsNode.getElementsByTagName("dimension");
-                    for node in nodes:
-
-                        name = None
-                        value = None
-                        for detail in node.childNodes:
-                            for child in detail.childNodes:
-                                if(child.nodeType == Document.TEXT_NODE) :
-                                    
-                                    if(detail.localName == "name") :
-                                        name = child.nodeValue
-
-                                    elif(detail.localName == "value") :
-                                        value = child.nodeValue
-
-                        #print("  Name: {0} Value: {1}".format(name,value))
-                                
-                        if(name == "networkID") :
-                            self.setVacuumID(int(value))
-                            
-                        elif(name == "xPos") :
-                            self.setXPos(int64(value))
-
-                        elif(name == "yPos") :
-                            self.setYPos(int64(value))
-
-                    #print("network: {0} - prob: {1}".format(
-                    #    self.getNetworkID(),self.getProbSuccessfulTransmission()))
-                        
-
-            else :
-                # Error - there is more than one object class node.
-                if(self.DEBUG) :
-                    print("Error - too many object class nodes.")
-                self.objectClassNode = None
-
-
                 
 
 
 if (__name__ =='__main__') :
+    from XMLParser import XMLParser
+    from XMLMessageWorldStatus import XMLMessageWorldStatus
+    
     XMLParser.DEBUG = True
     A = random.rand(1.0,5,5)[0]
     worldData = XMLMessageWorldStatus(A)
     worldData.createRootNode()
-    worldData.setMatrixFromXML()
-    print("Array:\n{0}".format(worldData.xml2Char()))
+    print("Array:\n{0}".format(worldData.xml2Char(True)))
 
     sensorData = XMLMessageWorldStatus()
     sensorData.parseXMLString(worldData.xml2Char())
