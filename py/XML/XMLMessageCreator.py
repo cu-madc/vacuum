@@ -182,6 +182,24 @@ class XMLMessageCreator (XMLParser) :
         
 
 
+    ## makeNodeSingleValue
+    #
+    # Method to set a value by adding a leaf on to the current
+    # tree. The value is then added to the xml tree under the
+    # dimensions node.
+    def makeNodeSingleValue(self,name) :
+
+        self.newNode = self.doc.createElement("dimension")
+        self.dimensionsNode.appendChild(self.newNode)
+
+        dimension = self.doc.createElement("name")
+        node = self.doc.createTextNode(name)
+        dimension.appendChild(node)
+        self.newNode.appendChild(dimension)
+
+
+
+
 
     ## updateValue(self,valueName,newValue)
     # 
