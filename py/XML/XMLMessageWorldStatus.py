@@ -87,7 +87,7 @@ class XMLMessageWorldStatus (XMLMessageArray) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        self.createObjectClassNodes("Sensor","World Status")
+        self.createObjectClassElements("Sensor","World Status")
         
 
 

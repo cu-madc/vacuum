@@ -105,7 +105,7 @@ class XMLMessageWorldVacuumCurrentTime (XMLMessageArray) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        self.createObjectClassNodes("Vacuum","World Time")
+        self.createObjectClassElements("Vacuum","World Time")
 
 
     def updateVacuumIDNode(self) :

@@ -87,7 +87,7 @@ class XMLMessageWorldWetness (XMLMessageArray) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        self.createObjectClassNodes("Sensor","World Wetness")
+        self.createObjectClassElements("Sensor","World Wetness")
         
 
 

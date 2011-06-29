@@ -93,28 +93,6 @@ class XMLMessageArray (XMLMessageCreator) :
         
 
 
-    def createObjectClassNodes(self,nodeName,nodeType) :
-        # Creates the node that contains the object class definition
-        # and all of its children.
-        node = self.doc.createElement("objects")
-        self.root_node.appendChild(node)
-
-        self.objectClassNode = self.doc.createElement("objectClass")
-        node.appendChild(self.objectClassNode)
-
-        nameNode = self.doc.createElement("name")
-        nameNode.appendChild(self.doc.createTextNode(nodeName))
-        self.objectClassNode.appendChild(nameNode)
-
-        typeNode = self.doc.createElement("type")
-        typeNode.appendChild(self.doc.createTextNode(nodeType))
-        self.objectClassNode.appendChild(typeNode)
-
-        self.createDimensions()
-
-
-
-
     def createDimensions(self):
         # Creates the dimensions node in the xml tree. It adds the
         # objectClass node as a child of the dimensions node. Finally
