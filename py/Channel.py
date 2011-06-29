@@ -76,7 +76,7 @@ from SocketRouter import SocketRouter
 # The xml classes used to define the messages being passed.
 from XML.XMLParser import XMLParser
 from XML.XMLIncomingDIF import XMLIncomingDIF
-from XML.XMLMessageNetwork import XMLMessageNetwork
+#from XML.XMLMessageNetwork import XMLMessageNetwork
 
 from XML.XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 
@@ -119,7 +119,6 @@ from XML.XMLMessageExternalParameter import \
 # The xml classes used to define the messages being passed.
 from XML.XMLParser import XMLParser
 from XML.XMLIncomingDIF import XMLIncomingDIF
-from XML.XMLMessageNetwork import XMLMessageNetwork
 
 #from XML.XMLMessagePlannerReportVacuumOrders import \
 #     XMLMessagePlannerReportVacuumOrders

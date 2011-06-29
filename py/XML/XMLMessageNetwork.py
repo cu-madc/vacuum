@@ -62,17 +62,16 @@
 
 from xml.dom.minidom import Document
 from XMLIncomingDIF import XMLIncomingDIF
-from XMLParser import XMLParser
+#from XMLParser import XMLParser
+from XMLMessageCreator import XMLMessageCreator
 
 
-class XMLMessageNetwork (XMLIncomingDIF) :
+class XMLMessageNetwork (XMLMessageCreator) :
 
 
     def __init__(self) :
-	XMLIncomingDIF.__init__(self)
+	XMLMessageCreator.__init__(self)
 	self.setMyInformationType(self.VACUUM_NETWORK);
-	self.dimensionsNode = None
-	self.objectClassNode = None
 	self.networkIDNode = None
 	self.probSuccessNode = None
         self.networkID = 0
@@ -101,22 +100,6 @@ class XMLMessageNetwork (XMLIncomingDIF) :
         self.updateProbTransmission()
 
 
-    def createRootNode(self) :
-	# Method to create the root node in the xml tree. Sets the
-        #  scheme information as well.
-        #
-
-	self.cleanUpDocument()
-        self.doc = Document()
-	self.root_node = self.doc.createElement("objectModel");
-        self.doc.appendChild(self.root_node)
-
-        self.root_node.setAttribute("xmlns","http://standards.ieee.org/IEEE1516-2010")
-        self.root_node.setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance")
-        self.root_node.setAttribute("xsi:schemaLocation","http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd")
-
-        self.createObjectClass()
-
 
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
@@ -138,9 +121,7 @@ class XMLMessageNetwork (XMLIncomingDIF) :
         # Creates the dimensions node in the xml tree. It adds the
         # objectClass node as a child of the dimensions node. Finally
         # a "name" node is added as a child of the dimensions node.
-
-        self.dimensionsNode = self.doc.createElement("dimensions")
-        self.objectClassNode.appendChild(self.dimensionsNode)
+	XMLMessageCreator.createDimensions(self)
         self.setNetworkIDNode()
         self.setProbSuccessNode()
         
@@ -181,32 +162,6 @@ class XMLMessageNetwork (XMLIncomingDIF) :
                          self.getProbSuccessfulTransmission())
 
 
-    def updateValue(self,valueName,newValue) :
-        # Method to change the network ID node to reflect the current
-        # value of the network id.
-
-        if(self.dimensionsNode) :
-            nodes = self.dimensionsNode.getElementsByTagName("dimension")
-            if(nodes.length>0) :
-
-                for dimension in nodes :
-                    # Get the value of the network ID in the tree and set
-                    # it for this instance
-                    networks = dimension.getElementsByTagName("name");
-                    for network in networks:
-                        for detail in network.childNodes:
-                            if((detail.nodeType == Document.TEXT_NODE) and
-                               (detail.nodeValue == valueName)) :
-                                    # This dimension node is for the network id
-                                    values = dimension.getElementsByTagName("value");
-                                    for value in values:
-                                        for id in value.childNodes:
-                                            if(id.nodeType == Document.TEXT_NODE) :
-                                                id.nodeValue = newValue
-
-
-
-
     def setProbSuccessNode(self) :
         # Method to set the value of the prob. of a successful
         # transmission. 
@@ -225,62 +180,6 @@ class XMLMessageNetwork (XMLIncomingDIF) :
         self.probSuccessNode.appendChild(dimension)
 
 
-
-    def copyXMLTree(self,existingDocument) :
-        # Copy the given parsed XML tree into the local tree. Also set
-        # the relevant nodes that this class tracks from the tree.
-
-	#self.copyXMLTree(existingDocument)
-        self.root_node = existingDocument.cloneNode(True)
-
-        #print("{0} {1} {2} {3} {4} {5} {6} {7} {8}".format(Document.ELEMENT_NODE, Document.ATTRIBUTE_NODE, Document.TEXT_NODE, Document.CDATA_SECTION_NODE, Document.ENTITY_NODE, Document.PROCESSING_INSTRUCTION_NODE, Document.COMMENT_NODE, Document.DOCUMENT_NODE, Document.DOCUMENT_TYPE_NODE, Document.NOTATION_NODE))
-
-	if(self.root_node) :
-            nodes = self.root_node.getElementsByTagName("objectClass")
-            if(nodes.length==1) :
-                self.objectClassNode = nodes.item(0)
-
-                nodes = self.root_node.getElementsByTagName("dimensions")
-                if(nodes.length==1) :
-                    self.dimensionsNode = nodes.item(0)
-
-                    # Get the value of the network ID in the tree and set
-                    # it for this instance
-                    nodes = self.dimensionsNode.getElementsByTagName("dimension");
-                    for node in nodes:
-
-                        name = None
-                        value = None
-                        for detail in node.childNodes:
-                            for child in detail.childNodes:
-                                if(child.nodeType == Document.TEXT_NODE) :
-                                    
-                                    if(detail.localName == "name") :
-                                        name = child.nodeValue
-
-                                    elif(detail.localName == "value") :
-                                        value = child.nodeValue
-
-                        #print("  Name: {0} Value: {1}".format(name,value))
-                                
-                        if(name == "networkID") :
-                            self.setNetworkID(int(value))
-                            
-                        elif(name == "probabilitySuccessfulTransmission") :
-                            self.setProbSuccessfulTransmission(float(value))
-
-                    #print("network: {0} - prob: {1}".format(
-                    #    self.getNetworkID(),self.getProbSuccessfulTransmission()))
-                        
-
-            else :
-                # Error - there is more than one object class node.
-                if(self.DEBUG) :
-                    print("Error - too many object class nodes.")
-                self.objectClassNode = None
-
-
-                
 
 
 
