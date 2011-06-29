@@ -1,14 +1,13 @@
 #!/usr/bin/python
 #
-#  XMLMessageRecommendOrderCommander2Planner.py
+#  XMLMessageCreator.py
 # 
-#   Created on: 22 Feb, 2011
+#   Created on: 29 June, 2011
 #       Author: black
 # 
-#       Methods for the class that keeps track of the information
-#       specific to the commander. This is information that the
-#       commander sends to the planner to let the planner know what
-#       order went to a vacuum.
+#       Methods for the class that is a base class to help in the
+#       creation of an XML string. This helps create the basic nodes
+#       and allows for routines for creation of other nodes.
 # 
 #  This material is based on research sponsored by DARPA under agreement
 #  number FA8750-10-2-0165. The U.S. Government is authorized to
@@ -66,56 +65,21 @@ from numpy import *
 from numpy.linalg import *
 
 from xml.dom.minidom import Document
-#from XMLIncomingDIF import XMLIncomingDIF
 from XMLParser import XMLParser
 
 
-class XMLMessageVacuumIDPosBase (XMLParser) :
+class XMLMessageCreator (XMLParser) :
 
 
     def __init__(self) :
         XMLParser.__init__(self)
 	self.dimensionsNode = None
 	self.objectClassNode = None
-	self.vacuumIDNode = None
-	self.probSuccessNode = None
-        self.xPosNode = None;
-        self.yPosNode = None;
-	self.vacuumID = -1
-        self.xPos = None
-        self.yPos = None
 
 
     def __del__(self) :
         pass
 
-
-    # Utility functions used for outside routines to define internal
-    # parameters.
-
-    def getVacuumID(self) :
-        return(self.vacuumID)
-
-
-    def setVacuumID(self,value) :
-        self.vacuumID = int(value)
-        self.updateVacuumIDNode()
-
-    def getPos(self) :
-        return([self.xPos,self.yPos])
-
-
-    def setPos(self,x,y) :
-        self.setXPos(x)
-        self.setYPos(y)
-
-    def setXPos(self,x) :
-        self.xPos = int64(x)
-        self.updatePositionNodes()
-
-    def setYPos(self,y) :
-        self.yPos = int64(y)
-        self.updatePositionNodes()
 
 
     ## createRootNode
@@ -213,55 +177,9 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
     # objectClass node as a child of the dimensions node. Finally a
     # "name" node is added as a child of the dimensions node.
     def createDimensions(self):
-
         self.dimensionsNode = self.doc.createElement("dimensions")
         self.objectClassNode.appendChild(self.dimensionsNode)
-        self.setVacuumIDNode()
-        self.setxPositionNode()
-        self.setyPositionNode()
         
-
-
-    ## setVacuumIDNode
-    # 
-    # Method to set the value of the id for this vacuum. It
-    # indicates which vacumm this structure is associated
-    # with. The value is then added to the xml tree under the
-    # dimensions node.
-    def setVacuumIDNode(self) :
-
-        self.vacuumIDNode = self.doc.createElement("dimension")
-        self.dimensionsNode.appendChild(self.vacuumIDNode)
-
-        dimension = self.doc.createElement("name")
-        node = self.doc.createTextNode("vacuumID")
-        dimension.appendChild(node)
-        self.vacuumIDNode.appendChild(dimension)
-
-        dimension = self.doc.createElement("value")
-        node = self.doc.createTextNode(str(self.getVacuumID()))
-        dimension.appendChild(node)
-        self.vacuumIDNode.appendChild(dimension)
-
-
-
-    ## updateVacuumIDNode
-    # 
-    # Method to change the network ID node to reflect the current
-    # value of the network id.
-    def updateVacuumIDNode(self) :
-        self.updateValue("vacuumID",self.getVacuumID())
-
-
-
-    ## updatePositionNodes
-    #
-    # Method to change the network ID node to reflect the current
-    # value of the network id.
-    def updatePositionNodes(self) :
-        position = self.getPos()
-        self.updateValue("xPos",position[0])
-        self.updateValue("yPos",position[1])
 
 
 
@@ -291,48 +209,6 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
                                                 id.nodeValue = newValue
 
 
-
-
-    ## setxPositionNode
-    # 
-    # Method to set the value of the prob. of a successful
-    # transmission.
-    def setxPositionNode(self) :
-
-        self.xPosNode = self.doc.createElement("dimension")
-        self.dimensionsNode.appendChild(self.xPosNode)
-
-        dimension = self.doc.createElement("name")
-        node = self.doc.createTextNode("xPos")
-        dimension.appendChild(node)
-        self.xPosNode.appendChild(dimension)
-
-        position = self.getPos()
-        dimension = self.doc.createElement("value")
-        node = self.doc.createTextNode("{0}".format(position[0]))
-        dimension.appendChild(node)
-        self.xPosNode.appendChild(dimension)
-
-
-    ## setyPositionNode
-    #
-    # Method to set the value of the prob. of a successful
-    # transmission.
-    def setyPositionNode(self) :
-
-        self.yPosNode = self.doc.createElement("dimension")
-        self.dimensionsNode.appendChild(self.yPosNode)
-
-        dimension = self.doc.createElement("name")
-        node = self.doc.createTextNode("yPos")
-        dimension.appendChild(node)
-        self.yPosNode.appendChild(dimension)
-
-        position = self.getPos()
-        dimension = self.doc.createElement("value")
-        node = self.doc.createTextNode("{0}".format(position[1]))
-        dimension.appendChild(node)
-        self.yPosNode.appendChild(dimension)
 
 
 
@@ -401,14 +277,4 @@ class XMLMessageVacuumIDPosBase (XMLParser) :
 
 
 if (__name__ =='__main__') :
-    orders = XMLMessageVacuumIDPosBase()
-
-    vacuumID = 0
-    xPos = 1
-    yPos = 2
-    
-    orders.setVacuumID(vacuumID)
-    orders.setPos(xPos,yPos)
-    orders.createRootNode()
-    orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
-    print(orders.xml2Char(True))
+    pass

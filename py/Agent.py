@@ -63,6 +63,12 @@ from multiprocessing import Process, Queue
 
 class Agent (Process):
 
+    COMMANDER, \
+	       PLANNER, \
+	       SENSORARRAY, \
+	       VACUUM, \
+	       WORLD = range(5)
+
     DEBUG = False
 
     def __init__(self,type) :

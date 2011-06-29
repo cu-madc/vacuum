@@ -116,6 +116,7 @@ if (__name__ =='__main__') :
 
     dif = XMLIncomingDIF()
     xmlString = network.xml2Char()
+    print(network.xml2Char(True))
     info = dif.determineXMLInformation(xmlString)
     info.createRootNode()
-    print("theXML:\n{0}".format(info.xml2Char()))
+    #print("theXML:\n{0}".format(info.xml2Char()))
