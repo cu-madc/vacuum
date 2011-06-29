@@ -137,12 +137,6 @@ class XMLMessageCreator (XMLParser) :
 
             
 
-    def createObjectClass(self) :
-        # Creates the node that contains the object class definition
-        # and all of its children. This is a no-op because if it is
-        # not defined in a child class nothing needs to happen.
-        pass
-
 
     ## createObjectClassElements
     #
