@@ -68,6 +68,7 @@ from numpy.linalg import *
 from xml.dom.minidom import Document
 from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 from XMLParser import XMLParser
+from XMLMessageCreator import XMLMessageCreator
 
 
 class XMLMessageVacuumAddExpenditureWorld (XMLMessageVacuumIDPosBase) :
@@ -140,8 +141,7 @@ class XMLMessageVacuumAddExpenditureWorld (XMLMessageVacuumIDPosBase) :
         # This overrides the one in the base class because the
         # positions are not needed.
 
-        self.dimensionsNode = self.doc.createElement("dimensions")
-        self.objectClassNode.appendChild(self.dimensionsNode)
+	XMLMessageCreator.createDimensions(self)
         self.setVacuumIDNode()
         self.setExpenditureNode()
 
