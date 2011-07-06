@@ -196,6 +196,79 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
+
+    ## __iter__ (self)
+    #
+    # Method to initialize the iterator. The iterator goes through the
+    # xml tree and returns the subtree that has a node name of
+    # "dimension."
+    def __iter__(self) :
+	#print("Iteration")
+	# Initialize the buffer with the full tree starting at the beginning.
+	self.parentList = [[0,self.getBuffer()]]
+	return(self)
+
+
+    ## next(self)
+    #
+    # Method to get the next tree node that has a name of "dimension."
+    def next(self) :
+	#print("next {0}".format(self.parentList))
+
+	# Check to see if there is anything left in the list.
+	if(len(self.parentList)) :
+	    # Take the next entry in the current list of nodes.
+	    [iterPos,currentList] = self.parentList.pop()
+
+	    # Check to see if there is anything in this subtree.
+	    value = self.walkNextDimension(iterPos,currentList)
+	    if(value) :
+		# Return the value of this subtree.
+		return(value)
+
+	    else :
+		# The subtree does not have a dimension. Get the next
+		# item.
+		return(self.next())
+
+	else:
+	    # The list is empty. Stop the iterator.
+	    raise StopIteration
+
+	
+
+    ## walkNextDimension(self,pos,currentList)
+    #
+    # Recursive routine to get the next item in the tree that has a
+    # name of "dimension." It takes the list past to it and checks
+    # each sibling in turn. Any sibling that has a list entry in the
+    # fourth position is checked by calling this routine.
+    def walkNextDimension(self,pos,currentList) :
+
+	# Go through each sibling.
+	for pos in range(pos,len(currentList)) :
+	    #print("Checking {0}".format(pos))
+	    sibling = currentList[pos]
+
+	    # Check to see if it has a dimension node
+	    if (sibling[0] == "dimension") :
+		# This has a dimension node. Save the state and return
+		# this node.
+		self.parentList.append([pos+1,currentList])
+		return(sibling[3])
+
+	    else :
+		# Check to see if the fourth entry has a node with the
+		# name "dimension."
+		self.parentList.append([pos+1,currentList])
+		value = self.walkNextDimension(0,sibling[3])
+		if(value) :
+		    return(value)
+
+	    # If we get here nothing was found.
+	    return(None)
+	
+
     ## determineXMLInformation(self,passedXML)
     #
     #  Method that takes information in the form of the parsed XML

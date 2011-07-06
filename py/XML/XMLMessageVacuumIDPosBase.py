@@ -287,4 +287,5 @@ if (__name__ =='__main__') :
     from XMLIncomingDIF import XMLIncomingDIF
     dif = XMLIncomingDIF()
     dif.parseXMLString(orders.xml2Char())
-    print(dif.walkObjectName(dif.getBuffer(),"dimension"))
+    for dimension in dif:
+	print(dimension)
