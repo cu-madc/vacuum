@@ -67,7 +67,13 @@ from numpy.linalg import *
 
 from xml.dom.minidom import Document
 from XMLMessageArray import XMLMessageArray
-#rom XMLParser import XMLParser
+#from XMLParser import XMLParser
+
+import sys
+import os
+sys.path.append( os.path.join( os.getcwd(), '..' ) )
+
+from Agent import Agent
 
 
 class XMLMessageWorldVacuumCurrentTime (XMLMessageArray) :
@@ -105,7 +111,7 @@ class XMLMessageWorldVacuumCurrentTime (XMLMessageArray) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        self.createObjectClassElements("Vacuum","World Time")
+        self.createObjectClassElements(Agent.VACUUM,"World Time")
 
 
     def updateVacuumIDNode(self) :

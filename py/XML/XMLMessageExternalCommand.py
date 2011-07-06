@@ -65,6 +65,10 @@ from xml.dom.minidom import Document
 #from XMLIncomingDIF import XMLIncomingDIF
 from XMLMessageCreator import XMLMessageCreator
 
+import sys
+import os
+sys.path.append( os.path.join( os.getcwd(), '..' ) )
+from Agent import Agent
 
 class XMLMessageExternalCommand (XMLMessageCreator) :
 
@@ -124,7 +128,7 @@ class XMLMessageExternalCommand (XMLMessageCreator) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-	self.createObjectClassElements("External","command")
+	self.createObjectClassElements(Agent.EXTERNAL,"command")
 
 
     def createDimensions(self):

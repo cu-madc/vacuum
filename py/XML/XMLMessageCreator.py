@@ -67,6 +67,12 @@ from numpy.linalg import *
 from xml.dom.minidom import Document
 from XMLParser import XMLParser
 
+import sys
+import os
+sys.path.append( os.path.join( os.getcwd(), '..' ) )
+
+from Agent import Agent
+
 
 class XMLMessageCreator (XMLParser) :
 
@@ -114,25 +120,25 @@ class XMLMessageCreator (XMLParser) :
         self.setMyInformationType(informationType)
 
         if(informationType==self.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
-            self.createObjectClassElements("Planner","Vacuum Recommendation")
+            self.createObjectClassElements(Agent.PLANNER,"Vacuum Recommendation")
 
         elif(informationType==self.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
-            self.createObjectClassElements("Planner","Vacuum Orders")
+            self.createObjectClassElements(Agent.PLANNER,"Vacuum Orders")
 
         elif(informationType==self.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER) :
-            self.createObjectClassElements("Commander","Vacuum Recommendation")
+            self.createObjectClassElements(Agent.Commander,"Vacuum Recommendation")
 
         elif(informationType==self.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
-            self.createObjectClassElements("Vacuum","Move Order")
+            self.createObjectClassElements(Agent.VACUUM,"Move Order")
 
         elif(informationType==self.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
-            self.createObjectClassElements("Planner","Move Order")
+            self.createObjectClassElements(Agent.PLANNER,"Move Order")
 
         elif(informationType==self.MESSAGE_VACUUM_NEW_POSITION_PLANNER) :
-            self.createObjectClassElements("Planner","New Vacuum Location")
+            self.createObjectClassElements(Agent.PLANNER,"New Vacuum Location")
 
         elif(informationType==self.MESSAGE_VACUUM_WORLD_CLEAN_GRID) :
-            self.createObjectClassElements("World","Clean Grid")
+            self.createObjectClassElements(Agent.WORLD,"Clean Grid")
 
 
             
@@ -154,11 +160,11 @@ class XMLMessageCreator (XMLParser) :
         node.appendChild(self.objectClassNode)
 
         nameNode = self.doc.createElement("name")
-        nameNode.appendChild(self.doc.createTextNode(name))
+        nameNode.appendChild(self.doc.createTextNode(str(name)))
         self.objectClassNode.appendChild(nameNode)
 
         typeNode = self.doc.createElement("type")
-        typeNode.appendChild(self.doc.createTextNode(type))
+        typeNode.appendChild(self.doc.createTextNode(str(type)))
         self.objectClassNode.appendChild(typeNode)
 
         self.createDimensions()

@@ -68,6 +68,12 @@ from numpy.linalg import *
 #from xml.dom.minidom import Document
 from XMLMessageCreator import XMLMessageCreator
 
+import sys
+import os
+sys.path.append( os.path.join( os.getcwd(), '..' ) )
+
+from Agent import Agent
+
 
 class XMLMessageVacuumIDPosBase (XMLMessageCreator) :
 
@@ -129,25 +135,25 @@ class XMLMessageVacuumIDPosBase (XMLMessageCreator) :
         self.setMyInformationType(informationType)
 
         if(informationType==self.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
-            self.createObjectClassElements("Planner","Vacuum Recommendation")
+            self.createObjectClassElements(Agent.PLANNER,"Vacuum Recommendation")
 
         elif(informationType==self.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
-            self.createObjectClassElements("Planner","Vacuum Orders")
+            self.createObjectClassElements(Agent.PLANNER,"Vacuum Orders")
 
         elif(informationType==self.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER) :
-            self.createObjectClassElements("Commander","Vacuum Recommendation")
+            self.createObjectClassElements(Agent.COMMANDER,"Vacuum Recommendation")
 
         elif(informationType==self.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
-            self.createObjectClassElements("Vacuum","Move Order")
+            self.createObjectClassElements(Agent.VACUUM,"Move Order")
 
         elif(informationType==self.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
-            self.createObjectClassElements("Planner","Move Order")
+            self.createObjectClassElements(Agent.PLANNER,"Move Order")
 
         elif(informationType==self.MESSAGE_VACUUM_NEW_POSITION_PLANNER) :
-            self.createObjectClassElements("Planner","New Vacuum Location")
+            self.createObjectClassElements(Agent.PLANNER,"New Vacuum Location")
 
         elif(informationType==self.MESSAGE_VACUUM_WORLD_CLEAN_GRID) :
-            self.createObjectClassElements("World","Clean Grid")
+            self.createObjectClassElements(Agent.WORLD,"Clean Grid")
 
 
             
@@ -277,3 +283,8 @@ if (__name__ =='__main__') :
     orders.createRootNode()
     orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
     print(orders.xml2Char(True))
+
+    from XMLIncomingDIF import XMLIncomingDIF
+    dif = XMLIncomingDIF()
+    dif.parseXMLString(orders.xml2Char())
+    print(dif.walkObjectName(dif.getBuffer(),"dimension"))

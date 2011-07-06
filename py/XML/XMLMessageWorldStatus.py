@@ -68,6 +68,10 @@ from numpy.linalg import *
 from xml.dom.minidom import Document
 from XMLMessageArray import XMLMessageArray
 
+import sys
+import os
+sys.path.append( os.path.join( os.getcwd(), '..' ) )
+from Agent import Agent
 
 class XMLMessageWorldStatus (XMLMessageArray) :
 
@@ -87,7 +91,7 @@ class XMLMessageWorldStatus (XMLMessageArray) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        self.createObjectClassElements("Sensor","World Status")
+        self.createObjectClassElements(Agent.SENSOR,"World Status")
         
 
 

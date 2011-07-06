@@ -64,10 +64,12 @@ from multiprocessing import Process, Queue
 class Agent (Process):
 
     COMMANDER, \
+	       SENSOR, \
 	       PLANNER, \
 	       SENSORARRAY, \
 	       VACUUM, \
-	       WORLD = range(5)
+	       WORLD, \
+	       EXTERNAL = range(7)
 
     DEBUG = False
 

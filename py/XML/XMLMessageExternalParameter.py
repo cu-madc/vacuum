@@ -67,6 +67,11 @@ from xml.dom.minidom import Document
 #from XMLParser import XMLParser
 from XMLMessageCreator import XMLMessageCreator
 
+import sys
+import os
+sys.path.append( os.path.join( os.getcwd(), '..' ) )
+from Agent import Agent
+
 
 class XMLMessageExternalParameter (XMLMessageCreator) :
 
@@ -134,7 +139,7 @@ class XMLMessageExternalParameter (XMLMessageCreator) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-	self.createObjectClassElements("External","parameter")
+	self.createObjectClassElements(Agent.EXTERNAL,"parameter")
 
 
 

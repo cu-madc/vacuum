@@ -69,6 +69,12 @@ from xml.dom.minidom import Document
 from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 from XMLParser import XMLParser
 
+import sys
+import os
+sys.path.append( os.path.join( os.getcwd(), '..' ) )
+
+from Agent import Agent
+
 
 class XMLMessageRecommendOrderCommander2Planner (XMLMessageVacuumIDPosBase) :
 
@@ -87,7 +93,7 @@ class XMLMessageRecommendOrderCommander2Planner (XMLMessageVacuumIDPosBase) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        self.createObjectClassElements("Planner","Vacuum Recommendation")
+        self.createObjectClassElements(Agent.PLANNER,"Vacuum Recommendation")
 
 
 

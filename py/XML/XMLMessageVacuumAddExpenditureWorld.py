@@ -70,6 +70,12 @@ from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 from XMLParser import XMLParser
 from XMLMessageCreator import XMLMessageCreator
 
+import sys
+import os
+sys.path.append( os.path.join( os.getcwd(), '..' ) )
+
+from Agent import Agent
+
 
 class XMLMessageVacuumAddExpenditureWorld (XMLMessageVacuumIDPosBase) :
 
@@ -96,7 +102,7 @@ class XMLMessageVacuumAddExpenditureWorld (XMLMessageVacuumIDPosBase) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-	self.createObjectClassElements("World","Add Expenditure")
+	self.createObjectClassElements(Agent.WORLD,"Add Expenditure")
 
 
     def setExpenditureNode(self) :

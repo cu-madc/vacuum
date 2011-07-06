@@ -60,9 +60,10 @@
 #
 
 
-#include <iostream>
-#include <fstream>
-#include <string.h>
+import sys
+import os
+sys.path.append( os.path.join( os.getcwd(), '..' ) )
+
 
 from XMLParser import XMLParser
 from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
@@ -99,6 +100,8 @@ from XMLMessageExternalParameter import \
 
 from XMLMessageExternalCommand import \
      XMLMessageExternalCommand
+
+from Agent import Agent
 
 class XMLIncomingDIF (XMLParser) :
 
@@ -206,7 +209,8 @@ class XMLIncomingDIF (XMLParser) :
 	#print("Name: {0} Type: {1}".format(name,type))
 
 
-        if( (name=="Planner") and (type == "Vacuum Orders")) :
+	name = int(name)
+        if( (name==(Agent.PLANNER)) and (type == "Vacuum Orders")) :
             # This is a message to be sent to a planner that contains
             # the orders to a vacuum from the commander. Define the
             # vacuum and its position.
@@ -240,7 +244,7 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif( (name=="Planner") and (type == "Vacuum Recommendation")) :
+        elif( (name==(Agent.PLANNER)) and (type == "Vacuum Recommendation")) :
             # This is a message from a commander sent to a planner to
             # let the planner know the recommendation made for the
             # movement of a vacuum. Define the vacuum and its
@@ -274,7 +278,7 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif( (name=="Commander") and (type=="Vacuum Recommendation")) :
+        elif( (name==(Agent.COMMANDER)) and (type=="Vacuum Recommendation")) :
             # This is a message from Planner to send the
             # recommendation of a move to the commander. Define the
             # vacuum and its position.
@@ -307,7 +311,7 @@ class XMLIncomingDIF (XMLParser) :
             incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
 
 
-        elif( (name=="World") and (type=="Clean Grid")) :
+        elif( (name==(Agent.WORLD)) and (type=="Clean Grid")) :
             # This is the message from a Vacuum to send its location
             # to the world. Define the vacuum and its position.
             incomingXML = XMLMessageVacuumIDPosBase()
@@ -340,7 +344,7 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif( (name=="Vacuum") and (type=="Move Order")) :
+        elif( (name==(Agent.VACUUM)) and (type=="Move Order")) :
             # This is a message send from a Commander to a Vacuum to
             # give the vacuum the order to move. Define the vacuum and
             # its future position.
@@ -375,7 +379,7 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif( (name=="Planner") and (type=="Move Order")) :
+        elif( (name==(Agent.PLANNER)) and (type=="Move Order")) :
             # This is a message from the commander to the planner to
             # let the planner know what order was sent. Define the
             # vacuum and its position.
@@ -409,7 +413,7 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif( (name=="Commander") and (type=="Get Report")) :
+        elif( (name==(Agent.COMMANDER)) and (type=="Get Report")) :
             # This is a message from the Vacuum to the commander to
             # let the commander know the position and status of a
             # vacuum. Need to define the position and status.
@@ -449,35 +453,35 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif( (name=="Sensor") and (type=="World Status")) :
+        elif( (name==Agent.SENSOR) and (type=="World Status")) :
             # This is a message from the World to the Sensor to let it
             # know the status of the world.
             incomingXML = XMLMessageWorldStatus()
 
 
 
-        elif( (name=="Sensor") and (type=="World Wetness")) :
+        elif( (name==Agent.SENSOR) and (type=="World Wetness")) :
             # This is a message from the world to the Sensor to let it
             # know the wetness levels of the world.
             incomingXML = XMLMessageWorldWetness()
 
 
 
-        elif( (name=="Planner") and (type=="Update")) :
+        elif( (name==(Agent.PLANNER)) and (type=="Update")) :
             # This is a message from the Sensor to the planner to let
             # it know the status of the world.
             incomingXML = XMLMessageUpdateWorldPlanner()
 
 
 
-        elif( (name=="Sensor") and (type=="Send Planner Update")) :
+        elif( (name==Agent.SENSOR) and (type=="Send Planner Update")) :
             # This is a message from the planner to the sensor to
             # request an update.
             incomingXML = XMLMessageUpdatePlannerSensor()
 
 
 
-        elif( (name=="Planner") and (type=="Sensor Status")) :
+        elif( (name==(Agent.PLANNER)) and (type=="Sensor Status")) :
             # This is a message from the Sensor to the Planner to
             # provide a status of the world as the Sensor currently
             # understands it.
@@ -485,7 +489,7 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif( (name=="Planner") and (type=="Sensor Wetness")) :
+        elif( (name==(Agent.PLANNER)) and (type=="Sensor Wetness")) :
             # This is message from the Sensor to the Planner to let
             # the Planner know what the Sensor thinks is the current
             # wetness levels of the world.
@@ -493,7 +497,7 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif( (name=="Planner") and (type=="New Vacuum Location")) :
+        elif( (name==(Agent.PLANNER)) and (type=="New Vacuum Location")) :
             # This is a message from the Vacuum to the planner to give
             # the planner a report of its activities. Define the
             # vacuum and its position.
@@ -523,7 +527,7 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif( (name=="Vacuum") and (type=="World Time")) :
+        elif( (name==(Agent.VACUUM)) and (type=="World Time")) :
             # This is a message from the world to the vacuum. It lets
             # the vacuum know what the world time is. Set the vacuum's
             # ID and the time.
@@ -545,7 +549,7 @@ class XMLIncomingDIF (XMLParser) :
                     incomingXML.setTime(time[3][1][2])
 
 
-        elif( (name=="World") and (type=="Add Expenditure")) :
+        elif( (name==(Agent.WORLD)) and (type=="Add Expenditure")) :
             # This is a message from a vacuum to the World. It sends
             # an expenditure required for the vacuum.
             incomingXML = XMLMessageVacuumAddExpenditureWorld()
@@ -565,7 +569,7 @@ class XMLIncomingDIF (XMLParser) :
                     incomingXML.setExpenditure(expenditure[3][1][2])
 
 
-        elif( (name=="External") and (type=="parameter")) :
+        elif( (name==(Agent.EXTERNAL)) and (type=="parameter")) :
 	    # This is an external message. It has information about a
 	    # set of parameters.
 	    incomingXML = XMLMessageExternalParameter()
@@ -590,7 +594,7 @@ class XMLIncomingDIF (XMLParser) :
 			    break
 
 
-        elif( (name=="External") and (type=="command")) :
+        elif( (name==(Agent.EXTERNAL)) and (type=="command")) :
 	    # This is an external message. It has information about an
 	    # action to take.
 	    incomingXML = XMLMessageExternalCommand()

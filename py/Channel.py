@@ -71,6 +71,7 @@ from numpy.linalg import *
 from Router import Router
 from SocketRouter import SocketRouter
 
+from Agent import Agent
 
 
 # The xml classes used to define the messages being passed.
