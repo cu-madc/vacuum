@@ -104,17 +104,7 @@ class XMLMessageNetwork (XMLMessageCreator) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        node = self.doc.createElement("objects")
-        self.root_node.appendChild(node)
-
-        self.objectClassNode = self.doc.createElement("objectClass")
-        node.appendChild(self.objectClassNode)
-
-        nameNode = self.doc.createElement("name")
-        nameNode.appendChild(self.doc.createTextNode("vacuumNetwork"))
-        self.objectClassNode.appendChild(nameNode)
-
-        self.createDimensions()
+	self.createObjectClassElements("vacuumNetwork","network parameter")
 
 
     def createDimensions(self):

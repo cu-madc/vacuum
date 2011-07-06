@@ -87,24 +87,7 @@ class XMLMessageMoveOrderCommanderPlanner (XMLMessageVacuumIDPosBase) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        node = self.doc.createElement("objects")
-        self.root_node.appendChild(node)
-
-        self.objectClassNode = self.doc.createElement("objectClass")
-        node.appendChild(self.objectClassNode)
-
-        nameNode = self.doc.createElement("name")
-        nameNode.appendChild(self.doc.createTextNode("Planner"))
-        self.objectClassNode.appendChild(nameNode)
-
-        typeNode = self.doc.createElement("type")
-        typeNode.appendChild(self.doc.createTextNode("Move Order"))
-        self.objectClassNode.appendChild(typeNode)
-
-        self.createDimensions()
-
-
-
+	self.createObjectClassElements("Planner","Move Order")
 
 
 
@@ -122,7 +105,7 @@ if (__name__ =='__main__') :
     network.setVacuumID(1)
     network.setXPos(5)
     network.setYPos(2)
-    #print(network.xml2Char())
+    print(network.xml2Char(True))
 
     #root_node = network.root_node.cloneNode(True)
     #network.copyXMLTree(root_node)
@@ -132,4 +115,4 @@ if (__name__ =='__main__') :
     xmlString = network.xml2Char()
     info = dif.determineXMLInformation(xmlString)
     info.createRootNode()
-    print("theXML:\n{0}".format(info.xml2Char()))
+    #print("theXML:\n{0}".format(info.xml2Char(True)))

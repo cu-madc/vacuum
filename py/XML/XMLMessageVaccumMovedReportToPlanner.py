@@ -86,24 +86,7 @@ class XMLMessageVaccumMovedReportToPlanner (XMLMessageVacuumIDPosBase) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        node = self.doc.createElement("objects")
-        self.root_node.appendChild(node)
-
-        self.objectClassNode = self.doc.createElement("objectClass")
-        node.appendChild(self.objectClassNode)
-
-        nameNode = self.doc.createElement("name")
-        nameNode.appendChild(self.doc.createTextNode("Planner"))
-        self.objectClassNode.appendChild(nameNode)
-
-        typeNode = self.doc.createElement("type")
-        typeNode.appendChild(self.doc.createTextNode("New Vaccum Location"))
-        self.objectClassNode.appendChild(typeNode)
-
-        self.createDimensions()
-
-
-
+	self.createObjectClassElements("Planner","New Vaccum Location")
 
 
 
@@ -111,11 +94,11 @@ class XMLMessageVaccumMovedReportToPlanner (XMLMessageVacuumIDPosBase) :
 if (__name__ =='__main__') :
     from XMLIncomingDIF import XMLIncomingDIF
     
-    network = XMLMessageMoveOrderCommanderVacuum()
+    network = XMLMessageVaccumMovedReportToPlanner()
     network.setVacuumID(3)
     network.setPos(2,4)
     network.createRootNode()
-    #print(network.xml2Char())
+    print(network.xml2Char(True))
 
 
     network.setVacuumID(1)

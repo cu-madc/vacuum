@@ -87,24 +87,7 @@ class XMLMessageVacuumCleanWorld (XMLMessageVacuumIDPosBase) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        node = self.doc.createElement("objects")
-        self.root_node.appendChild(node)
-
-        self.objectClassNode = self.doc.createElement("objectClass")
-        node.appendChild(self.objectClassNode)
-
-        nameNode = self.doc.createElement("name")
-        nameNode.appendChild(self.doc.createTextNode("World"))
-        self.objectClassNode.appendChild(nameNode)
-
-        typeNode = self.doc.createElement("type")
-        typeNode.appendChild(self.doc.createTextNode("Clean Grid"))
-        self.objectClassNode.appendChild(typeNode)
-
-        self.createDimensions()
-
-
-
+	self.createObjectClassElements("World","Clean Grid")
 
 
 
@@ -112,11 +95,11 @@ class XMLMessageVacuumCleanWorld (XMLMessageVacuumIDPosBase) :
 if (__name__ =='__main__') :
     from XMLIncomingDIF import XMLIncomingDIF
     
-    network = XMLMessageMoveOrderCommanderPlanner()
+    network = XMLMessageVacuumCleanWorld()
     network.setVacuumID(3)
     network.setPos(2,4)
     network.createRootNode()
-    #print(network.xml2Char())
+    print(network.xml2Char(True))
 
 
     network.setVacuumID(1)

@@ -93,21 +93,7 @@ class XMLMessageGetReportVacuumCommander (XMLMessageVacuumIDPosBase) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        node = self.doc.createElement("objects")
-        self.root_node.appendChild(node)
-
-        self.objectClassNode = self.doc.createElement("objectClass")
-        node.appendChild(self.objectClassNode)
-
-        nameNode = self.doc.createElement("name")
-        nameNode.appendChild(self.doc.createTextNode("Commander"))
-        self.objectClassNode.appendChild(nameNode)
-
-        typeNode = self.doc.createElement("type")
-        typeNode.appendChild(self.doc.createTextNode("Get Report"))
-        self.objectClassNode.appendChild(typeNode)
-
-        self.createDimensions()
+	self.createObjectClassElements("Commander","Get Report")
 
 
 
@@ -172,4 +158,4 @@ if (__name__ =='__main__') :
     xmlString = network.xml2Char()
     info = dif.determineXMLInformation(xmlString)
     info.createRootNode()
-    print("theXML:\n{0}".format(info.xml2Char()))
+    print("theXML:\n{0}".format(info.xml2Char(True)))

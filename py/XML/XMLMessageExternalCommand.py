@@ -124,21 +124,7 @@ class XMLMessageExternalCommand (XMLMessageCreator) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        node = self.doc.createElement("objects")
-        self.root_node.appendChild(node)
-
-        self.objectClassNode = self.doc.createElement("objectClass")
-        node.appendChild(self.objectClassNode)
-
-        nameNode = self.doc.createElement("name")
-        nameNode.appendChild(self.doc.createTextNode("External"))
-        self.objectClassNode.appendChild(nameNode)
-
-	typeNode = self.doc.createElement("type")
-        typeNode.appendChild(self.doc.createTextNode("command"))
-        self.objectClassNode.appendChild(typeNode)
-
-        self.createDimensions()
+	self.createObjectClassElements("External","command")
 
 
     def createDimensions(self):

@@ -85,36 +85,17 @@ class XMLMessageUpdatePlannerSensor (XMLMessageVacuumIDPosBase) :
     def createObjectClass(self) :
         # Creates the node that contains the object class definition
         # and all of its children.
-        node = self.doc.createElement("objects")
-        self.root_node.appendChild(node)
-
-        self.objectClassNode = self.doc.createElement("objectClass")
-        node.appendChild(self.objectClassNode)
-
-        nameNode = self.doc.createElement("name")
-        nameNode.appendChild(self.doc.createTextNode("Sensor"))
-        self.objectClassNode.appendChild(nameNode)
-
-        typeNode = self.doc.createElement("type")
-        typeNode.appendChild(self.doc.createTextNode("Send Planner Update"))
-        self.objectClassNode.appendChild(typeNode)
-
-        self.createDimensions()
-
-
-
+	self.createObjectClassElements("Sensor","Send Planner Update")
 
 
 
 
 if (__name__ =='__main__') :
-    from XMLIncomingDIF import XMLIncomingDIF
-    
-    network = XMLMessageMoveOrderCommanderPlanner()
+    network = XMLMessageUpdatePlannerSensor()
     network.setVacuumID(3)
     network.setPos(2,4)
     network.createRootNode()
-    #print(network.xml2Char())
+    print(network.xml2Char(True))
 
 
     network.setVacuumID(1)
@@ -130,4 +111,4 @@ if (__name__ =='__main__') :
     xmlString = network.xml2Char()
     info = dif.determineXMLInformation(xmlString)
     info.createRootNode()
-    print("theXML:\n{0}".format(info.xml2Char()))
+    #print("theXML:\n{0}".format(info.xml2Char()))
