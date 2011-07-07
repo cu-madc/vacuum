@@ -181,25 +181,20 @@ class XMLMessageWorldVacuumCurrentTime (XMLMessageArray) :
 
 if (__name__ =='__main__') :
     from XMLIncomingDIF import XMLIncomingDIF
+
+    N = 5;
+    A = zeros((N,N),dtype=float64)        # array of values for dirt levels
+    for i in range(N) :
+	for j in range(N) :
+	    A[i,j] = i*N+j
     
-    network = XMLMessageMoveOrderCommanderVacuum()
-    network.setVacuumID(3)
-    network.setPos(2,4)
-    network.createRootNode()
-    #print(network.xml2Char())
-
-
+    network = XMLMessageWorldVacuumCurrentTime(3,A)
     network.setVacuumID(1)
-    network.setXPos(5)
-    network.setYPos(2)
-    #print(network.xml2Char())
-
-    #root_node = network.root_node.cloneNode(True)
-    #network.copyXMLTree(root_node)
+    network.createRootNode()
+    print(network.xml2Char(True))
 
 
     dif = XMLIncomingDIF()
     xmlString = network.xml2Char()
     info = dif.determineXMLInformation(xmlString)
-    info.createRootNode()
-    print("theXML:\n{0}".format(info.xml2Char()))
+    #print("theXML:\n{0}".format(info.xml2Char()))
