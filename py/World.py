@@ -349,6 +349,18 @@ class  World (Agent):
         self.time=T;
 
 
+
+    # Method to handle an incoming message and determine what to do
+    def handleMessage(self,type,passedInformation) :
+	#print("World.handleMessage: {0} - {1}".format(type,passedInformation))
+
+	if (type=="Add Expenditure") :
+	    expenditure = int(passedInformation["expenditure"])
+	    vacuumID    = int(passedInformation["vacuumID"])
+	    self.addExpenditure(expenditure)
+
+
+
     # Static method that is used as a helper to make it easier to
     # create a world object.
     @staticmethod

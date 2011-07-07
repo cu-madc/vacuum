@@ -358,6 +358,18 @@ class Channel:
 
 
 
+	elif (name == Agent.WORLD) :
+	    #print("this is a message for the world: {0}\n{1}".format(
+	    #    dif.getType(),dif.getPassedInformation()))
+
+	    if(self.world) :
+		self.world.handleMessage(dif.getType(),dif.getPassedInformation())
+
+	    
+
+
+
+
 	elif(theType == XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
             
             if(self.planner) :
@@ -376,57 +388,6 @@ class Channel:
                 #    info.getVacuumID(),pos[0],pos[1]))
                 self.planner.recommendOrder(info.getVacuumID(),pos[0],pos[1])
 
-
-
-
-
-        elif(theType == XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
-            
-            pos = info.getPos()
-            vacuumID = info.getVacuumID()
-            #print("Channel: sending report to vacuum for {0} - {1},{2}".format(
-            #    info.getVacuumID(),pos[0],pos[1]))
-
-            #if(vacuumID < len(self.vacuumArray)) :
-	    if(self.vacuum) :
-		#print("Moving this vacuum {0} - {1},{2}".format(vacuumID,pos[0],pos[1]))
-		self.vacuum.moveord(pos[0],pos[1])
-                #self.vacuumArray[vacuumID].moveord(pos[0],pos[1])
-
-
-        elif(theType == XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID) :
-
-            if(self.world) :
-                pos = info.getPos()
-                vacuumID = info.getVacuumID()
-                #print("sending cleaning report to world from vacuum for {0} - {1},{2}".format(
-                #   info.getVacuumID(),pos[0],pos[1]))
-
-                self.world.clean(pos[0],pos[1])
-
-
-        elif(theType == XMLParser.MESSAGE_WORLD_VACUUM_CURRENT_TIME) :
-            
-            time = info.getTime()
-            vacuumID = info.getVacuumID()
-            #print("sending report to vacuum for {0}".format(vacuumID))
-
-            #if(vacuumID < len(self.vacuumArray)) :
-	    if(self.vacuum) :
-		#print("sending to vacuum.")
-		self.vacuum.timeStep(time,info.getMatrixFromArray())
-                #self.vacuumArray[vacuumID].timeStep(time,info.getMatrixFromArray())
-
-
-        elif(theType == XMLParser.MESSAGE_VACUUM_WORLD_ADD_EXPENDITURE) :
-
-            if(self.world) :
-                expenditure = info.getExpenditure()
-                vacuumID = info.getVacuumID()
-                #print("sending expenditure report to world for {0} - {1}".format(
-                #    info.getVacuumID(),expenditure))
-
-                self.world.addExpenditure(expenditure)
 
 
         elif(theType == XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
@@ -448,6 +409,72 @@ class Channel:
 
 
 
+        elif(theType == XMLParser.MESSAGE_UPDATE_WORLD_PLANNER) :
+
+	    #print("Send world update to planner");
+            if(self.planner):
+                # Request that the planner make an update to its view.
+		#print("Update planner")
+                self.planner.updateView()
+
+
+
+        elif(theType == XMLParser.MESSAGE_STATUS_SENSOR_PLANNER) :
+            if(self.planner) :
+                # Send the planner what the sensor things the world status is.
+		#print("Send planner dirt levels.")
+                self.planner.setDirtLevels(info.getMatrixFromArray())
+
+
+
+        elif(theType == XMLParser.MESSAGE_WETNESS_SENSOR_PLANNER) :
+            if(self.planner) :
+                # Send the planner what the sensor things is the world
+                # wetness levels.
+		#print("send planner wet levels")
+                self.planner.setWet(info.getMatrixFromArray())
+
+
+
+
+
+        elif(theType == XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
+            
+            pos = info.getPos()
+            vacuumID = info.getVacuumID()
+            #print("Channel: sending report to vacuum for {0} - {1},{2}".format(
+            #    info.getVacuumID(),pos[0],pos[1]))
+
+            #if(vacuumID < len(self.vacuumArray)) :
+	    if(self.vacuum) :
+		#print("Moving this vacuum {0} - {1},{2}".format(vacuumID,pos[0],pos[1]))
+		self.vacuum.moveord(pos[0],pos[1])
+                #self.vacuumArray[vacuumID].moveord(pos[0],pos[1])
+
+
+        elif(theType == XMLParser.MESSAGE_WORLD_VACUUM_CURRENT_TIME) :
+            
+            time = info.getTime()
+            vacuumID = info.getVacuumID()
+            #print("sending report to vacuum for {0}".format(vacuumID))
+
+            #if(vacuumID < len(self.vacuumArray)) :
+	    if(self.vacuum) :
+		#print("sending to vacuum.")
+		self.vacuum.timeStep(time,info.getMatrixFromArray())
+                #self.vacuumArray[vacuumID].timeStep(time,info.getMatrixFromArray())
+
+
+        elif(theType == XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID) :
+
+            if(self.world) :
+                pos = info.getPos()
+                vacuumID = info.getVacuumID()
+                #print("sending cleaning report to world from vacuum for {0} - {1},{2}".format(
+                #   info.getVacuumID(),pos[0],pos[1]))
+
+                self.world.clean(pos[0],pos[1])
+
 
         elif(theType == XMLParser.MESSAGE_WORLD_STATUS) :
 	    #print("Send world status to the sensor.")
@@ -466,15 +493,6 @@ class Channel:
 
 
 
-        elif(theType == XMLParser.MESSAGE_UPDATE_WORLD_PLANNER) :
-
-	    #print("Send world update to planner");
-            if(self.planner):
-                # Request that the planner make an update to its view.
-		#print("Update planner")
-                self.planner.updateView()
-
-
 
         elif(theType == XMLParser.MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR) :
             if(self.sensor) :
@@ -484,22 +502,6 @@ class Channel:
 		#print("Channel.receiveXMLReportParseAndDecide - XMLParser.MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR")
                 self.sensor.measure()
 
-
-
-        elif(theType == XMLParser.MESSAGE_STATUS_SENSOR_PLANNER) :
-            if(self.planner) :
-                # Send the planner what the sensor things the world status is.
-		#print("Send planner dirt levels.")
-                self.planner.setDirtLevels(info.getMatrixFromArray())
-
-
-
-        elif(theType == XMLParser.MESSAGE_WETNESS_SENSOR_PLANNER) :
-            if(self.planner) :
-                # Send the planner what the sensor things is the world
-                # wetness levels.
-		#print("send planner wet levels")
-                self.planner.setWet(info.getMatrixFromArray())
 
 
 
