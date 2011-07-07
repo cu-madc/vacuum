@@ -280,35 +280,37 @@ class XMLIncomingDIF (XMLParser) :
         [name,type] = self.getObjectClassNameAndType()
         incomingXML = None
 	#print("Name: {0} Type: {1}".format(name,type))
-
-
 	name = int(name)
+
+
+
+	# Get the information that is in the dimension
+	# fields. Initialize the dictionary that has the
+	# information.
+	passedInformation = {}
+
+	# Go through each dimension and get the associated information.
+	for dimension in self:
+	    #print(dimension)
+	    xmlName = ""
+	    xmlValue = -1
+
+	    # Get the value of each node.
+	    for values in dimension :
+		if(values[0] == "name") :
+		    xmlName = values[2]
+
+		elif(values[0] == "value") :
+		    xmlValue = values[2]
+
+	    # Set the dictionary information for this node.
+	    passedInformation[xmlName] = xmlValue
+	#print(passedInformation)
+	self.__iter__()
+
 
 	if(name==Agent.PLANNER):
 	    
-	    # Get the information that is in the dimension
-	    # fields. Initialize the dictionary that has the
-	    # information.
-	    passedInformation = {}
-	    name = ""
-	    value = -1
-
-	    # Go through each dimension and get the associated information.
-	    for dimension in self:
-		#print(dimension)
-
-		# Get the value of each node.
-		for values in dimension :
-		    if(values[0] == "name") :
-			name = values[2]
-
-		    elif(values[0] == "value") :
-			value = values[2]
-			
-		# Set the dictionary information for this node.
-		passedInformation[name] = value
-	    #print(passedInformation)
-
 
 	    if(type == "Vacuum Orders") :
 		# This is a message to be sent to a planner that contains
@@ -430,28 +432,6 @@ class XMLIncomingDIF (XMLParser) :
             # recommendation of a move to the commander. Define the
             # vacuum and its position.
 
-	    # Get the information that is in the dimension
-	    # fields. Initialize the dictionary that has the
-	    # information.
-	    passedInformation = {}
-	    name = ""
-	    value = -1
-
-	    # Go through each dimension and get the associated information.
-	    for dimension in self:
-		#print(dimension)
-
-		# Get the value of each node.
-		for values in dimension :
-		    if(values[0] == "name") :
-			name = values[2]
-
-		    elif(values[0] == "value") :
-			value = values[2]
-			
-		# Set the dictionary information for this node.
-		passedInformation[name] = value
-	    #print(passedInformation)
 
 
 	    if (type=="Vacuum Recommendation") :
@@ -525,30 +505,7 @@ class XMLIncomingDIF (XMLParser) :
 
 
 	elif(name==Agent.WORLD) :
-
-	    # Get the information that is in the dimension
-	    # fields. Initialize the dictionary that has the
-	    # information.
-	    passedInformation = {}
-	    name = ""
-	    value = -1
-
-	    # Go through each dimension and get the associated information.
-	    for dimension in self:
-		#print(dimension)
-
-		# Get the value of each node.
-		for values in dimension :
-		    if(values[0] == "name") :
-			name = values[2]
-
-		    elif(values[0] == "value") :
-			value = values[2]
-			
-		# Set the dictionary information for this node.
-		passedInformation[name] = value
-	    #print(passedInformation)
-
+	    
 	    
 	    if(type=="Clean Grid") :
 		# This is the message from a Vacuum to send its location
@@ -588,29 +545,6 @@ class XMLIncomingDIF (XMLParser) :
 
 
 	elif(name == Agent.VACUUM) :
-
-	    # Get the information that is in the dimension
-	    # fields. Initialize the dictionary that has the
-	    # information.
-	    passedInformation = {}
-	    name = ""
-	    value = -1
-
-	    # Go through each dimension and get the associated information.
-	    for dimension in self:
-		#print(dimension)
-
-		# Get the value of each node.
-		for values in dimension :
-		    if(values[0] == "name") :
-			name = values[2]
-
-		    elif(values[0] == "value") :
-			value = values[2]
-			
-		# Set the dictionary information for this node.
-		passedInformation[name] = value
-	    #print(passedInformation)
 
 	    
 	    if(type=="Move Order") :
@@ -659,7 +593,8 @@ class XMLIncomingDIF (XMLParser) :
 
 
 	elif(name==Agent.EXTERNAL):
-	     
+
+
 	    if(type=="parameter") :
 		# This is an external message. It has information about a
 		# set of parameters.
