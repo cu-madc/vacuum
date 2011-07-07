@@ -600,62 +600,66 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif( (name==(Agent.VACUUM)) and (type=="Move Order")) :
-            # This is a message send from a Commander to a Vacuum to
-            # give the vacuum the order to move. Define the vacuum and
-            # its future position.
-            
-            incomingXML = XMLMessageVacuumIDPosBase()
-            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
-
-            if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","vacuumID")
-                xPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","xPos")
-                yPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","yPos")
-                #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
-
-                if(vacuum) :
-                    incomingXML.setVacuumID(vacuum[3][1][2])
-
-                if(xPos) :
-                    incomingXML.setXPos(xPos[3][1][2])
-
-                if(yPos) :
-                    incomingXML.setYPos(yPos[3][1][2])
-                    
-
-                if(self.DEBUG) :
-                    print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
-
-            incomingXML.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM)
 
 
+	elif(name == Agent.VACUUM) :
+	    
+	    if(type=="Move Order") :
+		# This is a message send from a Commander to a Vacuum to
+		# give the vacuum the order to move. Define the vacuum and
+		# its future position.
+
+		incomingXML = XMLMessageVacuumIDPosBase()
+		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+		if(dimensions) :
+		    vacuum = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","vacuumID")
+		    xPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","xPos")
+		    yPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","yPos")
+		    #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
+
+		    if(vacuum) :
+			incomingXML.setVacuumID(vacuum[3][1][2])
+
+		    if(xPos) :
+			incomingXML.setXPos(xPos[3][1][2])
+
+		    if(yPos) :
+			incomingXML.setYPos(yPos[3][1][2])
+
+
+		    if(self.DEBUG) :
+			print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
+
+		incomingXML.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM)
 
 
 
-        elif( (name==(Agent.VACUUM)) and (type=="World Time")) :
-            # This is a message from the world to the vacuum. It lets
-            # the vacuum know what the world time is. Set the vacuum's
-            # ID and the time.
-            
-            incomingXML = XMLMessageWorldVacuumCurrentTime()
-            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
-            if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","vacuumID")
-                time = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","time")
-                #print("{0}\n{1}".format(vacuum,time))
 
-                if(vacuum) :
-                    incomingXML.setVacuumID(vacuum[3][1][2])
+	    elif(type=="World Time") :
+		# This is a message from the world to the vacuum. It lets
+		# the vacuum know what the world time is. Set the vacuum's
+		# ID and the time.
 
-                if(time) :
-                    incomingXML.setTime(time[3][1][2])
+		incomingXML = XMLMessageWorldVacuumCurrentTime()
+		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+		if(dimensions) :
+		    vacuum = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","vacuumID")
+		    time = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","time")
+		    #print("{0}\n{1}".format(vacuum,time))
+
+		    if(vacuum) :
+			incomingXML.setVacuumID(vacuum[3][1][2])
+
+		    if(time) :
+			incomingXML.setTime(time[3][1][2])
 
 
 
