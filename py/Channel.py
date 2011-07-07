@@ -346,8 +346,6 @@ class Channel:
 
 	name = dif.getName()
 
-	#print("this is a message for the vacuum: {0}\n{1}".format(
-	#    dif.getType(),dif.getPassedInformation()))
 
 
 	if(name == Agent.COMMANDER) :
@@ -394,98 +392,54 @@ class Channel:
 
 
 
-
-	elif(theType == XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
-            
-            if(self.planner) :
-                pos = info.getPos()
-                #print("sending report to planner for {0} - {1},{2}".format(
-                #    info.getVacuumID(),pos[0],pos[1]))
-                self.planner.receiveReport(pos[0],pos[1]) #,info.getVacuumID())
+	if (name == Agent.PLANNER) :
 
 
+	    if(self.planner) :
 
-        elif(theType == XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
-	    #print("Channel.recieveXMLReportParseAndDecide - send!")
-            if(self.planner) :
-                pos = info.getPos()
-                #print("sending report to planner for {0} - {1},{2}".format(
-                #    info.getVacuumID(),pos[0],pos[1]))
-                self.planner.recommendOrder(info.getVacuumID(),pos[0],pos[1])
+		self.planner.handleMessage(dif.getType(),dif.getPassedInformation())
+		
+
+		if(theType == XMLParser.MESSAGE_STATUS_SENSOR_PLANNER) :
+
+		    # Send the planner what the sensor things the world status is.
+		    #print("Send planner dirt levels.")
+		    self.planner.setDirtLevels(info.getMatrixFromArray())
 
 
 
-        elif(theType == XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
-            
-            if(self.planner) :
-                pos = info.getPos()
-                #print("sending report to planner for {0} - {1},{2}".format(
-                #    info.getVacuumID(),pos[0],pos[1]))
-                self.planner.receiveOrder(info.getVacuumID(),pos[0],pos[1])
+		elif(theType == XMLParser.MESSAGE_WETNESS_SENSOR_PLANNER) :
+
+		    # Send the planner what the sensor things is the world
+		    # wetness levels.
+		    #print("send planner wet levels")
+		    self.planner.setWet(info.getMatrixFromArray())
 
 
-        elif(theType == XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER) :
-            
-            if(self.planner) :
-                pos = info.getPos()
-                #print("sending vacuum position to planner for {0} - {1},{2}".format(
-                #    info.getVacuumID(),pos[0],pos[1]))
-                self.planner.setVacuumLocation(info.getVacuumID(),pos[0],pos[1])
+	if (name == Agent.SENSOR) :
 
-
-
-        elif(theType == XMLParser.MESSAGE_UPDATE_WORLD_PLANNER) :
-
-	    #print("Send world update to planner");
-            if(self.planner):
-                # Request that the planner make an update to its view.
-		#print("Update planner")
-                self.planner.updateView()
-
-
-
-        elif(theType == XMLParser.MESSAGE_STATUS_SENSOR_PLANNER) :
-            if(self.planner) :
-                # Send the planner what the sensor things the world status is.
-		#print("Send planner dirt levels.")
-                self.planner.setDirtLevels(info.getMatrixFromArray())
-
-
-
-        elif(theType == XMLParser.MESSAGE_WETNESS_SENSOR_PLANNER) :
-            if(self.planner) :
-                # Send the planner what the sensor things is the world
-                # wetness levels.
-		#print("send planner wet levels")
-                self.planner.setWet(info.getMatrixFromArray())
-
-
-
-        elif(theType == XMLParser.MESSAGE_WORLD_STATUS) :
-	    #print("Send world status to the sensor.")
             if(self.sensor) :
-                # let the sensor know the world status.
-		# print("Channel.receiveXMLReportParseAndDecide-XMLParser.MESSAGE_WORLD_STATUS")
-                self.sensor.setArray(info.getMatrixFromArray())
-    
 
+		self.sensor.handleMessage(dif.getType(),dif.getPassedInformation())
 
-        elif(theType == XMLParser.MESSAGE_WORLD_WETNESS) :
-            if(self.sensor) :
-                # Let the sensor know the wetness levels of the world.
-		#print("Channel.receiveXMLReportParseAndDecide - XMLParser.MESSAGE_WORLD_WETNESS")
-                self.sensor.setWet(info.getMatrixFromArray())
+		if(theType == XMLParser.MESSAGE_WORLD_STATUS) :
+
+		    # let the sensor know the world status.
+		    # print("Channel.receiveXMLReportParseAndDecide-XMLParser.MESSAGE_WORLD_STATUS")
+		    self.sensor.setArray(info.getMatrixFromArray())
 
 
 
+		elif(theType == XMLParser.MESSAGE_WORLD_WETNESS) :
+		    # Let the sensor know the wetness levels of the world.
+	            #print("Channel.receiveXMLReportParseAndDecide - XMLParser.MESSAGE_WORLD_WETNESS")
+		    self.sensor.setWet(info.getMatrixFromArray())
 
-        elif(theType == XMLParser.MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR) :
-            if(self.sensor) :
-                # Request that the sensor make a request to measure
-                # the world.
-		#print("asking sensor to measure.")
-		#print("Channel.receiveXMLReportParseAndDecide - XMLParser.MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR")
-                self.sensor.measure()
+
+		    
+		    #print("this is a message for the sensor: {0}\n{1}\n{2}".format(
+		#	    dif.getType(),dif.getPassedInformation()))
+
 
 
 

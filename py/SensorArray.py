@@ -156,6 +156,15 @@ class SensorArray (Agent):
 
         return(None)
 
+
+    # Method to handle an incoming message and determine what to do
+    def handleMessage(self,type,passedInformation) :
+	#print("Sensor.handleMessage: {0} - {1}".format(type,passedInformation))
+
+	if (type=="Send Planner Update") :
+	    self.measure()
+
+
     # Static method that is used as a helper to make it easier to
     # create a sensor array object.
     @staticmethod

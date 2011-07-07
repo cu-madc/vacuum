@@ -331,6 +331,42 @@ class Planner (Agent) :
 	return(planner)
 
 
+    # Method to handle an incoming message and determine what to do
+    def handleMessage(self,type,passedInformation) :
+	#print("Planner.handleMessage: {0} - {1}".format(type,passedInformation))
+
+	if (type=="Vacuum Orders") :
+	    posX      = int(passedInformation["xPos"])
+	    posY      = int(passedInformation["yPos"])
+	    self.receiveReport(posX,posY)
+
+	elif (type=="Vacuum Recommendation") :
+	    posX      = int(passedInformation["xPos"])
+	    posY      = int(passedInformation["yPos"])
+            vacuumID  = int(passedInformation["vacuumID"])
+	    self.recommendOrder(vacuumID,posX,posY)
+
+	elif (type=="Move Order") :
+	    posX      = int(passedInformation["xPos"])
+	    posY      = int(passedInformation["yPos"])
+            vacuumID  = int(passedInformation["vacuumID"])
+	    self.receiveOrder(vacuumID,posX,posY)
+
+	elif (type=="New Vacuum Location") :
+	    posX      = int(passedInformation["xPos"])
+	    posY      = int(passedInformation["yPos"])
+            vacuumID  = int(passedInformation["vacuumID"])
+	    self.setVacuumLocation(vacuumID,posX,posY)
+
+	elif (type=="Update") :
+	    self.updateView()
+
+
+
+
+
+
+
 if (__name__ =='__main__') :
     from Vacuum import Vacuum
     
