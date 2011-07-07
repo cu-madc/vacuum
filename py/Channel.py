@@ -335,9 +335,14 @@ class Channel:
 	    print("Got information: {0}".format(info.getMyInformationType()))
 	    Channel.checkInfoType = False
 
+	try:
+	    theType = info.getMyInformationType()
 
-        if(info.getMyInformationType() ==
-           XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
+	except AttributeError:
+	    print("Error - the XML information is not valid.")
+	    return
+
+        if(theType == XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
             
             if(self.planner) :
                 pos = info.getPos()
@@ -347,8 +352,7 @@ class Channel:
 
 
 
-        elif(info.getMyInformationType() ==
-             XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
+        elif(theType == XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER) :
 	    #print("Channel.recieveXMLReportParseAndDecide - send!")
             if(self.planner) :
                 pos = info.getPos()
@@ -358,8 +362,7 @@ class Channel:
 
 
 
-        elif(info.getMyInformationType() ==
-             XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER) :
+        elif(theType == XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER) :
             
             if(self.commander) :
                 pos = info.getPos()
@@ -369,8 +372,7 @@ class Channel:
 
 
 
-        elif(info.getMyInformationType() ==
-             XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
+        elif(theType == XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
             
             pos = info.getPos()
             vacuumID = info.getVacuumID()
@@ -384,8 +386,7 @@ class Channel:
                 #self.vacuumArray[vacuumID].moveord(pos[0],pos[1])
 
 
-        elif(info.getMyInformationType() ==
-             XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID) :
+        elif(theType == XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID) :
 
             if(self.world) :
                 pos = info.getPos()
@@ -396,8 +397,7 @@ class Channel:
                 self.world.clean(pos[0],pos[1])
 
 
-        elif(info.getMyInformationType() ==
-             XMLParser.MESSAGE_WORLD_VACUUM_CURRENT_TIME) :
+        elif(theType == XMLParser.MESSAGE_WORLD_VACUUM_CURRENT_TIME) :
             
             time = info.getTime()
             vacuumID = info.getVacuumID()
@@ -410,8 +410,7 @@ class Channel:
                 #self.vacuumArray[vacuumID].timeStep(time,info.getMatrixFromArray())
 
 
-        elif(info.getMyInformationType() ==
-             XMLParser.MESSAGE_VACUUM_WORLD_ADD_EXPENDITURE) :
+        elif(theType == XMLParser.MESSAGE_VACUUM_WORLD_ADD_EXPENDITURE) :
 
             if(self.world) :
                 expenditure = info.getExpenditure()
@@ -422,8 +421,7 @@ class Channel:
                 self.world.addExpenditure(expenditure)
 
 
-        elif(info.getMyInformationType() ==
-             XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
+        elif(theType == XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER) :
             
             if(self.planner) :
                 pos = info.getPos()
@@ -432,8 +430,7 @@ class Channel:
                 self.planner.receiveOrder(info.getVacuumID(),pos[0],pos[1])
 
 
-        elif(info.getMyInformationType() ==
-             XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER) :
+        elif(theType == XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER) :
             
             if(self.planner) :
                 pos = info.getPos()
@@ -443,8 +440,7 @@ class Channel:
 
 
 
-        elif(info.getMyInformationType() ==
-             XMLParser.MESSAGE_GET_REPORT_VACUUM_COMMANDER) :
+        elif(theType == XMLParser.MESSAGE_GET_REPORT_VACUUM_COMMANDER) :
 
             if(self.commander) :
                 pos = info.getPos()
@@ -453,7 +449,7 @@ class Channel:
                 self.commander.getReport(pos[0],pos[1],info.getStatus(),info.getVacuumID())
 
 
-        elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_STATUS) :
+        elif(theType == XMLParser.MESSAGE_WORLD_STATUS) :
 	    #print("Send world status to the sensor.")
             if(self.sensor) :
                 # let the sensor know the world status.
@@ -462,7 +458,7 @@ class Channel:
     
 
 
-        elif(info.getMyInformationType() == XMLParser.MESSAGE_WORLD_WETNESS) :
+        elif(theType == XMLParser.MESSAGE_WORLD_WETNESS) :
             if(self.sensor) :
                 # Let the sensor know the wetness levels of the world.
 		#print("Channel.receiveXMLReportParseAndDecide - XMLParser.MESSAGE_WORLD_WETNESS")
@@ -470,7 +466,7 @@ class Channel:
 
 
 
-        elif(info.getMyInformationType() == XMLParser.MESSAGE_UPDATE_WORLD_PLANNER) :
+        elif(theType == XMLParser.MESSAGE_UPDATE_WORLD_PLANNER) :
 
 	    #print("Send world update to planner");
             if(self.planner):
@@ -480,7 +476,7 @@ class Channel:
 
 
 
-        elif(info.getMyInformationType() == XMLParser.MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR) :
+        elif(theType == XMLParser.MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR) :
             if(self.sensor) :
                 # Request that the sensor make a request to measure
                 # the world.
@@ -490,7 +486,7 @@ class Channel:
 
 
 
-        elif(info.getMyInformationType() == XMLParser.MESSAGE_STATUS_SENSOR_PLANNER) :
+        elif(theType == XMLParser.MESSAGE_STATUS_SENSOR_PLANNER) :
             if(self.planner) :
                 # Send the planner what the sensor things the world status is.
 		#print("Send planner dirt levels.")
@@ -498,7 +494,7 @@ class Channel:
 
 
 
-        elif(info.getMyInformationType() == XMLParser.MESSAGE_WETNESS_SENSOR_PLANNER) :
+        elif(theType == XMLParser.MESSAGE_WETNESS_SENSOR_PLANNER) :
             if(self.planner) :
                 # Send the planner what the sensor things is the world
                 # wetness levels.
@@ -507,7 +503,7 @@ class Channel:
 
 
 
-	elif(info.getMyInformationType() == XMLParser.MESSAGE_EXTERNAL_PARAMETER) :
+	elif(theType == XMLParser.MESSAGE_EXTERNAL_PARAMETER) :
 	    # This is a message from the outside with information
 	    # about a parameter to set.
 	    # print("External message")
@@ -628,7 +624,7 @@ class Channel:
 
 		    
 
-	elif(info.getMyInformationType() == XMLParser.MESSAGE_EXTERNAL_COMMAND) :
+	elif(theType == XMLParser.MESSAGE_EXTERNAL_COMMAND) :
 	    # This is a message from the outside with information
 	    # about a command request
 	    #print("External Command")
