@@ -80,6 +80,7 @@ class Commander (Agent) :
 
     def getReport(self,xPos,yPos,status,IDnum) :
         # receive a report from a vac and take action
+	#print("commander get report {0} {1} {2} {3}".format(xPos,yPos,status,IDnum))
         if (self.isWorking)  :
             # This commander is working
             
@@ -95,8 +96,31 @@ class Commander (Agent) :
 
     def receiveReport(self,xord,yord,IDnum) :
         # pass order to vacuum and the planner
+	#print("commander receive report {0} {1} {2}".format(xord,yord,IDnum))
         self.channel.sendMoveOrderFromCommander2Vacuum(xord,yord,IDnum)
         self.channel.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
+
+
+
+
+
+    # Method to handle an incoming message and determine what to do
+    def handleMessage(self,type,passedInformation) :
+	#print("Commander.handleMessage: {0} - {1}".format(type,passedInformation))
+
+	if (type=="Vacuum Recommendation") :
+	    self.receiveReport(int(passedInformation['xPos']),
+			       int(passedInformation['yPos']),
+			       int(passedInformation['vacuumID']))
+
+
+	elif(type=="Get Report") :
+	    self.getReport(int(passedInformation['xPos']),
+			   int(passedInformation['yPos']),
+			   int(passedInformation['status']),
+			   int(passedInformation['vacuumID']))
+
+
 
 
     # Static method that is used as a helper to make it easier to
@@ -107,6 +131,7 @@ class Commander (Agent) :
 	channel = commander.initializeChannel()
 	channel.setCommander(commander)
 	return(commander)
+
 
 
 

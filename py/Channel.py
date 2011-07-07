@@ -344,7 +344,21 @@ class Channel:
 	    print("Error - the XML information is not valid.")
 	    return
 
-        if(theType == XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
+	name = dif.getName()
+
+
+
+	if(name == Agent.COMMANDER) :
+	    #print("this is a message for the commander: {0}\n{1}".format(
+	    #    dif.getType(),dif.getPassedInformation()))
+
+	    if(self.commander) :
+		self.commander.handleMessage(dif.getType(),dif.getPassedInformation())
+
+
+
+
+	elif(theType == XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS) :
             
             if(self.planner) :
                 pos = info.getPos()
@@ -363,14 +377,6 @@ class Channel:
                 self.planner.recommendOrder(info.getVacuumID(),pos[0],pos[1])
 
 
-
-        elif(theType == XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER) :
-            
-            if(self.commander) :
-                pos = info.getPos()
-                #print("Channel.receiveXMLReportParseAndDecide sending report to commander for {0} - {1},{2}".format(
-                #    info.getVacuumID(),pos[0],pos[1]))
-                self.commander.receiveReport(pos[0],pos[1],info.getVacuumID())
 
 
 
@@ -441,14 +447,6 @@ class Channel:
                 self.planner.setVacuumLocation(info.getVacuumID(),pos[0],pos[1])
 
 
-
-        elif(theType == XMLParser.MESSAGE_GET_REPORT_VACUUM_COMMANDER) :
-
-            if(self.commander) :
-                pos = info.getPos()
-                #print("sending report to commander for {0} - {1},{2} - {3}".format(
-                #    info.getVacuumID(),pos[0],pos[1],info.getStatus()))
-                self.commander.getReport(pos[0],pos[1],info.getStatus(),info.getVacuumID())
 
 
         elif(theType == XMLParser.MESSAGE_WORLD_STATUS) :
