@@ -351,37 +351,104 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif( (name==(Agent.COMMANDER)) and (type=="Vacuum Recommendation")) :
+        elif(name==Agent.COMMANDER) :
             # This is a message from Planner to send the
             # recommendation of a move to the commander. Define the
             # vacuum and its position.
-            incomingXML = XMLMessageVacuumIDPosBase()
-            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
-            if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","vacuumID")
-                xPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","xPos")
-                yPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","yPos")
-                #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
+	    # Get the information that is in the dimension
+	    # fields. Initialize the dictionary that has the
+	    # information.
+	    passedInformation = {}
+	    name = ""
+	    value = -1
 
-                if(vacuum) :
-                    incomingXML.setVacuumID(vacuum[3][1][2])
+	    # Go through each dimension and get the associated information.
+	    for dimension in self:
+		#print(dimension)
 
-                if(xPos) :
-                    incomingXML.setXPos(xPos[3][1][2])
+		# Get the value of each node.
+		for values in dimension :
+		    if(values[0] == "name") :
+			name = values[2]
 
-                if(yPos) :
-                    incomingXML.setYPos(yPos[3][1][2])
-                    
+		    elif(values[0] == "value") :
+			value = values[2]
+			
+		# Set the dictionary information for this node.
+		passedInformation[name] = value
+	    #print(passedInformation)
 
-                if(self.DEBUG) :
-                    print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
+
+	    if (type=="Vacuum Recommendation") :
+		incomingXML = XMLMessageVacuumIDPosBase()
+		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+		if(dimensions) :
+		    vacuum = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","vacuumID")
+		    xPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","xPos")
+		    yPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","yPos")
+		    #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
+
+		    if(vacuum) :
+			incomingXML.setVacuumID(vacuum[3][1][2])
+
+		    if(xPos) :
+			incomingXML.setXPos(xPos[3][1][2])
+
+		    if(yPos) :
+			incomingXML.setYPos(yPos[3][1][2])
 
 
-            incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
+		    if(self.DEBUG) :
+			print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
+
+
+		incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
+
+
+	    elif(type=="Get Report") :
+		# This is a message from the Vacuum to the commander to
+		# let the commander know the position and status of a
+		# vacuum. Need to define the position and status.
+		incomingXML = XMLMessageGetReportVacuumCommander()
+		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+		if(dimensions) :
+		    vacuum = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","vacuumID")
+		    xPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","xPos")
+		    yPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","yPos")
+
+		    status = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","status")
+
+		    if(vacuum) :
+			incomingXML.setVacuumID(vacuum[3][1][2])
+
+		    if(xPos) :
+			incomingXML.setXPos(xPos[3][1][2])
+
+		    if(yPos) :
+			incomingXML.setYPos(yPos[3][1][2])
+
+		    if(status) :
+			incomingXML.setStatus(status[3][1][2])
+
+		    pos = incomingXML.getPos()
+		    #print("id: {0} pos: {1},{2} Status: {3}".format(
+		    #    incomingXML.getVacuumID(),pos[0],pos[1],incomingXML.getStatus()))
+
+
+		    if(self.DEBUG) :
+			print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
+
+
 
 
         elif( (name==(Agent.WORLD)) and (type=="Clean Grid")) :
@@ -484,45 +551,6 @@ class XMLIncomingDIF (XMLParser) :
 
             incomingXML.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
 
-
-
-        elif( (name==(Agent.COMMANDER)) and (type=="Get Report")) :
-            # This is a message from the Vacuum to the commander to
-            # let the commander know the position and status of a
-            # vacuum. Need to define the position and status.
-            incomingXML = XMLMessageGetReportVacuumCommander()
-            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
-
-            if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","vacuumID")
-                xPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","xPos")
-                yPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","yPos")
-
-                status = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","status")
-
-                if(vacuum) :
-                    incomingXML.setVacuumID(vacuum[3][1][2])
-
-                if(xPos) :
-                    incomingXML.setXPos(xPos[3][1][2])
-
-                if(yPos) :
-                    incomingXML.setYPos(yPos[3][1][2])
-
-                if(status) :
-                    incomingXML.setStatus(status[3][1][2])
-
-                pos = incomingXML.getPos()
-                #print("id: {0} pos: {1},{2} Status: {3}".format(
-                #    incomingXML.getVacuumID(),pos[0],pos[1],incomingXML.getStatus()))
-                                
-
-                if(self.DEBUG) :
-                    print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
 
 
 
