@@ -578,7 +578,7 @@ class XMLIncomingDIF (XMLParser) :
 		incomingXML = XMLMessageVacuumAddExpenditureWorld()
 		vacuum = passedInformation["vacuumID"]
 		expenditure = passedInformation["expenditure"]
-		print("{0} - {1}".format(vacuum,expenditure))
+		#print("{0} - {1}".format(vacuum,expenditure))
 
 		incomingXML.setVacuumID(vacuum)
 		incomingXML.setExpenditure(expenditure)
@@ -588,6 +588,30 @@ class XMLIncomingDIF (XMLParser) :
 
 
 	elif(name == Agent.VACUUM) :
+
+	    # Get the information that is in the dimension
+	    # fields. Initialize the dictionary that has the
+	    # information.
+	    passedInformation = {}
+	    name = ""
+	    value = -1
+
+	    # Go through each dimension and get the associated information.
+	    for dimension in self:
+		#print(dimension)
+
+		# Get the value of each node.
+		for values in dimension :
+		    if(values[0] == "name") :
+			name = values[2]
+
+		    elif(values[0] == "value") :
+			value = values[2]
+			
+		# Set the dictionary information for this node.
+		passedInformation[name] = value
+	    #print(passedInformation)
+
 	    
 	    if(type=="Move Order") :
 		# This is a message send from a Commander to a Vacuum to
@@ -595,29 +619,18 @@ class XMLIncomingDIF (XMLParser) :
 		# its future position.
 
 		incomingXML = XMLMessageVacuumIDPosBase()
-		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
-
-		if(dimensions) :
-		    vacuum = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","vacuumID")
-		    xPos = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","xPos")
-		    yPos = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","yPos")
-		    #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
-
-		    if(vacuum) :
-			incomingXML.setVacuumID(vacuum[3][1][2])
-
-		    if(xPos) :
-			incomingXML.setXPos(xPos[3][1][2])
-
-		    if(yPos) :
-			incomingXML.setYPos(yPos[3][1][2])
+		vacuum = passedInformation["vacuumID"]
+		xPos = passedInformation["xPos"]
+		yPos = passedInformation["yPos"]
+		#print("{0} - {1},{2}".format(vacuum,xPos,yPos))
+		
+		incomingXML.setVacuumID(vacuum)
+		incomingXML.setXPos(xPos)
+		incomingXML.setYPos(yPos)
 
 
-		    if(self.DEBUG) :
-			print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
+		if(self.DEBUG) :
+		    print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
 
 		incomingXML.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM)
 
@@ -634,17 +647,12 @@ class XMLIncomingDIF (XMLParser) :
 		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
 		if(dimensions) :
-		    vacuum = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","vacuumID")
-		    time = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","time")
-		    #print("{0}\n{1}".format(vacuum,time))
+		    vacuum = passedInformation["vacuumID"]
+		    time = passedInformation["time"]
+		    #print("{0} - {1}".format(vacuum,time))
 
-		    if(vacuum) :
-			incomingXML.setVacuumID(vacuum[3][1][2])
-
-		    if(time) :
-			incomingXML.setTime(time[3][1][2])
+		    incomingXML.setVacuumID(vacuum)
+		    incomingXML.setTime(time)
 
 
 
