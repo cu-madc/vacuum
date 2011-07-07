@@ -268,7 +268,25 @@ class Vacuum (Agent):
 
 	    if(self.queueUse) :
 		self.queue.put([self.xPos,self.yPos])
-                    
+
+
+
+    # Method to handle an incoming message and determine what to do
+    def handleMessage(self,type,passedInformation) :
+	#print("Vacuum.handleMessage: {0} - {1}".format(type,passedInformation))
+
+	if (type=="Move Order") :
+	    posX      = int(passedInformation["xPos"])
+	    posY      = int(passedInformation["yPos"])
+	    self.moveord(posX,posY)
+
+	elif (type=="World Time") :
+	    time     = int(passedInformation["time"])
+            vacuumID = int(passedInformation["vacuumID"])
+	    self.timeStep(time,None)  # TODO!!!!
+
+
+
 
     # Static method that is used as a helper to make it easier to
     # create a vacuum object.

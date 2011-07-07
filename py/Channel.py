@@ -346,6 +346,8 @@ class Channel:
 
 	name = dif.getName()
 
+	#print("this is a message for the vacuum: {0}\n{1}".format(
+	#    dif.getType(),dif.getPassedInformation()))
 
 
 	if(name == Agent.COMMANDER) :
@@ -365,7 +367,30 @@ class Channel:
 	    if(self.world) :
 		self.world.handleMessage(dif.getType(),dif.getPassedInformation())
 
-	    
+
+
+	elif (name == Agent.VACUUM) :
+	    #print("this is a message for the vacuum: {0}\n{1}".format(
+	    #    dif.getType(),dif.getPassedInformation()))
+
+	    if(self.vacuum) :
+
+		if (theType == XMLParser.MESSAGE_WORLD_VACUUM_CURRENT_TIME) :
+
+		    time = info.getTime()
+		    vacuumID = info.getVacuumID()
+		    #print("sending report to vacuum for {0}".format(vacuumID))
+
+		    #if(vacuumID < len(self.vacuumArray)) :
+		    if(self.vacuum) :
+			 #print("sending to vacuum.")
+			 self.vacuum.timeStep(time,info.getMatrixFromArray())
+			 #self.vacuumArray[vacuumID].timeStep(time,info.getMatrixFromArray())
+
+		else :
+		    self.vacuum.handleMessage(dif.getType(),dif.getPassedInformation())
+
+		
 
 
 
@@ -434,46 +459,6 @@ class Channel:
 		#print("send planner wet levels")
                 self.planner.setWet(info.getMatrixFromArray())
 
-
-
-
-
-        elif(theType == XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM) :
-            
-            pos = info.getPos()
-            vacuumID = info.getVacuumID()
-            #print("Channel: sending report to vacuum for {0} - {1},{2}".format(
-            #    info.getVacuumID(),pos[0],pos[1]))
-
-            #if(vacuumID < len(self.vacuumArray)) :
-	    if(self.vacuum) :
-		#print("Moving this vacuum {0} - {1},{2}".format(vacuumID,pos[0],pos[1]))
-		self.vacuum.moveord(pos[0],pos[1])
-                #self.vacuumArray[vacuumID].moveord(pos[0],pos[1])
-
-
-        elif(theType == XMLParser.MESSAGE_WORLD_VACUUM_CURRENT_TIME) :
-            
-            time = info.getTime()
-            vacuumID = info.getVacuumID()
-            #print("sending report to vacuum for {0}".format(vacuumID))
-
-            #if(vacuumID < len(self.vacuumArray)) :
-	    if(self.vacuum) :
-		#print("sending to vacuum.")
-		self.vacuum.timeStep(time,info.getMatrixFromArray())
-                #self.vacuumArray[vacuumID].timeStep(time,info.getMatrixFromArray())
-
-
-        elif(theType == XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID) :
-
-            if(self.world) :
-                pos = info.getPos()
-                vacuumID = info.getVacuumID()
-                #print("sending cleaning report to world from vacuum for {0} - {1},{2}".format(
-                #   info.getVacuumID(),pos[0],pos[1]))
-
-                self.world.clean(pos[0],pos[1])
 
 
         elif(theType == XMLParser.MESSAGE_WORLD_STATUS) :
