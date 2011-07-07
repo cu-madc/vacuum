@@ -382,29 +382,18 @@ class XMLIncomingDIF (XMLParser) :
 
 	    if (type=="Vacuum Recommendation") :
 		incomingXML = XMLMessageVacuumIDPosBase()
-		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+		vacuum = int(passedInformation['vacuumID'])
+		xPos   = int(passedInformation['xPos'])
+		yPos   = int(passedInformation['yPos'])
+		#print("{0} - ({1},{2})".format(vacuum,xPos,yPos))
 
-		if(dimensions) :
-		    vacuum = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","vacuumID")
-		    xPos = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","xPos")
-		    yPos = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","yPos")
-		    #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
-
-		    if(vacuum) :
-			incomingXML.setVacuumID(vacuum[3][1][2])
-
-		    if(xPos) :
-			incomingXML.setXPos(xPos[3][1][2])
-
-		    if(yPos) :
-			incomingXML.setYPos(yPos[3][1][2])
+		incomingXML.setVacuumID(vacuum)
+		incomingXML.setXPos(xPos)
+		incomingXML.setYPos(yPos)
 
 
-		    if(self.DEBUG) :
-			print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
+		if(self.DEBUG) :
+		    print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
 
 
 		incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
@@ -415,38 +404,48 @@ class XMLIncomingDIF (XMLParser) :
 		# let the commander know the position and status of a
 		# vacuum. Need to define the position and status.
 		incomingXML = XMLMessageGetReportVacuumCommander()
-		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+		vacuum = int(passedInformation['vacuumID'])
+		xPos   = int(passedInformation['xPos'])
+		yPos   = int(passedInformation['yPos'])
+		status = int(passedInformation['status'])
 
-		if(dimensions) :
-		    vacuum = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","vacuumID")
-		    xPos = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","xPos")
-		    yPos = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","yPos")
-
-		    status = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","status")
-
-		    if(vacuum) :
-			incomingXML.setVacuumID(vacuum[3][1][2])
-
-		    if(xPos) :
-			incomingXML.setXPos(xPos[3][1][2])
-
-		    if(yPos) :
-			incomingXML.setYPos(yPos[3][1][2])
-
-		    if(status) :
-			incomingXML.setStatus(status[3][1][2])
-
-		    pos = incomingXML.getPos()
-		    #print("id: {0} pos: {1},{2} Status: {3}".format(
-		    #    incomingXML.getVacuumID(),pos[0],pos[1],incomingXML.getStatus()))
+		incomingXML.setVacuumID(vacuum)
+		incomingXML.setXPos(xPos)
+		incomingXML.setYPos(yPos)
+		incomingXML.setStatus(status)
+		
+		pos = incomingXML.getPos()
+		#print("id: {0} pos: {1},{2} Status: {3}".format(
+		#    incomingXML.getVacuumID(),pos[0],pos[1],incomingXML.getStatus()))
 
 
-		    if(self.DEBUG) :
-			print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
+		if(self.DEBUG) :
+		    print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
+
+
+
+
+
+	elif(name==Agent.SENSOR) :
+
+	    if( type=="World Status" ) :
+		# This is a message from the World to the Sensor to let it
+		# know the status of the world.
+		incomingXML = XMLMessageWorldStatus()
+
+
+
+	    elif(type=="World Wetness") :
+		# This is a message from the world to the Sensor to let it
+		# know the wetness levels of the world.
+		incomingXML = XMLMessageWorldWetness()
+
+
+	    elif(type=="Send Planner Update") :
+		# This is a message from the planner to the sensor to
+		# request an update.
+		incomingXML = XMLMessageUpdatePlannerSensor()
+
 
 
 
@@ -554,31 +553,12 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif( (name==Agent.SENSOR) and (type=="World Status")) :
-            # This is a message from the World to the Sensor to let it
-            # know the status of the world.
-            incomingXML = XMLMessageWorldStatus()
-
-
-
-        elif( (name==Agent.SENSOR) and (type=="World Wetness")) :
-            # This is a message from the world to the Sensor to let it
-            # know the wetness levels of the world.
-            incomingXML = XMLMessageWorldWetness()
-
 
 
         elif( (name==(Agent.PLANNER)) and (type=="Update")) :
             # This is a message from the Sensor to the planner to let
             # it know the status of the world.
             incomingXML = XMLMessageUpdateWorldPlanner()
-
-
-
-        elif( (name==Agent.SENSOR) and (type=="Send Planner Update")) :
-            # This is a message from the planner to the sensor to
-            # request an update.
-            incomingXML = XMLMessageUpdatePlannerSensor()
 
 
 
