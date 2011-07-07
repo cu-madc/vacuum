@@ -525,34 +525,47 @@ class XMLIncomingDIF (XMLParser) :
 
 
 	elif(name==Agent.WORLD) :
+
+	    # Get the information that is in the dimension
+	    # fields. Initialize the dictionary that has the
+	    # information.
+	    passedInformation = {}
+	    name = ""
+	    value = -1
+
+	    # Go through each dimension and get the associated information.
+	    for dimension in self:
+		#print(dimension)
+
+		# Get the value of each node.
+		for values in dimension :
+		    if(values[0] == "name") :
+			name = values[2]
+
+		    elif(values[0] == "value") :
+			value = values[2]
+			
+		# Set the dictionary information for this node.
+		passedInformation[name] = value
+	    #print(passedInformation)
+
 	    
 	    if(type=="Clean Grid") :
 		# This is the message from a Vacuum to send its location
 		# to the world. Define the vacuum and its position.
 		incomingXML = XMLMessageVacuumIDPosBase()
-		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+		vacuum = passedInformation["vacuumID"]
+		xPos = passedInformation["xPos"]
+		yPos = passedInformation["yPos"]
+		#print("{0} - {1},{2}".format(vacuum,xPos,yPos))
 
-		if(dimensions) :
-		    vacuum = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","vacuumID")
-		    xPos = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","xPos")
-		    yPos = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","yPos")
-		    #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
-
-		    if(vacuum) :
-			incomingXML.setVacuumID(vacuum[3][1][2])
-
-		    if(xPos) :
-			incomingXML.setXPos(xPos[3][1][2])
-
-		    if(yPos) :
-			incomingXML.setYPos(yPos[3][1][2])
+		incomingXML.setVacuumID(vacuum)
+		incomingXML.setXPos(xPos)
+		incomingXML.setYPos(yPos)
 
 
-		    if(self.DEBUG) :
-			print("This data represents information from a vacuum to the world to indicate a spot is cleaned.")
+		if(self.DEBUG) :
+		    print("This data represents information from a vacuum to the world to indicate a spot is cleaned.")
 
 		incomingXML.specifyInformationType(XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID)
 
@@ -563,20 +576,12 @@ class XMLIncomingDIF (XMLParser) :
 		# This is a message from a vacuum to the World. It sends
 		# an expenditure required for the vacuum.
 		incomingXML = XMLMessageVacuumAddExpenditureWorld()
-		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+		vacuum = passedInformation["vacuumID"]
+		expenditure = passedInformation["expenditure"]
+		print("{0} - {1}".format(vacuum,expenditure))
 
-		if(dimensions) :
-		    vacuum = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","vacuumID")
-		    expenditure = self.walkObjectChildrenByNameContents(
-			dimensions[3],"dimension","name","expenditure")
-		    #print("{0}\n{1}".format(vacuum,expenditure))
-
-		    if(vacuum) :
-			incomingXML.setVacuumID(vacuum[3][1][2])
-
-		    if(expenditure) :
-			incomingXML.setExpenditure(expenditure[3][1][2])
+		incomingXML.setVacuumID(vacuum)
+		incomingXML.setExpenditure(expenditure)
 
 
 
