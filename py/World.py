@@ -237,6 +237,7 @@ class  World (Agent):
 
     def clean(self,x,y) :
         # reset location x,y dirt level to 0
+	#print("Cleaning grid {0},{1}".format(x,y))
         self.A[x,y] = 0.0
 
 
@@ -358,6 +359,12 @@ class  World (Agent):
 	    expenditure = int(passedInformation["expenditure"])
 	    vacuumID    = int(passedInformation["vacuumID"])
 	    self.addExpenditure(expenditure)
+
+	elif (type=="Clean Grid") :
+	    posX      = int(passedInformation["xPos"])
+	    posY      = int(passedInformation["yPos"])
+	    vacuumID  =  int(passedInformation["vacuumID"])
+	    self.clean(posX,posY)
 
 
 
