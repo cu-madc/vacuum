@@ -283,71 +283,165 @@ class XMLIncomingDIF (XMLParser) :
 
 
 	name = int(name)
-        if( (name==(Agent.PLANNER)) and (type == "Vacuum Orders")) :
-            # This is a message to be sent to a planner that contains
-            # the orders to a vacuum from the commander. Define the
-            # vacuum and its position.
-            
-            incomingXML = XMLMessageVacuumIDPosBase()
-            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
-            if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","vacuumID")
-                xPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","xPos")
-                yPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","yPos")
-                #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
+	if(name==Agent.PLANNER):
 
-                if(vacuum) :
-                    incomingXML.setVacuumID(vacuum[3][1][2])
+	    if(type == "Vacuum Orders") :
+		# This is a message to be sent to a planner that contains
+		# the orders to a vacuum from the commander. Define the
+		# vacuum and its position.
 
-                if(xPos) :
-                    incomingXML.setXPos(xPos[3][1][2])
+		incomingXML = XMLMessageVacuumIDPosBase()
+		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
-                if(yPos) :
-                    incomingXML.setYPos(yPos[3][1][2])
-                    
+		if(dimensions) :
+		    vacuum = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","vacuumID")
+		    xPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","xPos")
+		    yPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","yPos")
+		    #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
 
-                if(self.DEBUG) :
-                    print("This data represents information from a planner from a commander with the orders for a vacuum")
+		    if(vacuum) :
+			incomingXML.setVacuumID(vacuum[3][1][2])
 
-            incomingXML.specifyInformationType(XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
+		    if(xPos) :
+			incomingXML.setXPos(xPos[3][1][2])
+
+		    if(yPos) :
+			incomingXML.setYPos(yPos[3][1][2])
 
 
+		    if(self.DEBUG) :
+			print("This data represents information from a planner from a commander with the orders for a vacuum")
 
-        elif( (name==(Agent.PLANNER)) and (type == "Vacuum Recommendation")) :
-            # This is a message from a commander sent to a planner to
-            # let the planner know the recommendation made for the
-            # movement of a vacuum. Define the vacuum and its
-            # position.
-            incomingXML = XMLMessageVacuumIDPosBase()
-            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+		incomingXML.specifyInformationType(XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
 
-            if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","vacuumID")
-                xPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","xPos")
-                yPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","yPos")
-                #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
 
-                if(vacuum) :
-                    incomingXML.setVacuumID(vacuum[3][1][2])
 
-                if(xPos) :
-                    incomingXML.setXPos(xPos[3][1][2])
+	    elif(type == "Vacuum Recommendation") :
+		# This is a message from a commander sent to a planner to
+		# let the planner know the recommendation made for the
+		# movement of a vacuum. Define the vacuum and its
+		# position.
+		incomingXML = XMLMessageVacuumIDPosBase()
+		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
-                if(yPos) :
-                    incomingXML.setYPos(yPos[3][1][2])
-                    
+		if(dimensions) :
+		    vacuum = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","vacuumID")
+		    xPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","xPos")
+		    yPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","yPos")
+		    #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
 
-                if(self.DEBUG) :
-                    print("This data represents information from a commander to a planner with the suggested orders for a vacuum")
+		    if(vacuum) :
+			incomingXML.setVacuumID(vacuum[3][1][2])
 
-            incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
+		    if(xPos) :
+			incomingXML.setXPos(xPos[3][1][2])
+
+		    if(yPos) :
+			incomingXML.setYPos(yPos[3][1][2])
+
+
+		    if(self.DEBUG) :
+			print("This data represents information from a commander to a planner with the suggested orders for a vacuum")
+
+		incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
+
+
+	    elif(type=="Move Order") :
+		# This is a message from the commander to the planner to
+		# let the planner know what order was sent. Define the
+		# vacuum and its position.
+
+		incomingXML = XMLMessageVacuumIDPosBase()
+		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+		if(dimensions) :
+		    vacuum = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","vacuumID")
+		    xPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","xPos")
+		    yPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","yPos")
+		    #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
+
+		    if(vacuum) :
+			incomingXML.setVacuumID(vacuum[3][1][2])
+
+		    if(xPos) :
+			incomingXML.setXPos(xPos[3][1][2])
+
+		    if(yPos) :
+			incomingXML.setYPos(yPos[3][1][2])
+
+
+		    if(self.DEBUG) :
+			print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
+
+		incomingXML.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
+
+
+
+
+
+
+	    elif(type=="Update") :
+		# This is a message from the Sensor to the planner to let
+		# it know the status of the world.
+		incomingXML = XMLMessageUpdateWorldPlanner()
+
+
+
+	    elif(type=="Sensor Status") :
+		# This is a message from the Sensor to the Planner to
+		# provide a status of the world as the Sensor currently
+		# understands it.
+		incomingXML = XMLMessageSensorStatus()
+
+
+
+	    elif(type=="Sensor Wetness") :
+		# This is message from the Sensor to the Planner to let
+		# the Planner know what the Sensor thinks is the current
+		# wetness levels of the world.
+		incomingXML = XMLMessageSensorWetness()
+
+
+
+	    elif(type=="New Vacuum Location") :
+		# This is a message from the Vacuum to the planner to give
+		# the planner a report of its activities. Define the
+		# vacuum and its position.
+
+		incomingXML = XMLMessageVacuumIDPosBase()
+		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+		if(dimensions) :
+		    vacuum = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","vacuumID")
+		    xPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","xPos")
+		    yPos = self.walkObjectChildrenByNameContents(
+			dimensions[3],"dimension","name","yPos")
+		    #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
+
+		    if(vacuum) :
+			incomingXML.setVacuumID(vacuum[3][1][2])
+
+		    if(xPos) :
+			incomingXML.setXPos(xPos[3][1][2])
+
+		    if(yPos) :
+			incomingXML.setYPos(yPos[3][1][2])
+
+		incomingXML.specifyInformationType(XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER)
+
+
 
 
 
@@ -516,95 +610,6 @@ class XMLIncomingDIF (XMLParser) :
             incomingXML.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM)
 
 
-
-
-        elif( (name==(Agent.PLANNER)) and (type=="Move Order")) :
-            # This is a message from the commander to the planner to
-            # let the planner know what order was sent. Define the
-            # vacuum and its position.
-            
-            incomingXML = XMLMessageVacuumIDPosBase()
-            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
-
-            if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","vacuumID")
-                xPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","xPos")
-                yPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","yPos")
-                #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
-
-                if(vacuum) :
-                    incomingXML.setVacuumID(vacuum[3][1][2])
-
-                if(xPos) :
-                    incomingXML.setXPos(xPos[3][1][2])
-
-                if(yPos) :
-                    incomingXML.setYPos(yPos[3][1][2])
-                    
-
-                if(self.DEBUG) :
-                    print("This data represents information from a planner to a commander with the suggested orders for a vacuum")
-
-            incomingXML.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
-
-
-
-
-
-
-        elif( (name==(Agent.PLANNER)) and (type=="Update")) :
-            # This is a message from the Sensor to the planner to let
-            # it know the status of the world.
-            incomingXML = XMLMessageUpdateWorldPlanner()
-
-
-
-        elif( (name==(Agent.PLANNER)) and (type=="Sensor Status")) :
-            # This is a message from the Sensor to the Planner to
-            # provide a status of the world as the Sensor currently
-            # understands it.
-            incomingXML = XMLMessageSensorStatus()
-
-
-
-        elif( (name==(Agent.PLANNER)) and (type=="Sensor Wetness")) :
-            # This is message from the Sensor to the Planner to let
-            # the Planner know what the Sensor thinks is the current
-            # wetness levels of the world.
-            incomingXML = XMLMessageSensorWetness()
-
-
-
-        elif( (name==(Agent.PLANNER)) and (type=="New Vacuum Location")) :
-            # This is a message from the Vacuum to the planner to give
-            # the planner a report of its activities. Define the
-            # vacuum and its position.
-            
-            incomingXML = XMLMessageVacuumIDPosBase()
-            dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
-
-            if(dimensions) :
-                vacuum = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","vacuumID")
-                xPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","xPos")
-                yPos = self.walkObjectChildrenByNameContents(
-                    dimensions[3],"dimension","name","yPos")
-                #print("{0}\n{1}\n{2}".format(vacuum,xPos,yPos))
-
-                if(vacuum) :
-                    incomingXML.setVacuumID(vacuum[3][1][2])
-
-                if(xPos) :
-                    incomingXML.setXPos(xPos[3][1][2])
-
-                if(yPos) :
-                    incomingXML.setYPos(yPos[3][1][2])
-
-            incomingXML.specifyInformationType(XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER)
 
 
 
