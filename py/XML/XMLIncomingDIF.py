@@ -664,55 +664,58 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif( (name==(Agent.EXTERNAL)) and (type=="parameter")) :
-	    # This is an external message. It has information about a
-	    # set of parameters.
-	    incomingXML = XMLMessageExternalParameter()
 
-	    # Get all of the information associated with the
-	    # dimensions that were passed.
-	    dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+	elif(name==Agent.EXTERNAL):
+	     
+	    if(type=="parameter") :
+		# This is an external message. It has information about a
+		# set of parameters.
+		incomingXML = XMLMessageExternalParameter()
 
-            if(dimensions) :
-		# For each dimension go through and decide what type of dimension it is.
-		for dimension in dimensions[3]:
-		    name  = self.getChildWithName([dimension],"name")    # Get the name leaf on the tree
-		    value = self.getChildWithName([dimension],"value")   # Get the value leaf on the tree
+		# Get all of the information associated with the
+		# dimensions that were passed.
+		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
-		    #print("Value {0} - {1}".format(name[2],value[2]))
-		    for key, val in XMLMessageExternalParameter.ParameterTitles.iteritems():
-			# Go through each member of the possible parameters and check for a match
-			#print("check {0} - {1}".format(key,val))
-			if(val == name[2]) :
-			    # This is the same type. Set the parameter
-			    incomingXML.setParameterValue(key,value[2])
-			    break
+		if(dimensions) :
+		    # For each dimension go through and decide what type of dimension it is.
+		    for dimension in dimensions[3]:
+			name  = self.getChildWithName([dimension],"name")    # Get the name leaf on the tree
+			value = self.getChildWithName([dimension],"value")   # Get the value leaf on the tree
 
-
-        elif( (name==(Agent.EXTERNAL)) and (type=="command")) :
-	    # This is an external message. It has information about an
-	    # action to take.
-	    incomingXML = XMLMessageExternalCommand()
-
-	    # Get all of the information associated with the
-	    # dimensions that were passed.
-	    dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
-
-            if(dimensions) :
-		# For each dimension go through and decide what type of dimension it is.
-		for dimension in dimensions[3]:
-		    name  = self.getChildWithName([dimension],"name")    # Get the name leaf on the tree
+			#print("Value {0} - {1}".format(name[2],value[2]))
+			for key, val in XMLMessageExternalParameter.ParameterTitles.iteritems():
+			    # Go through each member of the possible parameters and check for a match
+			    #print("check {0} - {1}".format(key,val))
+			    if(val == name[2]) :
+				# This is the same type. Set the parameter
+				incomingXML.setParameterValue(key,value[2])
+				break
 
 
-		    #print("Value {0} - {1}".format(name[2],value[2]))
-		    for key, val in XMLMessageExternalCommand.ParameterTitles.iteritems():
-			# Go through each member of the possible parameters and check for a match
-			#print("check {0} - {1}".format(key,name[2]))
-			if(val == name[2]) :
-			    # This is the same type. Set the parameter
-			    #print("Setting: {0}".format(key))
-			    incomingXML.setParameterValue(key)
-			    break
+	    elif (type=="command") :
+		# This is an external message. It has information about an
+		# action to take.
+		incomingXML = XMLMessageExternalCommand()
+
+		# Get all of the information associated with the
+		# dimensions that were passed.
+		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
+
+		if(dimensions) :
+		    # For each dimension go through and decide what type of dimension it is.
+		    for dimension in dimensions[3]:
+			name  = self.getChildWithName([dimension],"name")    # Get the name leaf on the tree
+
+
+			#print("Value {0} - {1}".format(name[2],value[2]))
+			for key, val in XMLMessageExternalCommand.ParameterTitles.iteritems():
+			    # Go through each member of the possible parameters and check for a match
+			    #print("check {0} - {1}".format(key,name[2]))
+			    if(val == name[2]) :
+				# This is the same type. Set the parameter
+				#print("Setting: {0}".format(key))
+				incomingXML.setParameterValue(key)
+				break
 
 
 
