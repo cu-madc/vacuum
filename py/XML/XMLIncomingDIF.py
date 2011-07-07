@@ -110,11 +110,30 @@ class XMLIncomingDIF (XMLParser) :
     def __init__(self) :
         XMLParser.__init__(self)
         self.setMyInformationType(XMLParser.CHECK_INCOMING);
+	self.passedInformation = {}
+	self.name = -1
+	self.type = ""
 
 
     def __del__(self):
         pass
 
+
+
+    def getPassedInformation(self) :
+	return(self.passedInformation)
+
+
+
+    def getName(self) :
+	return(self.name)
+
+
+
+    def getType(self) :
+	return(self.type)
+
+    
 
     def getObjectClassName(self,name) :
         # Routine to determine the name associated with objectClass
@@ -277,17 +296,17 @@ class XMLIncomingDIF (XMLParser) :
     #  returns it.
     def determineXMLInformation(self,passedXML) :
         self.parseXMLString(passedXML)
-        [name,type] = self.getObjectClassNameAndType()
+        [name,self.type] = self.getObjectClassNameAndType()
         incomingXML = None
-	#print("Name: {0} Type: {1}".format(name,type))
-	name = int(name)
+	#print("Name: {0} Type: {1}".format(name,self.type))
+	self.name = int(name)
 
 
 
 	# Get the information that is in the dimension
 	# fields. Initialize the dictionary that has the
 	# information.
-	passedInformation = {}
+	self.passedInformation = {}
 
 	# Go through each dimension and get the associated information.
 	for dimension in self:
@@ -304,23 +323,22 @@ class XMLIncomingDIF (XMLParser) :
 		    xmlValue = values[2]
 
 	    # Set the dictionary information for this node.
-	    passedInformation[xmlName] = xmlValue
-	#print(passedInformation)
-	self.__iter__()
+	    self.passedInformation[xmlName] = xmlValue
+	#print(self.passedInformation)
 
 
-	if(name==Agent.PLANNER):
+	if(self.name==Agent.PLANNER):
 	    
 
-	    if(type == "Vacuum Orders") :
+	    if(self.type == "Vacuum Orders") :
 		# This is a message to be sent to a planner that contains
 		# the orders to a vacuum from the commander. Define the
 		# vacuum and its position.
 
 		incomingXML = XMLMessageVacuumIDPosBase()
-		vacuum = passedInformation["vacuumID"]
-		xPos = passedInformation["xPos"]
-		yPos = passedInformation["yPos"]
+		vacuum = self.passedInformation["vacuumID"]
+		xPos = self.passedInformation["xPos"]
+		yPos = self.passedInformation["yPos"]
 		#print("{0} - {1},{2}".format(vacuum,xPos,yPos))
 
 		incomingXML.setVacuumID(vacuum)
@@ -335,15 +353,15 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-	    elif(type == "Vacuum Recommendation") :
+	    elif(self.type == "Vacuum Recommendation") :
 		# This is a message from a commander sent to a planner to
 		# let the planner know the recommendation made for the
 		# movement of a vacuum. Define the vacuum and its
 		# position.
 		incomingXML = XMLMessageVacuumIDPosBase()
-		vacuum = passedInformation["vacuumID"]
-		xPos = passedInformation["xPos"]
-		yPos = passedInformation["yPos"]
+		vacuum = self.passedInformation["vacuumID"]
+		xPos = self.passedInformation["xPos"]
+		yPos = self.passedInformation["yPos"]
 		#print("{0} - {1},{2}".format(vacuum,xPos,yPos))
 
 		incomingXML.setVacuumID(vacuum)
@@ -357,15 +375,15 @@ class XMLIncomingDIF (XMLParser) :
 		incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
 
 
-	    elif(type=="Move Order") :
+	    elif(self.type=="Move Order") :
 		# This is a message from the commander to the planner to
 		# let the planner know what order was sent. Define the
 		# vacuum and its position.
 
 		incomingXML = XMLMessageVacuumIDPosBase()
-		vacuum = passedInformation["vacuumID"]
-		xPos = passedInformation["xPos"]
-		yPos = passedInformation["yPos"]
+		vacuum = self.passedInformation["vacuumID"]
+		xPos = self.passedInformation["xPos"]
+		yPos = self.passedInformation["yPos"]
 		#print("{0} - {1},{2}".format(vacuum,xPos,yPos))
 
 		incomingXML.setVacuumID(vacuum)
@@ -383,14 +401,14 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-	    elif(type=="Update") :
+	    elif(self.type=="Update") :
 		# This is a message from the Sensor to the planner to let
 		# it know the status of the world.
 		incomingXML = XMLMessageUpdateWorldPlanner()
 
 
 
-	    elif(type=="Sensor Status") :
+	    elif(self.type=="Sensor Status") :
 		# This is a message from the Sensor to the Planner to
 		# provide a status of the world as the Sensor currently
 		# understands it.
@@ -398,7 +416,7 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-	    elif(type=="Sensor Wetness") :
+	    elif(self.type=="Sensor Wetness") :
 		# This is message from the Sensor to the Planner to let
 		# the Planner know what the Sensor thinks is the current
 		# wetness levels of the world.
@@ -406,15 +424,15 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-	    elif(type=="New Vacuum Location") :
+	    elif(self.type=="New Vacuum Location") :
 		# This is a message from the Vacuum to the planner to give
 		# the planner a report of its activities. Define the
 		# vacuum and its position.
 
 		incomingXML = XMLMessageVacuumIDPosBase()
-		vacuum = passedInformation["vacuumID"]
-		xPos = passedInformation["xPos"]
-		yPos = passedInformation["yPos"]
+		vacuum = self.passedInformation["vacuumID"]
+		xPos = self.passedInformation["xPos"]
+		yPos = self.passedInformation["yPos"]
 		#print("{0} - {1},{2}".format(vacuum,xPos,yPos))
 
 		incomingXML.setVacuumID(vacuum)
@@ -427,18 +445,18 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-        elif(name==Agent.COMMANDER) :
+        elif(self.name==Agent.COMMANDER) :
             # This is a message from Planner to send the
             # recommendation of a move to the commander. Define the
             # vacuum and its position.
 
 
 
-	    if (type=="Vacuum Recommendation") :
+	    if (self.type=="Vacuum Recommendation") :
 		incomingXML = XMLMessageVacuumIDPosBase()
-		vacuum = int(passedInformation['vacuumID'])
-		xPos   = int(passedInformation['xPos'])
-		yPos   = int(passedInformation['yPos'])
+		vacuum = int(self.passedInformation['vacuumID'])
+		xPos   = int(self.passedInformation['xPos'])
+		yPos   = int(self.passedInformation['yPos'])
 		#print("{0} - ({1},{2})".format(vacuum,xPos,yPos))
 
 		incomingXML.setVacuumID(vacuum)
@@ -453,15 +471,15 @@ class XMLIncomingDIF (XMLParser) :
 		incomingXML.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
 
 
-	    elif(type=="Get Report") :
+	    elif(self.type=="Get Report") :
 		# This is a message from the Vacuum to the commander to
 		# let the commander know the position and status of a
 		# vacuum. Need to define the position and status.
 		incomingXML = XMLMessageGetReportVacuumCommander()
-		vacuum = int(passedInformation['vacuumID'])
-		xPos   = int(passedInformation['xPos'])
-		yPos   = int(passedInformation['yPos'])
-		status = int(passedInformation['status'])
+		vacuum = int(self.passedInformation['vacuumID'])
+		xPos   = int(self.passedInformation['xPos'])
+		yPos   = int(self.passedInformation['yPos'])
+		status = int(self.passedInformation['status'])
 
 		incomingXML.setVacuumID(vacuum)
 		incomingXML.setXPos(xPos)
@@ -480,22 +498,22 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-	elif(name==Agent.SENSOR) :
+	elif(self.name==Agent.SENSOR) :
 
-	    if( type=="World Status" ) :
+	    if( self.type=="World Status" ) :
 		# This is a message from the World to the Sensor to let it
 		# know the status of the world.
 		incomingXML = XMLMessageWorldStatus()
 
 
 
-	    elif(type=="World Wetness") :
+	    elif(self.type=="World Wetness") :
 		# This is a message from the world to the Sensor to let it
 		# know the wetness levels of the world.
 		incomingXML = XMLMessageWorldWetness()
 
 
-	    elif(type=="Send Planner Update") :
+	    elif(self.type=="Send Planner Update") :
 		# This is a message from the planner to the sensor to
 		# request an update.
 		incomingXML = XMLMessageUpdatePlannerSensor()
@@ -504,16 +522,16 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-	elif(name==Agent.WORLD) :
+	elif(self.name==Agent.WORLD) :
 	    
 	    
-	    if(type=="Clean Grid") :
+	    if(self.type=="Clean Grid") :
 		# This is the message from a Vacuum to send its location
 		# to the world. Define the vacuum and its position.
 		incomingXML = XMLMessageVacuumIDPosBase()
-		vacuum = passedInformation["vacuumID"]
-		xPos = passedInformation["xPos"]
-		yPos = passedInformation["yPos"]
+		vacuum = self.passedInformation["vacuumID"]
+		xPos = self.passedInformation["xPos"]
+		yPos = self.passedInformation["yPos"]
 		#print("{0} - {1},{2}".format(vacuum,xPos,yPos))
 
 		incomingXML.setVacuumID(vacuum)
@@ -529,12 +547,12 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-	    elif(type=="Add Expenditure") :
+	    elif(self.type=="Add Expenditure") :
 		# This is a message from a vacuum to the World. It sends
 		# an expenditure required for the vacuum.
 		incomingXML = XMLMessageVacuumAddExpenditureWorld()
-		vacuum = passedInformation["vacuumID"]
-		expenditure = passedInformation["expenditure"]
+		vacuum = self.passedInformation["vacuumID"]
+		expenditure = self.passedInformation["expenditure"]
 		#print("{0} - {1}".format(vacuum,expenditure))
 
 		incomingXML.setVacuumID(vacuum)
@@ -544,18 +562,18 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-	elif(name == Agent.VACUUM) :
+	elif(self.name == Agent.VACUUM) :
 
 	    
-	    if(type=="Move Order") :
+	    if(self.type=="Move Order") :
 		# This is a message send from a Commander to a Vacuum to
 		# give the vacuum the order to move. Define the vacuum and
 		# its future position.
 
 		incomingXML = XMLMessageVacuumIDPosBase()
-		vacuum = passedInformation["vacuumID"]
-		xPos = passedInformation["xPos"]
-		yPos = passedInformation["yPos"]
+		vacuum = self.passedInformation["vacuumID"]
+		xPos = self.passedInformation["xPos"]
+		yPos = self.passedInformation["yPos"]
 		#print("{0} - {1},{2}".format(vacuum,xPos,yPos))
 		
 		incomingXML.setVacuumID(vacuum)
@@ -572,7 +590,7 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-	    elif(type=="World Time") :
+	    elif(self.type=="World Time") :
 		# This is a message from the world to the vacuum. It lets
 		# the vacuum know what the world time is. Set the vacuum's
 		# ID and the time.
@@ -581,8 +599,8 @@ class XMLIncomingDIF (XMLParser) :
 		dimensions = self.getChildWithName(self.getBuffer(),"dimensions")
 
 		if(dimensions) :
-		    vacuum = passedInformation["vacuumID"]
-		    time = passedInformation["time"]
+		    vacuum = self.passedInformation["vacuumID"]
+		    time = self.passedInformation["time"]
 		    #print("{0} - {1}".format(vacuum,time))
 
 		    incomingXML.setVacuumID(vacuum)
@@ -592,10 +610,10 @@ class XMLIncomingDIF (XMLParser) :
 
 
 
-	elif(name==Agent.EXTERNAL):
+	elif(self.name==Agent.EXTERNAL):
 
 
-	    if(type=="parameter") :
+	    if(self.type=="parameter") :
 		# This is an external message. It has information about a
 		# set of parameters.
 		incomingXML = XMLMessageExternalParameter()
@@ -620,7 +638,7 @@ class XMLIncomingDIF (XMLParser) :
 				break
 
 
-	    elif (type=="command") :
+	    elif (self.type=="command") :
 		# This is an external message. It has information about an
 		# action to take.
 		incomingXML = XMLMessageExternalCommand()

@@ -331,6 +331,8 @@ class Channel:
     def receiveXMLReportParseAndDecide(self,xmlString) :
         dif = XMLIncomingDIF()
         info = dif.determineXMLInformation(xmlString)
+
+	
 	if(Channel.checkInfoType) :
 	    print("Got information: {0}".format(info.getMyInformationType()))
 	    Channel.checkInfoType = False
