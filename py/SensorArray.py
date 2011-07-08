@@ -117,7 +117,7 @@ class SensorArray (Agent):
 
     def setArray(self,value) :
         self.array = value
-	print(self.array)
+	#print(self.array)
 	if(self.queueUse) :
 	    self.queue.put(self.array)
 

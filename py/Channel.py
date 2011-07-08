@@ -379,7 +379,8 @@ class Channel:
 
 
 	if (name == Agent.PLANNER) :
-
+	    #print("this is a message for the planner: {0}\n{1}".format(
+	    #    dif.getType(),dif.getPassedInformation()))
 
 	    if(self.planner) :
 		self.planner.handleMessage(dif.getType(),dif.getPassedInformation())
@@ -387,6 +388,8 @@ class Channel:
 
 
 	if (name == Agent.SENSOR) :
+	    #print("this is a message for the sensor: {0}\n{1}".format(
+	    #    dif.getType(),dif.getPassedInformation()))	    
 
             if(self.sensor) :
 		self.sensor.handleMessage(dif.getType(),dif.getPassedInformation())
@@ -412,6 +415,10 @@ class Channel:
 
 		    if(self.world) :
 			self.world.setDirtRate(float(item[1]))
+
+		    #print("this is a message for external data: *{0}*\n{1}".format(
+			#dif.getType(),dif.getPassedInformation()))
+
 		    
 		elif(item[0] == XMLMessageExternalParameter.DUST_SIZE) :
 		    if(self.planner) :
