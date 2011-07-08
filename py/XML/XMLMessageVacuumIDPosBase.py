@@ -272,20 +272,30 @@ class XMLMessageVacuumIDPosBase (XMLMessageCreator) :
 
 if (__name__ =='__main__') :
     from XMLParser import XMLParser
-    orders = XMLMessageVacuumIDPosBase()
-
-    vacuumID = 0
-    xPos = 1
-    yPos = 2
     
-    orders.setVacuumID(vacuumID)
-    orders.setPos(xPos,yPos)
-    orders.createRootNode()
-    orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
-    print(orders.xml2Char(True))
+    IDnum = 0
+    xPos  = 1
+    yPos  = 2
 
+    network = XMLMessageVacuumIDPosBase()
+    network.setVacuumID(IDnum)
+    network.setPos(xPos,yPos)
+    network.createRootNode()
+    network.specifyInformationType(XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
+    print(network.xml2Char(True))
+
+    from XMLMessageCreator import XMLMessageCreator
+    network = XMLMessageCreator()
+    network.createRootNode(False)
+    network.createObjectClassElements(Agent.PLANNER,"Vacuum Orders")
+    network.addNodeWithValue("vacuumID",IDnum)
+    network.addNodeWithValue("xPos",xPos)
+    network.addNodeWithValue("yPos",yPos)
+    print(network.xml2Char(True))
+
+    
     from XMLIncomingDIF import XMLIncomingDIF
     dif = XMLIncomingDIF()
-    dif.parseXMLString(orders.xml2Char())
+    dif.parseXMLString(network.xml2Char())
     for dimension in dif:
 	print(dimension)

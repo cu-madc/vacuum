@@ -77,6 +77,7 @@ from Agent import Agent
 # The xml classes used to define the messages being passed.
 from XML.XMLParser import XMLParser
 from XML.XMLIncomingDIF import XMLIncomingDIF
+from XML.XMLMessageForAgent import XMLMessageForAgent
 #from XML.XMLMessageNetwork import XMLMessageNetwork
 
 from XML.XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
@@ -609,15 +610,9 @@ class Channel:
     # to the planner so it will know where the vacuum was sent.
     #
     def sendVacuumReportFromCommander2Planner(self,xPos,yPos,IDnum) :
-        
-        #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
-        #network = XMLMessagePlannerReportVacuumOrders()
-        network = XMLMessageVacuumIDPosBase()
-        network.setVacuumID(IDnum)
-        network.setPos(xPos,yPos)
-        network.createRootNode()
-        network.specifyInformationType(XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
 
+        network = XMLMessageForAgent()
+	network.VacuumReportFromCommander2Planner(xPos,yPos,IDnum)
 	self.sendString(Router.PLANNER,network.xml2Char())
 	#self.receiveXMLReportParseAndDecide(network.xml2Char())
 

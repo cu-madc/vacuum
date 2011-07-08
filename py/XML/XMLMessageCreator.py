@@ -93,18 +93,19 @@ class XMLMessageCreator (XMLParser) :
     # Method to create the root node in the xml tree. Sets the
     # scheme information as well.
     #
-    def createRootNode(self) :
+    def createRootNode(self,createObject=True) :
 
 	self.cleanUpDocument()
         self.doc = Document()
 	self.root_node = self.doc.createElement("objectModel");
         self.doc.appendChild(self.root_node)
 
-        self.root_node.setAttribute("xmlns","http://standards.ieee.org/IEEE1516-2010")
-        self.root_node.setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance")
-        self.root_node.setAttribute("xsi:schemaLocation","http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd")
+        #self.root_node.setAttribute("xmlns","http://standards.ieee.org/IEEE1516-2010")
+        #self.root_node.setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance")
+        #self.root_node.setAttribute("xsi:schemaLocation","http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd")
 
-        self.createObjectClass()
+	if(createObject) :
+	    self.createObjectClass()
 
 
 
@@ -196,6 +197,25 @@ class XMLMessageCreator (XMLParser) :
         node = self.doc.createTextNode(name)
         dimension.appendChild(node)
         self.newNode.appendChild(dimension)
+
+
+    ## addNodeWithValue
+    #
+    # Method to set the name and value of a node.
+    def addNodeWithValue(self,name,value) :
+
+        newDimension = self.doc.createElement("dimension")
+        self.dimensionsNode.appendChild(newDimension)
+
+        dimension = self.doc.createElement("name")
+        node = self.doc.createTextNode(name)
+        dimension.appendChild(node)
+        newDimension.appendChild(dimension)
+
+        dimension = self.doc.createElement("value")
+        node = self.doc.createTextNode("{0}".format(value))
+        dimension.appendChild(node)
+        newDimension.appendChild(dimension)
 
 
 
