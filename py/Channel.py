@@ -80,34 +80,6 @@ from XML.XMLIncomingDIF import XMLIncomingDIF
 from XML.XMLMessageForAgent import XMLMessageForAgent
 #from XML.XMLMessageNetwork import XMLMessageNetwork
 
-from XML.XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
-
-from XML.XMLMessageWorldStatus import \
-     XMLMessageWorldStatus
-
-from XML.XMLMessageWorldWetness import \
-     XMLMessageWorldWetness
-
-from XML.XMLMessageUpdateWorldPlanner import \
-     XMLMessageUpdateWorldPlanner
-
-from XML.XMLMessageUpdatePlannerSensor import \
-     XMLMessageUpdatePlannerSensor
-
-from XML.XMLMessageSensorWetness import \
-     XMLMessageSensorWetness
-
-from XML.XMLMessageSensorWetness import \
-     XMLMessageSensorWetness
-
-from XML.XMLMessageSensorStatus import \
-     XMLMessageSensorStatus
-
-from XML.XMLMessageWorldVacuumCurrentTime import \
-     XMLMessageWorldVacuumCurrentTime
-
-from XML.XMLMessageVacuumAddExpenditureWorld import \
-     XMLMessageVacuumAddExpenditureWorld
 
 from XML.XMLMessageExternalCommand import \
      XMLMessageExternalCommand     
@@ -115,19 +87,7 @@ from XML.XMLMessageExternalCommand import \
 from XML.XMLMessageExternalParameter import \
      XMLMessageExternalParameter
 
-# The xml classes used to define the messages being passed.
-from XML.XMLParser import XMLParser
-from XML.XMLIncomingDIF import XMLIncomingDIF
-
-#from XML.XMLMessagePlannerReportVacuumOrders import \
-#     XMLMessagePlannerReportVacuumOrders
-
-#from XML.XMLMessageRecommendOrderCommander2Planner import \
-#     XMLMessageRecommendOrderCommander2Planner
-
-#from XML.XMLMessageRecommendOrderPlanner2Commander import \
-#     XMLMessageRecommendOrderPlanner2Commander
-
+#######################################################################
 from XML.XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 
 from XML.XMLMessageMoveOrderCommanderVacuum import \
@@ -689,13 +649,13 @@ class Channel:
 	#self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 
+    ## sendStatusSensor2Planner
+    #
+    # Routine to send a noisy view of the world's grids to the planner
+    # from the sensor.
     def sendStatusSensor2Planner(self,noisyView) :
-	print(noisyView)
-        sensorData = XMLMessageSensorStatus(noisyView)
-	#print("Channel.sendStatusSensor2Planner: {0}".format(sensorData.getMyInformationType()))
-        sensorData.createRootNode()
-
-	#Channel.checkInfoType = True
+        sensorData = XMLMessageForAgent()
+        sensorData.StatusSensor2Planner(noisyView)
 	self.sendString(Router.PLANNER,sensorData.xml2Char()) #,-1,True)
 	#self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 

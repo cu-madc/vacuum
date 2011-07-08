@@ -233,9 +233,20 @@ class XMLMessageForAgent (XMLMessageCreator) :
 	#print(self.xml2Char())
 
 
+    ## StatusSensor2Planner
+    #
+    # Routine to define the xml for a noisy view of the world's grids
+    # to the planner from the sensor.
+    def StatusSensor2Planner(self,noisyView) :
+        self.createRootNode(False)
+	self.createObjectClassElements(Agent.PLANNER,"Sensor Status")
+	self.addArrayNode(noisyView)
+	#print(self.xml2Char())
+
+
 
 if (__name__ =='__main__') :
-    from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
+    from XMLMessageSensorStatus import XMLMessageSensorStatus
     from XMLParser import XMLParser
     
     IDnum  = 0
@@ -243,20 +254,24 @@ if (__name__ =='__main__') :
     yPos   = 2
     status = 4
 
-    orders = XMLMessageVacuumIDPosBase()
-    orders.setVacuumID(IDnum)
-    orders.setPos(xPos,yPos)
-    orders.createRootNode()
-    orders.specifyInformationType(XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID)
-    print(orders.xml2Char(True))
+    N = 5;
+    A = zeros((N,N),dtype=float64)        # array of values for dirt levels
+    for i in range(N) :
+        for j in range(N) :
+            A[i,j] = i*N+j
+
+
+    sensorData = XMLMessageSensorStatus(A)
+    sensorData.createRootNode()
+    print(sensorData.xml2Char(True))
 
     network = XMLMessageForAgent()
-    network.WorldCleanedGrid(IDnum,xPos,yPos)
+    network.StatusSensor2Planner(A)
     print(network.xml2Char(True))
 
     
-    from XMLIncomingDIF import XMLIncomingDIF
-    dif = XMLIncomingDIF()
-    dif.parseXMLString(network.xml2Char())
-    for dimension in dif:
-	print(dimension)
+#    from XMLIncomingDIF import XMLIncomingDIF
+#    dif = XMLIncomingDIF()
+#    dif.parseXMLString(network.xml2Char())
+#    for dimension in dif:
+#	print(dimension)

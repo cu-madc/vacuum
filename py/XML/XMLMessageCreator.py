@@ -219,6 +219,77 @@ class XMLMessageCreator (XMLParser) :
 
 
 
+    def addArrayNode(self,A) :
+        # Method to values from an array to the tree. The value is
+        # then added to the xml tree under the dimensions node.
+
+	# First create an array node to hold the array
+	self.arrayNode = self.doc.createElement("dimension")
+	self.dimensionsNode.appendChild(self.arrayNode)
+
+	array = self.doc.createElement("array")
+	self.arrayNode.appendChild(array)
+
+
+        rowNum = 0
+        for row in A:
+            colNum = 0
+            for col in row:
+
+                # Go through each entry in the array.
+                # Create a dimension element for each entry in the array.
+                entryNode = self.doc.createElement("entry")
+                array.appendChild(entryNode)
+
+                # Specify which row this is coming from.
+                dimension = self.doc.createElement("row")
+                node = self.doc.createTextNode(str(rowNum))
+                dimension.appendChild(node)
+                entryNode.appendChild(dimension)
+
+                # specify which column this is coming from.
+                dimension = self.doc.createElement("column")
+                node = self.doc.createTextNode(str(colNum))
+                dimension.appendChild(node)
+                entryNode.appendChild(dimension)
+
+                # Specify the value in the array.
+                dimension = self.doc.createElement("value")
+                # This is a cheap hack. Need to properly treat the
+                # boolean arrays. Question - how to do it? *TODO*
+                if(type(col)==bool_) :
+                    if(col) :
+                        node = self.doc.createTextNode("1.0")
+                    else:
+                        node = self.doc.createTextNode("0.0")
+                else:
+                    node = self.doc.createTextNode("{0:22.14E}".format(col))
+                dimension.appendChild(node)
+                entryNode.appendChild(dimension)
+
+                colNum += 1
+
+
+            rowNum += 1
+
+        # Specify the number of rows in the array.
+        #self.arrayNode = self.doc.createElement("dimension")
+        #self.dimensionsNode.appendChild(self.arrayNode)
+        dimension = self.doc.createElement("NumberRows")
+        node = self.doc.createTextNode(str(rowNum))
+        dimension.appendChild(node)
+        array.appendChild(dimension)
+
+        # specify the number of columns in the array.
+        #self.arrayNode = self.doc.createElement("dimension")
+        #self.dimensionsNode.appendChild(self.arrayNode)
+        dimension = self.doc.createElement("NumberColumns")
+        node = self.doc.createTextNode(str(colNum))
+        dimension.appendChild(node)
+        array.appendChild(dimension)
+
+
+
 
     ## getMatrixFromArray
     #
