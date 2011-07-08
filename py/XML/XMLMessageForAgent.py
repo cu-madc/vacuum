@@ -245,8 +245,18 @@ class XMLMessageForAgent (XMLMessageCreator) :
 
 
 
+    ## WorldWetnessToSensor
+    #
+    # Routine to send the world's wetness levels to a sensor.
+    def WorldWetnessToSensor(self,Moisture):
+        self.createRootNode(False)
+	self.createObjectClassElements(Agent.SENSOR,"World Wetness")
+	self.addArrayNode(Moisture)
+	#print(self.xml2Char())
+	
+
+
 if (__name__ =='__main__') :
-    from XMLMessageSensorStatus import XMLMessageSensorStatus
     from XMLParser import XMLParser
     
     IDnum  = 0
@@ -261,12 +271,13 @@ if (__name__ =='__main__') :
             A[i,j] = i*N+j
 
 
-    sensorData = XMLMessageSensorStatus(A)
+    from XMLMessageWorldWetness import XMLMessageWorldWetness
+    sensorData = XMLMessageWorldWetness(A)
     sensorData.createRootNode()
     print(sensorData.xml2Char(True))
 
     network = XMLMessageForAgent()
-    network.StatusSensor2Planner(A)
+    network.WorldWetnessToSensor(A)
     print(network.xml2Char(True))
 
     

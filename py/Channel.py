@@ -676,9 +676,8 @@ class Channel:
     #
     # Routine to send the world's wetness levels to a sensor.
     def sendWorldWetnessToSensor(self,Moisture):
-        worldWetness = XMLMessageWorldWetness(Moisture)
-        worldWetness.createRootNode()
-
+	worldWetness = XMLMessageForAgent()
+	worldWetness.WorldWetnessToSensor(Moisture)
 	self.sendString(Router.SENSORARRAY,worldWetness.xml2Char())
 	#self.receiveXMLReportParseAndDecide(worldWetness.xml2Char())
 
