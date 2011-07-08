@@ -129,6 +129,7 @@ class Planner (Agent) :
 
     def setDirtLevels(self,value):
         self.dirtLevels = value
+	#print(self.dirtLevels)
         
     def getArray(self) :
 	while(not self.queue.empty()):
@@ -360,6 +361,13 @@ class Planner (Agent) :
 
 	elif (type=="Update") :
 	    self.updateView()
+
+	elif (type=="Sensor Status") :
+	    self.setDirtLevels(passedInformation["array"])
+
+	elif (type=="Sensor Wetness") :
+	    self.setWet(passedInformation["array"])  # TODO - is this ever called?
+
 
 
 

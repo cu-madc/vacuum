@@ -382,24 +382,8 @@ class Channel:
 
 
 	    if(self.planner) :
-
 		self.planner.handleMessage(dif.getType(),dif.getPassedInformation())
 		
-
-		if(theType == XMLParser.MESSAGE_STATUS_SENSOR_PLANNER) :
-
-		    # Send the planner what the sensor things the world status is.
-		    #print("Send planner dirt levels.")
-		    self.planner.setDirtLevels(info.getMatrixFromArray())
-
-
-
-		elif(theType == XMLParser.MESSAGE_WETNESS_SENSOR_PLANNER) :
-
-		    # Send the planner what the sensor things is the world
-		    # wetness levels.
-		    #print("send planner wet levels")
-		    self.planner.setWet(info.getMatrixFromArray())
 
 
 	if (name == Agent.SENSOR) :
@@ -423,8 +407,8 @@ class Channel:
 
 
 		    
-		    #print("this is a message for the sensor: {0}\n{1}\n{2}".format(
-		#	    dif.getType(),dif.getPassedInformation()))
+		    print("this is a message for the sensor: {0}\n{1}\n{2}".format(
+			dif.getType(),dif.getPassedInformation()))
 
 
 
