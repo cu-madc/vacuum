@@ -664,9 +664,8 @@ class Channel:
     #
     # Routine to send the world's status to a sensor.
     def sendWorldStatusToSensor(self,A) :
-        worldData = XMLMessageWorldStatus(A)
-        worldData.createRootNode()
-	#print("Channel.sendWorldStatusToSensor: sending data")
+        worldData = XMLMessageForAgent()
+	worldData.sendWorldStatusToSensor(A)
 	self.sendString(Router.SENSORARRAY,worldData.xml2Char(),-1)
 	#self.receiveXMLReportParseAndDecide(worldData.xml2Char())
 
@@ -713,12 +712,8 @@ class Channel:
     # vacuum. This tells the vacuum that it needs to take whatever
     # actions are appropriate for a given time step.
     def sendVacuumWorldTime(self,T,id,wetness) :
-        newTime = XMLMessageWorldVacuumCurrentTime(T,wetness)
-        newTime.setVacuumID(id)
-        newTime.createRootNode()
-        #print(newTime.xml2Char())
-
-	#print("Channel.sendVacuumWorldTime - {0}".format(id))
+	newTime = XMLMessageForAgent()
+	newTime.sendVacuumWorldTime(T,id,wetness)
 	self.sendString(Router.VACUUM,newTime.xml2Char(),id,False)
 	#self.receiveXMLReportParseAndDecide(newTime.xml2Char())
 

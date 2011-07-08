@@ -98,6 +98,9 @@ class XMLMessageForAgent (XMLMessageCreator) :
     def addExpenditure(self,expenditure) :
 	self.addNodeWithValue("expenditure",str(expenditure))
 
+    def addTime(self,time) :
+	self.addNodeWithValue("time",time)
+
 
     ## VacuumReportFromCommander2Planner
     #
@@ -244,16 +247,40 @@ class XMLMessageForAgent (XMLMessageCreator) :
 	#print(self.xml2Char())
 
 
+    ## sendWorldStatusToSensor
+    #
+    # Routine to send the world's status to a sensor.
+    def sendWorldStatusToSensor(self,A) :
+        self.createRootNode(False)
+	self.createObjectClassElements(Agent.SENSOR,"World Status")
+	self.addArrayNode(A)
+	#print(self.xml2Char())
+
 
     ## WorldWetnessToSensor
     #
-    # Routine to send the world's wetness levels to a sensor.
+    # Routine to create the xml for the world's wetness levels to a
+    # sensor.
     def WorldWetnessToSensor(self,Moisture):
         self.createRootNode(False)
 	self.createObjectClassElements(Agent.SENSOR,"World Wetness")
 	self.addArrayNode(Moisture)
 	#print(self.xml2Char())
-	
+
+
+    ## sendVacuumWorldTime
+    #
+    # Routine to create the xml for the current world time from the
+    # world to a vacuum. This tells the vacuum that it needs to take
+    # whatever actions are appropriate for a given time step.
+    def sendVacuumWorldTime(self,T,id,wetness) :
+        self.createRootNode(False)
+	self.createObjectClassElements(Agent.VACUUM,"World Time")
+	self.addArrayNode(wetness)
+	self.vacuumID(id)
+	self.addTime(T)
+	#print(self.xml2Char())
+
 
 
 if (__name__ =='__main__') :
@@ -263,21 +290,24 @@ if (__name__ =='__main__') :
     xPos   = 1
     yPos   = 2
     status = 4
+    T      = 5
 
-    N = 5;
+    N = 3;
     A = zeros((N,N),dtype=float64)        # array of values for dirt levels
     for i in range(N) :
         for j in range(N) :
             A[i,j] = i*N+j
 
 
-    from XMLMessageWorldWetness import XMLMessageWorldWetness
-    sensorData = XMLMessageWorldWetness(A)
-    sensorData.createRootNode()
-    print(sensorData.xml2Char(True))
+    from XMLMessageWorldVacuumCurrentTime import XMLMessageWorldVacuumCurrentTime
+    newTime = XMLMessageWorldVacuumCurrentTime(T,A)
+    newTime.setVacuumID(IDnum)
+    newTime.createRootNode()
+    print(newTime.xml2Char(True))
+
 
     network = XMLMessageForAgent()
-    network.WorldWetnessToSensor(A)
+    network.sendVacuumWorldTime(T,IDnum,A)
     print(network.xml2Char(True))
 
     
