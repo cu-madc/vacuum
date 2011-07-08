@@ -82,9 +82,6 @@ from XML.XMLMessageForAgent import XMLMessageForAgent
 
 from XML.XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
 
-from XML.XMLMessageGetReportVacuumCommander import \
-     XMLMessageGetReportVacuumCommander
-
 from XML.XMLMessageWorldStatus import \
      XMLMessageWorldStatus
 
@@ -138,9 +135,6 @@ from XML.XMLMessageMoveOrderCommanderVacuum import \
 
 from XML.XMLMessageMoveOrderCommanderPlanner import \
      XMLMessageMoveOrderCommanderPlanner
-
-from XML.XMLMessageGetReportVacuumCommander import \
-     XMLMessageGetReportVacuumCommander
 
 from XML.XMLMessageWorldStatus import \
      XMLMessageWorldStatus
@@ -678,18 +672,9 @@ class Channel:
     # Routine to take a message from the commander that is an order to
     # move a vacuum and relay it to the planner.
     def sendMoveOrderFromCommander2Planner(self,xPos,yPos,IDnum) :
-        
-        #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
-        #orders = XMLMessageMoveOrderCommanderPlanner()
-        orders = XMLMessageVacuumIDPosBase()
-        orders.setVacuumID(IDnum)
-        orders.setPos(xPos,yPos)
-        orders.createRootNode()
-        orders.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
-
-	self.sendString(Router.PLANNER,orders.xml2Char(),IDnum)
-	#self.sendString(Router.PLANNER,orders.xml2Char())
-	#self.receiveXMLReportParseAndDecide(orders.xml2Char())
+	report = XMLMessageForAgent()
+	report.MoveOrderFromCommander2Planner(xPos,yPos,IDnum)
+	self.sendString(Router.PLANNER,report.xml2Char(),IDnum)
 
 
 

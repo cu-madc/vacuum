@@ -156,7 +156,20 @@ class XMLMessageForAgent (XMLMessageCreator) :
 	self.addPosition(xPos,yPos)
 	self.vacuumID(IDnum)
 	self.addStatus(status)
-	print(self.xml2Char())
+	#print(self.xml2Char())
+
+
+
+    ## MoveOrderFromCommander2Planner
+    #
+    # Routine to take a message from the commander that is an order to
+    # move a vacuum for a planner.
+    def MoveOrderFromCommander2Planner(self,xPos,yPos,IDnum) :
+	self.createRootNode(False)
+	self.createObjectClassElements(Agent.PLANNER,"Move Order")
+	self.addPosition(xPos,yPos)
+	self.vacuumID(IDnum)
+	#print(self.xml2Char())
 
 
 
@@ -173,15 +186,14 @@ if (__name__ =='__main__') :
     orders.setVacuumID(IDnum)
     orders.setPos(xPos,yPos)
     orders.createRootNode()
-    orders.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM)
-    #print(orders.xml2Char(True))
+    orders.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
+    print(orders.xml2Char(True))
 
     network = XMLMessageForAgent()
     network.createRootNode(False)
-    network.createObjectClassElements(Agent.COMMANDER,"Get Report")
+    network.createObjectClassElements(Agent.PLANNER,"Move Order")
     network.addPosition(xPos,yPos)
     network.vacuumID(IDnum)
-    network.addStatus(status)
     print(network.xml2Char(True))
 
     
