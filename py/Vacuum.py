@@ -283,7 +283,7 @@ class Vacuum (Agent):
 	elif (type=="World Time") :
 	    time     = int(passedInformation["time"])
             vacuumID = int(passedInformation["vacuumID"])
-	    self.timeStep(time,None)  # TODO!!!!
+	    self.timeStep(time,passedInformation["array"])
 
 
 

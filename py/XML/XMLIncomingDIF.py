@@ -101,14 +101,16 @@ from XMLMessageExternalParameter import \
 from XMLMessageExternalCommand import \
      XMLMessageExternalCommand
 
+from XMLMessageCreator import XMLMessageCreator
+
 from Agent import Agent
 
-class XMLIncomingDIF (XMLParser) :
+class XMLIncomingDIF (XMLMessageCreator) :
 
     DEBUG = False
 
     def __init__(self) :
-        XMLParser.__init__(self)
+        XMLMessageCreator.__init__(self)
         self.setMyInformationType(XMLParser.CHECK_INCOMING);
 	self.passedInformation = {}
 	self.name = -1
@@ -321,6 +323,10 @@ class XMLIncomingDIF (XMLParser) :
 
 		elif(values[0] == "value") :
 		    xmlValue = values[2]
+
+		elif(values[0] == "array") :
+		    xmlName = "array"
+		    xmlValue = self.getMatrixFromArray([values])
 
 	    # Set the dictionary information for this node.
 	    self.passedInformation[xmlName] = xmlValue

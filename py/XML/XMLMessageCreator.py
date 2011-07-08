@@ -205,13 +205,18 @@ class XMLMessageCreator (XMLParser) :
     # Routine to traverse the current tree and search for a set of
     # dimensions that have array elements. All of the array elements
     # are returned in an array
-    def getMatrixFromArray(self) :
+    def getMatrixFromArray(self,theTree=None) :
+
+	# See if a list was passed. If not use the default
+	if(not theTree) :
+	    theTree=self.getBuffer()
 
         # Set the default value of the array.
         A = None
 
-        # Get the start of the dimensions.
-        nodes = self.getChildWithName(self.getBuffer(),"dimensions")
+        nodes = self.getChildWithName(theTree,"array")
+	#nodes = self.walkObjectChildrenByName(theTree,"dimension","array")
+	#print(nodes)
         if(nodes) :
 
             # The dimensions was found. Determine the number of rows
@@ -228,7 +233,7 @@ class XMLMessageCreator (XMLParser) :
                 # Go through the whole set of dimensions and get the
                 # coresponding entry in the array.
                 for dimension in nodes[3]:
-                    if(dimension[0] == "dimension") :
+                    if(dimension[0] == "entry") :
 
                         thisRow = -1;
                         thisCol = -1;

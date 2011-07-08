@@ -319,6 +319,66 @@ class XMLParser (xml.sax.handler.ContentHandler):
 
 
 
+    def walkObjectChildrenByName(self,currentNode,nodeName,name) :
+        # Routine to walk through the tree and find the node
+        # that contains a child 
+        #  
+
+
+        if(self.DEBUG) :
+            print("\nSearching for node name: {0} node pointer: {1}".format(name,currentNode))
+
+        if(currentNode==None) :
+            return(None); #  The node passed in was null.
+
+
+        for sibling in currentNode:
+            #  Go through each of the children of the passed node.
+
+            #print("   now checking node name: ".format(sibling[0]))
+            if (sibling[0]==nodeName):
+                if (self.checkChildrenForName(sibling[3],name)):
+                    return (sibling);
+
+            #  Check to see if the target is any of this node's children.
+            checkChildren = self.walkObjectChildrenByName(sibling[3],nodeName,name);
+            if(checkChildren) :
+                #  A match was found. Return it.
+                return(checkChildren);
+
+
+        #  No match was found. Return null.
+        return(None);
+
+
+
+    def checkChildrenForName(self,currentNode,name) :
+        # Routine to walk through each of the children of the current
+        # node. If it has a node with the given name then the result
+        # is "true." Otherwise return "false."
+        # 
+
+        if(not currentNode) :
+            return None
+        
+        for sibling in currentNode:
+
+            content = sibling[2];
+            if(self.DEBUG) :
+                print("      checking node name:{0} #{1}#contents#{2}#".format(
+		    sibling[0],name,contentsToMatch))
+
+            if (sibling[0]==name):
+                #  The name of the node matches the name that was passed.
+                #  Return this node.
+                if(self.DEBUG) :
+                    print("   THIS IS A MATCH!")
+                return (True)
+
+        return(False)
+
+
+
 	
     def getChildWithName(self,currentNode,name) :
         # Routine to walk through the children and return the node whose name

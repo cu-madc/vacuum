@@ -109,6 +109,14 @@ class XMLMessageArray (XMLMessageCreator) :
         # with. The value is then added to the xml tree under the
         # dimensions node.
 
+	# First create an array node to hold the array
+	self.arrayNode = self.doc.createElement("dimension")
+	self.dimensionsNode.appendChild(self.arrayNode)
+
+	array = self.doc.createElement("array")
+	self.arrayNode.appendChild(array)
+
+
         rowNum = 0
         #print(self.A)
         for row in self.A:
@@ -117,20 +125,20 @@ class XMLMessageArray (XMLMessageCreator) :
 
                 # Go through each entry in the array.
                 # Create a dimension element for each entry in the array.
-                self.arrayNode = self.doc.createElement("dimension")
-                self.dimensionsNode.appendChild(self.arrayNode)
+                entryNode = self.doc.createElement("entry")
+                array.appendChild(entryNode)
 
                 # Specify which row this is coming from.
                 dimension = self.doc.createElement("row")
                 node = self.doc.createTextNode(str(rowNum))
                 dimension.appendChild(node)
-                self.arrayNode.appendChild(dimension)
+                entryNode.appendChild(dimension)
 
                 # specify which column this is coming from.
                 dimension = self.doc.createElement("column")
                 node = self.doc.createTextNode(str(colNum))
                 dimension.appendChild(node)
-                self.arrayNode.appendChild(dimension)
+                entryNode.appendChild(dimension)
 
                 # Specify the value in the array.
                 dimension = self.doc.createElement("value")
@@ -144,7 +152,7 @@ class XMLMessageArray (XMLMessageCreator) :
                 else:
                     node = self.doc.createTextNode("{0:22.14E}".format(col))
                 dimension.appendChild(node)
-                self.arrayNode.appendChild(dimension)
+                entryNode.appendChild(dimension)
 
                 colNum += 1
 
@@ -152,20 +160,20 @@ class XMLMessageArray (XMLMessageCreator) :
             rowNum += 1
 
         # Specify the number of rows in the array.
-        self.arrayNode = self.doc.createElement("dimension")
-        self.dimensionsNode.appendChild(self.arrayNode)
+        #self.arrayNode = self.doc.createElement("dimension")
+        #self.dimensionsNode.appendChild(self.arrayNode)
         dimension = self.doc.createElement("NumberRows")
         node = self.doc.createTextNode(str(rowNum))
         dimension.appendChild(node)
-        self.arrayNode.appendChild(dimension)
+        array.appendChild(dimension)
 
         # specify the number of columns in the array.
-        self.arrayNode = self.doc.createElement("dimension")
-        self.dimensionsNode.appendChild(self.arrayNode)
+        #self.arrayNode = self.doc.createElement("dimension")
+        #self.dimensionsNode.appendChild(self.arrayNode)
         dimension = self.doc.createElement("NumberColumns")
         node = self.doc.createTextNode(str(colNum))
         dimension.appendChild(node)
-        self.arrayNode.appendChild(dimension)
+        array.appendChild(dimension)
 
 
 

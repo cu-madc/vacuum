@@ -372,21 +372,7 @@ class Channel:
 	    #    dif.getType(),dif.getPassedInformation()))
 
 	    if(self.vacuum) :
-
-		if (theType == XMLParser.MESSAGE_WORLD_VACUUM_CURRENT_TIME) :
-
-		    time = info.getTime()
-		    vacuumID = info.getVacuumID()
-		    #print("sending report to vacuum for {0}".format(vacuumID))
-
-		    #if(vacuumID < len(self.vacuumArray)) :
-		    if(self.vacuum) :
-			 #print("sending to vacuum.")
-			 self.vacuum.timeStep(time,info.getMatrixFromArray())
-			 #self.vacuumArray[vacuumID].timeStep(time,info.getMatrixFromArray())
-
-		else :
-		    self.vacuum.handleMessage(dif.getType(),dif.getPassedInformation())
+		self.vacuum.handleMessage(dif.getType(),dif.getPassedInformation())
 
 		
 

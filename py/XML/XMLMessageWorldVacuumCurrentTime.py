@@ -197,4 +197,13 @@ if (__name__ =='__main__') :
     dif = XMLIncomingDIF()
     xmlString = network.xml2Char()
     info = dif.determineXMLInformation(xmlString)
-    #print("theXML:\n{0}".format(info.xml2Char()))
+    A = dif.getMatrixFromArray()
+    print(A)
+
+    passed = dif.getPassedInformation()
+    #print(passed["array"])
+    B = dif.getMatrixFromArray(passed["array"]) # TODO - this is abhorrent
+    print(B)
+    
+    #buffer = info.getBuffer()
+    #print(buffer)
