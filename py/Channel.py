@@ -638,15 +638,8 @@ class Channel:
     # identifies a particular vacuum and converts it into XML and
     # passes the XML tree on to the commander.
     def sendRecommendOrderFromPlanner2Commander(self,xPos,yPos,IDnum) :
-        
-        #print("Sending to id: {0} pos: {1},{2}".format(IDnum,xPos,yPos))
-        #orders = XMLMessageRecommendOrderPlanner2Commander()
-        orders = XMLMessageVacuumIDPosBase()
-        orders.setVacuumID(IDnum)
-        orders.setPos(xPos,yPos)
-        orders.createRootNode()
-        orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER)
-
+	orders = XMLMessageForAgent()
+	orders.RecommendOrderFromPlanner2Commander(xPos,yPos,IDnum)
 	self.sendString(Router.COMMANDER,orders.xml2Char())
 	#self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
