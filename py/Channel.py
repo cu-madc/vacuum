@@ -729,12 +729,9 @@ class Channel:
     # tells the planner that it needs to take whatever actions are
     # necessary during a world time step.
     def sendPlannerUpdateRequest(self) :
-        update = XMLMessageUpdateWorldPlanner()
-	#print("Channel.sendPlannerUpdateRequest: {0}".format(update.getMyInformationType()))
-        update.createRootNode()
-
-	#Channel.checkInfoType = True
-	self.sendString(Router.PLANNER,update.xml2Char()) #,-1,True)
+	report = XMLMessageForAgent()
+	report.PlannerUpdateRequest()
+	self.sendString(Router.PLANNER,report.xml2Char()) #,-1,True)
 	#self.receiveXMLReportParseAndDecide(update.xml2Char())
 
 
@@ -744,12 +741,8 @@ class Channel:
     # vacuum and is sent to a planner.
     def sendPlannerVacuumMovedPosition(self,idnum,xpos,ypos) :
         #update = XMLMessageVaccumMovedReportToPlanner()
-        update = XMLMessageVacuumIDPosBase()
-        update.setVacuumID(idnum)
-        update.setPos(xpos,ypos)
-        update.createRootNode()
-        update.specifyInformationType(XMLParser.MESSAGE_VACUUM_NEW_POSITION_PLANNER)
-
+        update = XMLMessageForAgent()
+        update.PlannerVacuumMovedPosition(idnum,xpos,ypos)
 	self.sendString(Router.PLANNER,update.xml2Char())
 	#self.receiveXMLReportParseAndDecide(update.xml2Char())
 

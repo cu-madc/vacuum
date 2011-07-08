@@ -183,6 +183,31 @@ class XMLMessageForAgent (XMLMessageCreator) :
 
 
 
+    ## PlannerUpdateRequest
+    #
+    # Routine to send a request for an update to the planner. This
+    # tells the planner that it needs to take whatever actions are
+    # necessary during a world time step.
+    def PlannerUpdateRequest(self) :
+	self.createRootNode(False)
+	self.createObjectClassElements(Agent.PLANNER,"Update")
+	#print(self.xml2Char())
+
+
+
+    ## PlannerVacuumMovedPosition
+    #
+    # Routine to send the new position of a vacuum. This comes from a
+    # vacuum and is sent to a planner.
+    def PlannerVacuumMovedPosition(self,idnum,xpos,ypos) :
+        self.createRootNode(False)
+	self.createObjectClassElements(Agent.PLANNER,"New Vacuum Location")
+	self.addPosition(xpos,ypos)
+	self.vacuumID(idnum)
+	#print(self.xml2Char())
+
+
+
 if (__name__ =='__main__') :
     from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
     from XMLParser import XMLParser
