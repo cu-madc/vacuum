@@ -105,6 +105,18 @@ class XMLMessageForAgent (XMLMessageCreator) :
 	self.vacuumID(IDnum)
 	#print(self.xml2Char())
 
+
+    ## RecommendOrderFromCommander2Planner
+    #
+    # Routine that takes a recommendation order from the commander
+    # that identifies a particular vacuum and converts it into XML.
+    def RecommendOrderFromCommander2Planner(self,IDnum,xPos,yPos) :
+	self.createRootNode(False)
+	self.createObjectClassElements(Agent.PLANNER,"Vacuum Recommendation")
+	self.addPosition(xPos,yPos)
+	self.vacuumID(IDnum)
+	print(self.xml2Char())
+
 	
 
 
@@ -116,16 +128,17 @@ if (__name__ =='__main__') :
     xPos  = 1
     yPos  = 2
 
-    network = XMLMessageVacuumIDPosBase()
-    network.setVacuumID(IDnum)
-    network.setPos(xPos,yPos)
-    network.createRootNode()
-    network.specifyInformationType(XMLParser.MESSAGE_PLANNER_REPORT_VACUUM_ORDERS)
-    print(network.xml2Char(True))
+
+    orders = XMLMessageVacuumIDPosBase()
+    orders.setVacuumID(IDnum)
+    orders.setPos(xPos,yPos)
+    orders.createRootNode()
+    orders.specifyInformationType(XMLParser.MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER)
+    print(orders.xml2Char(True))
 
     network = XMLMessageForAgent()
     network.createRootNode(False)
-    network.createObjectClassElements(Agent.PLANNER,"Vacuum Orders")
+    network.createObjectClassElements(Agent.PLANNER,"Vacuum Recommendation")
     network.addPosition(xPos,yPos)
     network.vacuumID(IDnum)
     print(network.xml2Char(True))
