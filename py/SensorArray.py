@@ -137,10 +137,8 @@ class SensorArray (Agent):
         dirtLevel=None
         wetted=None
         if (self.isWorking):
-            #actualdata=self.world.getArray()     #get real world values
-
             #adjust for noise
-            #print(actualdata)
+            #print(self.Wet)
             noisyView =self.array*(
                 1.0+2.0*self.accuracy*(random.rand(self.N*self.N).reshape(self.N,self.N)-0.5))
             #print("SensorArray.measure:\n{0}\n{1}\n\n".format(self.array,noisyView))

@@ -683,12 +683,9 @@ class Channel:
     # Routine to take a request from the planner to get information
     # from the sensor and send it to the sensor.
     def sendMeasuredFromPlanner2Sensor(self) :
-        sensorData = XMLMessageUpdatePlannerSensor()
-	#print("Channel.sendMeasuredFromPlanner2Sensor: {0}".format(sensorData.getMyInformationType()))
-        sensorData.createRootNode()
-
-	#Channel.checkInfoType = True
-	self.sendString(Router.SENSORARRAY,sensorData.xml2Char()) #,-1,True)
+	report = XMLMessageForAgent()
+	report.MeasuredFromPlanner2Sensor()
+	self.sendString(Router.SENSORARRAY,report.xml2Char()) #,-1,True)
 	#self.receiveXMLReportParseAndDecide(sensorData.xml2Char())
 
 

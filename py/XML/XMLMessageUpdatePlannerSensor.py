@@ -101,18 +101,9 @@ if (__name__ =='__main__') :
     network.createRootNode()
     print(network.xml2Char(True))
 
-
-    network.setVacuumID(1)
-    network.setXPos(5)
-    network.setYPos(2)
-    #print(network.xml2Char())
-
-    #root_node = network.root_node.cloneNode(True)
-    #network.copyXMLTree(root_node)
+    from XMLMessageForAgent import XMLMessageForAgent
+    trial = XMLMessageForAgent()
+    trial.MeasuredFromPlanner2Sensor()
+    print(trial.xml2Char(True))
 
 
-    dif = XMLIncomingDIF()
-    xmlString = network.xml2Char()
-    info = dif.determineXMLInformation(xmlString)
-    info.createRootNode()
-    #print("theXML:\n{0}".format(info.xml2Char()))

@@ -172,6 +172,16 @@ class XMLMessageForAgent (XMLMessageCreator) :
 	#print(self.xml2Char())
 
 
+    ## MeasuredFromPlanner2Sensor
+    #
+    # Routine to take a request from the planner to get information
+    # from the sensor to send it to the sensor.
+    def MeasuredFromPlanner2Sensor(self) :
+	self.createRootNode(False)
+	self.createObjectClassElements(Agent.SENSOR,"Send Planner Update")
+	#print(self.xml2Char())
+
+
 
 if (__name__ =='__main__') :
     from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
