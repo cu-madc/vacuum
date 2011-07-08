@@ -87,47 +87,6 @@ from XML.XMLMessageExternalCommand import \
 from XML.XMLMessageExternalParameter import \
      XMLMessageExternalParameter
 
-#######################################################################
-from XML.XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
-
-from XML.XMLMessageMoveOrderCommanderVacuum import \
-     XMLMessageMoveOrderCommanderVacuum
-
-from XML.XMLMessageMoveOrderCommanderPlanner import \
-     XMLMessageMoveOrderCommanderPlanner
-
-from XML.XMLMessageWorldStatus import \
-     XMLMessageWorldStatus
-
-from XML.XMLMessageWorldWetness import \
-     XMLMessageWorldWetness
-
-from XML.XMLMessageUpdateWorldPlanner import \
-     XMLMessageUpdateWorldPlanner
-
-from XML.XMLMessageUpdatePlannerSensor import \
-     XMLMessageUpdatePlannerSensor
-
-from XML.XMLMessageSensorWetness import \
-     XMLMessageSensorWetness
-
-from XML.XMLMessageSensorWetness import \
-     XMLMessageSensorWetness
-
-from XML.XMLMessageSensorStatus import \
-     XMLMessageSensorStatus
-
-from XML.XMLMessageVaccumMovedReportToPlanner import \
-     XMLMessageVaccumMovedReportToPlanner
-
-from XML.XMLMessageWorldVacuumCurrentTime import \
-     XMLMessageWorldVacuumCurrentTime
-
-from XML.XMLMessageVacuumAddExpenditureWorld import \
-     XMLMessageVacuumAddExpenditureWorld
-
-from XML.XMLMessageVacuumCleanWorld import \
-     XMLMessageVacuumCleanWorld
 
 ## Channel
 #
