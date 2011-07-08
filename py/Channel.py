@@ -248,11 +248,17 @@ class Channel:
 
 	
 	if(Channel.checkInfoType) :
-	    print("Got information: {0}".format(info.getMyInformationType()))
+	    if(info) :
+		print("Got information: {0}".format(info.getMyInformationType()))
+	    else:
+		print("No object returned from the parsing routine.")
 	    Channel.checkInfoType = False
 
 	try:
-	    theType = info.getMyInformationType()
+	    if(info) :
+		theType = info.getMyInformationType()
+	    else :
+		theType = -1
 
 	except AttributeError:
 	    print("Error - the XML information is not valid.")
