@@ -389,28 +389,7 @@ class Channel:
 	if (name == Agent.SENSOR) :
 
             if(self.sensor) :
-
 		self.sensor.handleMessage(dif.getType(),dif.getPassedInformation())
-
-		if(theType == XMLParser.MESSAGE_WORLD_STATUS) :
-
-		    # let the sensor know the world status.
-		    # print("Channel.receiveXMLReportParseAndDecide-XMLParser.MESSAGE_WORLD_STATUS")
-		    self.sensor.setArray(info.getMatrixFromArray())
-
-
-
-		elif(theType == XMLParser.MESSAGE_WORLD_WETNESS) :
-		    # Let the sensor know the wetness levels of the world.
-	            #print("Channel.receiveXMLReportParseAndDecide - XMLParser.MESSAGE_WORLD_WETNESS")
-		    self.sensor.setWet(info.getMatrixFromArray())
-
-
-		    
-		    print("this is a message for the sensor: {0}\n{1}\n{2}".format(
-			dif.getType(),dif.getPassedInformation()))
-
-
 
 
 

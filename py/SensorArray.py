@@ -117,7 +117,7 @@ class SensorArray (Agent):
 
     def setArray(self,value) :
         self.array = value
-	#print(self.array)
+	print(self.array)
 	if(self.queueUse) :
 	    self.queue.put(self.array)
 
@@ -126,7 +126,7 @@ class SensorArray (Agent):
 
     def setWet(self,value) :
         self.Wet = value
-
+	#print(self.Wet)
 
 
     
@@ -163,6 +163,12 @@ class SensorArray (Agent):
 
 	if (type=="Send Planner Update") :
 	    self.measure()
+
+	elif (type=="World Wetness") :
+	    self.setWet(passedInformation["array"])
+
+	elif (type=="World Status") :
+	    self.setArray(passedInformation["array"])
 
 
     # Static method that is used as a helper to make it easier to
