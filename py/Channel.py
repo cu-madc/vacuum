@@ -664,17 +664,10 @@ class Channel:
     # Routine to take a message from the vacuum that is a report for
     # the commander. This routine relays that report to the commander.
     def sendReportFromVacuum2Commander(self,xPos,yPos,status,IDnum) :
-        
-        #print("Sending status to id: {0} pos: {1},{2} - {3}".format(
-        #    IDnum,xPos,yPos,status))
-        report = XMLMessageGetReportVacuumCommander()
-        report.setVacuumID(IDnum)
-        report.setPos(xPos,yPos)
-        report.setStatus(status)
-        report.createRootNode()
-
 	#Channel.checkInfoType = True
 	#print("sending vacuum to commander")
+	report = XMLMessageForAgent()
+	report.ReportFromVacuum2Commander(xPos,yPos,status,IDnum)
 	self.sendString(Router.COMMANDER,report.xml2Char(),-1,False)
 	#self.receiveXMLReportParseAndDecide(report.xml2Char())
 

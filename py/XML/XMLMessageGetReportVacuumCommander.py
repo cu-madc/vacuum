@@ -148,20 +148,10 @@ if (__name__ =='__main__') :
     network.setPos(2,4)
     network.setStatus(False)
     network.createRootNode()
-    #print(network.xml2Char())
+    print(network.xml2Char(True))
 
 
-    network.setVacuumID(1)
-    network.setXPos(5)
-    network.setYPos(2)
-    #print(network.xml2Char())
-
-    #root_node = network.root_node.cloneNode(True)
-    #network.copyXMLTree(root_node)
-
-
-    dif = XMLIncomingDIF()
-    xmlString = network.xml2Char()
-    info = dif.determineXMLInformation(xmlString)
-    info.createRootNode()
-    print("theXML:\n{0}".format(info.xml2Char(True)))
+    from XMLMessageForAgent import XMLMessageForAgent
+    trial = XMLMessageForAgent()
+    trial.ReportFromVacuum2Commander(2,4,False,3)
+    print(trial.xml2Char(True))
