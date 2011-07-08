@@ -767,11 +767,8 @@ class Channel:
     #
     # Routine to send an expenditure from a vacuum to the world. 
     def sendVacuumWorldExpenditure(self,expenditure,id) :
-        newExpenditure = XMLMessageVacuumAddExpenditureWorld(expenditure)
-        newExpenditure.setVacuumID(id)
-        newExpenditure.createRootNode()
-        #print(newExpenditure.xml2Char())
-
+	newExpenditure = XMLMessageForAgent()
+	newExpenditure.VacuumWorldExpenditure(expenditure,id)
 	self.sendString(Router.WORLD,newExpenditure.xml2Char(),id)
 	#self.receiveXMLReportParseAndDecide(newExpenditure.xml2Char())
 
@@ -781,13 +778,8 @@ class Channel:
     # Routine to let a vacuum send an update to the world to let it
     # know that a grid area has been cleaned.
     def sendWorldCleanedGrid(self,idnum,xpos,ypos) :
-        #update = XMLMessageVacuumCleanWorld()
-        update = XMLMessageVacuumIDPosBase()
-        update.setVacuumID(idnum)
-        update.setPos(xpos,ypos)
-        update.createRootNode()
-        update.specifyInformationType(XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID)
-
+	update = XMLMessageForAgent()
+	update.WorldCleanedGrid(idnum,xpos,ypos)
 	self.sendString(Router.WORLD,update.xml2Char(),idnum)
 	#self.receiveXMLReportParseAndDecide(update.xml2Char())
 

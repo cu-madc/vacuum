@@ -95,6 +95,9 @@ class XMLMessageForAgent (XMLMessageCreator) :
     def addStatus(self,status):
 	self.addNodeWithValue("status",status)
 
+    def addExpenditure(self,expenditure) :
+	self.addNodeWithValue("expenditure",str(expenditure))
+
 
     ## VacuumReportFromCommander2Planner
     #
@@ -207,6 +210,29 @@ class XMLMessageForAgent (XMLMessageCreator) :
 	#print(self.xml2Char())
 
 
+    ## VacuumWorldExpenditure
+    #
+    # Routine to create an expenditure from a vacuum to the world. 
+    def VacuumWorldExpenditure(self,expenditure,id) :
+        self.createRootNode(False)
+	self.createObjectClassElements(Agent.WORLD,"Add Expenditure")
+	self.vacuumID(id)
+	self.addExpenditure(expenditure)
+	#print(self.xml2Char())
+
+
+    ## WorldCleanedGrid
+    #
+    # Routine to let a vacuum send an update to the world to let it
+    # know that a grid area has been cleaned.
+    def WorldCleanedGrid(self,idnum,xpos,ypos) :
+        self.createRootNode(False)
+	self.createObjectClassElements(Agent.WORLD,"Clean Grid")
+	self.addPosition(xpos,ypos)
+	self.vacuumID(idnum)
+	#print(self.xml2Char())
+
+
 
 if (__name__ =='__main__') :
     from XMLMessageVacuumIDPosBase import XMLMessageVacuumIDPosBase
@@ -221,14 +247,11 @@ if (__name__ =='__main__') :
     orders.setVacuumID(IDnum)
     orders.setPos(xPos,yPos)
     orders.createRootNode()
-    orders.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_PLANNER)
+    orders.specifyInformationType(XMLParser.MESSAGE_VACUUM_WORLD_CLEAN_GRID)
     print(orders.xml2Char(True))
 
     network = XMLMessageForAgent()
-    network.createRootNode(False)
-    network.createObjectClassElements(Agent.PLANNER,"Move Order")
-    network.addPosition(xPos,yPos)
-    network.vacuumID(IDnum)
+    network.WorldCleanedGrid(IDnum,xPos,yPos)
     print(network.xml2Char(True))
 
     

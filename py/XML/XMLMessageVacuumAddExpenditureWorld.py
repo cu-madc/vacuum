@@ -146,24 +146,13 @@ class XMLMessageVacuumAddExpenditureWorld (XMLMessageVacuumIDPosBase) :
 if (__name__ =='__main__') :
     from XMLIncomingDIF import XMLIncomingDIF
     
-    network = XMLMessageVacuumAddExpenditureWorld()
+    network = XMLMessageVacuumAddExpenditureWorld(1)
     network.setVacuumID(3)
-    network.setPos(2,4)
     network.createRootNode()
     print(network.xml2Char(True))
 
 
-    network.setVacuumID(1)
-    network.setXPos(5)
-    network.setYPos(2)
-    #print(network.xml2Char())
-
-    #root_node = network.root_node.cloneNode(True)
-    #network.copyXMLTree(root_node)
-
-
-    dif = XMLIncomingDIF()
-    xmlString = network.xml2Char()
-    info = dif.determineXMLInformation(xmlString)
-    info.createRootNode()
-    print("theXML:\n{0}".format(info.xml2Char()))
+    from XMLMessageForAgent import XMLMessageForAgent
+    trial = XMLMessageForAgent()
+    trial.VacuumWorldExpenditure(1,3)
+    print(trial.xml2Char(True))
