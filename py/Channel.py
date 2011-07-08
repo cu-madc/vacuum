@@ -651,15 +651,8 @@ class Channel:
     # Routine that takes an order from the commander and converts it
     # into XML and passed the XML to the vacuum.
     def sendMoveOrderFromCommander2Vacuum(self,xPos,yPos,vacuumID) :
-        
-        #print("Sending to id: {0} pos: {1},{2}".format(vacuumID,xPos,yPos))
-        #orders = XMLMessageMoveOrderCommanderVacuum()
-        orders = XMLMessageVacuumIDPosBase()
-        orders.setVacuumID(vacuumID)
-        orders.setPos(xPos,yPos)
-        orders.createRootNode()
-        orders.specifyInformationType(XMLParser.MESSAGE_MOVE_ORDER_COMMANDER_VACUUM)
-
+	orders = XMLMessageForAgent()
+	orders.MoveOrderFromCommander2Vacuum(xPos,yPos,vacuumID)        
 	self.sendString(Router.VACUUM,orders.xml2Char(),vacuumID)
 	#self.receiveXMLReportParseAndDecide(orders.xml2Char())
 
