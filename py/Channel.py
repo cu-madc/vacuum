@@ -690,6 +690,7 @@ class Channel:
 
 
     def sendStatusSensor2Planner(self,noisyView) :
+	print(noisyView)
         sensorData = XMLMessageSensorStatus(noisyView)
 	#print("Channel.sendStatusSensor2Planner: {0}".format(sensorData.getMyInformationType()))
         sensorData.createRootNode()
