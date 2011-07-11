@@ -265,13 +265,13 @@ class Channel:
 	name = dif.getName()
 
 
-
-	if((type(name) is 'int') and (name >= 0)) :
-	    #print("this is a message for the commander: {0}\n{1}".format(
-	    #    dif.getType(),dif.getPassedInformation()))
-
+	if((type(name) is int) and (name >= 0)) :
+	    #print("this is a message for {2}: {0}\n{1}".format(
+	    #    dif.getType(),dif.getPassedInformation(),name))
 	    if((len(self.myAgents)>=name) and self.myAgents[name][0]) :
-	       self.myAgents[name][0].handleMessage(dif.getType(),dif.getPassedInformation())
+		self.myAgents[name][0].handleMessage(dif.getType(),dif.getPassedInformation())
+
+
 
 
 	elif(theType == XMLParser.MESSAGE_EXTERNAL_PARAMETER) :
@@ -430,25 +430,11 @@ class Channel:
 		elif(item == XMLMessageExternalCommand.RESTART) :
 		    #print("restart: {0}".format(item))
 
-		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
-			pass
+		    for agentList in self.myAgents :
+			for agent in agentList :
+			    if(agent) :
+				agent.restart()
 
-
-		    if(len(self.myAgents)>Agent.SENSORARRAY):
-			if (self.myAgents[Agent.SENSORARRAY][0]) :
-                            #self.myAgents[Agent.SENSORARRAY][0].shutdownServer()
-			    pass
-
-
-		    if((len(self.myAgents)>Agent.PLANNER) and self.myAgents[Agent.PLANNER][0]) :
-			#self.myAgents[Agent.PLANNER][0].shutdownServer()
-			pass
-
-		    if(len(self.myAgents)>Agent.COMMANDER) :
-			if (self.myAgents[Agent.COMMANDER][0]) :
-			    #self.myAgents[Agent.COMMANDER][0].shutdownServer()
-			    pass
-			    
 
 		    if((len(self.myAgents)>Agent.VACUUM) and self.myAgents[Agent.VACUUM][0]) :
 			#self.myAgents[Agent.VACUUM][0].shutdownServer()
@@ -457,23 +443,23 @@ class Channel:
 			self.myAgents[Agent.VACUUM][0].initializeTime(0.0)
 
 
-		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
-			#self.myAgents[Agent.WORLD][0].shutdownServer()
-			pass
-
-
-
 		elif(item == XMLMessageExternalCommand.RESET) :
-		    print("reset: {0}".format(item))
+		    #print("reset: {0}".format(item))
 
-		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
-			pass
+		    for agentList in self.myAgents :
+			for agent in agentList :
+			    if(agent) :
+				agent.reset()
+
 
 		elif(item == XMLMessageExternalCommand.POLL) :
-		    print("poll: {0}".format(item))
+		    #print("poll: {0}".format(item))
 
-		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
-			pass
+		    for agentList in self.myAgents :
+			for agent in agentList :
+			    if(agent) :
+				agent.poll()
+
 
 		elif(item == XMLMessageExternalCommand.EXIT) :
 		    #print("exit: {0}".format(item))
@@ -493,7 +479,6 @@ class Channel:
 		              #print("Shutting down the commander")
 			      self.myAgents[Agent.COMMANDER][0].shutdownServer()
 
-
 		    if((len(self.myAgents)>Agent.VACUUM) and self.myAgents[Agent.VACUUM][0]) :
 			#print("Shutting down the vacuum")
 			self.myAgents[Agent.VACUUM][0].shutdownServer()
@@ -502,6 +487,13 @@ class Channel:
 		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
 			#print("Shutting down the world")
 			self.myAgents[Agent.WORLD][0].shutdownServer()
+
+		    for agentList in self.myAgents :
+			for agent in agentList :
+			    if(agent) :
+				agent.shutdownServer()
+
+
 
 
     ## sendVacuumReportFromCommander2Planner

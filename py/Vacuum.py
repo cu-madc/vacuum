@@ -287,6 +287,11 @@ class Vacuum (Agent):
 
 
 
+    # Routine to handle the reset requests
+    def restart(self) :
+	print("vacuum reset")
+
+
 
     # Static method that is used as a helper to make it easier to
     # create a vacuum object.

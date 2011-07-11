@@ -197,3 +197,27 @@ class Agent (Process):
     # in from another agent or the world.
     def checkIncomingQueue(self,debug=False) :
 	self.getChannel().getRouter().checkIncomingQueue(debug)
+
+
+    # Routines that are expected to be overridden in their respective
+    # super classes. These are handlers for requests that come from an
+    # outside data source.
+
+    # Routine to handle the shutdown requests
+    def shutdownServer(self) :
+	pass
+
+
+    # Routine to handle the poll requests
+    def poll(self) :
+	pass
+
+
+    # Routine to handle the reset requests
+    def reset(self) :
+	pass
+
+
+    # Routine to handle the reset requests
+    def restart(self) :
+	pass
