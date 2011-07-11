@@ -289,7 +289,11 @@ class Vacuum (Agent):
 
     # Routine to handle the reset requests
     def restart(self) :
-	print("vacuum reset")
+	#self..shutdownServer()
+	self.setWorking(True)
+	self.setStatus(3)
+	self.initializeTime(0.0)
+
 
 
 

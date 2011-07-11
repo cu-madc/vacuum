@@ -412,20 +412,26 @@ class Channel:
 	elif(theType == XMLParser.MESSAGE_EXTERNAL_COMMAND) :
 	    # This is a message from the outside with information
 	    # about a command request
-	    print("External Command - {0}".format(name))
+	    #print("External Command - {0}".format(name))
 	    for item in info.parameterList:
 
 		if(item == XMLMessageExternalCommand.STOP) :
-		    print("stop: {0}".format(item))
+		    #print("stop: {0}".format(item))
 
-		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
-			pass
+		    for agentList in self.myAgents :
+			for agent in agentList :
+			    if(agent) :
+				agent.stopSimulation()
+
 
 		elif(item == XMLMessageExternalCommand.START) :
-		    print("start: {0}".format(item))
+		    #print("start: {0}".format(item))
 
-		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
-			pass
+		    for agentList in self.myAgents :
+			for agent in agentList :
+			    if(agent) :
+				agent.startSimulation()
+
 
 		elif(item == XMLMessageExternalCommand.RESTART) :
 		    #print("restart: {0}".format(item))
@@ -434,13 +440,6 @@ class Channel:
 			for agent in agentList :
 			    if(agent) :
 				agent.restart()
-
-
-		    if((len(self.myAgents)>Agent.VACUUM) and self.myAgents[Agent.VACUUM][0]) :
-			#self.myAgents[Agent.VACUUM][0].shutdownServer()
-			self.myAgents[Agent.VACUUM][0].setWorking(True)
-			self.myAgents[Agent.VACUUM][0].setStatus(3)
-			self.myAgents[Agent.VACUUM][0].initializeTime(0.0)
 
 
 		elif(item == XMLMessageExternalCommand.RESET) :
@@ -463,30 +462,6 @@ class Channel:
 
 		elif(item == XMLMessageExternalCommand.EXIT) :
 		    #print("exit: {0}".format(item))
-
-		    if(len(self.myAgents)>Agent.SENSORARRAY):
-			if (self.myAgents[Agent.SENSORARRAY][0]) :
-			     #print("Shutting down the server")
-			     self.myAgents[Agent.SENSORARRAY][0].shutdownServer()
-
-
-		    if((len(self.myAgents)>Agent.PLANNER) and self.myAgents[Agent.PLANNER][0]) :
-			#print("Shutting down the planner")
-			self.myAgents[Agent.PLANNER][0].shutdownServer()
-
-		    if(len(self.myAgents)>Agent.COMMANDER):
-			if (self.myAgents[Agent.COMMANDER][0]) :
-		              #print("Shutting down the commander")
-			      self.myAgents[Agent.COMMANDER][0].shutdownServer()
-
-		    if((len(self.myAgents)>Agent.VACUUM) and self.myAgents[Agent.VACUUM][0]) :
-			#print("Shutting down the vacuum")
-			self.myAgents[Agent.VACUUM][0].shutdownServer()
-
-
-		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
-			#print("Shutting down the world")
-			self.myAgents[Agent.WORLD][0].shutdownServer()
 
 		    for agentList in self.myAgents :
 			for agent in agentList :

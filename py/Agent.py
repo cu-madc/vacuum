@@ -217,3 +217,13 @@ class Agent (Process):
     # Routine to handle the reset requests
     def restart(self) :
 	pass
+
+
+    # Routine to handle the start requests
+    def startSimulation(self) :
+	pass
+
+
+    # Routine to handle the stop requests
+    def stopSimulation(self) :
+	pass
