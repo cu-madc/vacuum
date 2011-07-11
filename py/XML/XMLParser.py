@@ -78,26 +78,9 @@ class XMLParser (xml.sax.handler.ContentHandler):
     # passed. This number is assigned based on the contents of the
     # message and help the base object decide what variables should be
     # parsed from the message that is passed.
-    EMPTY, CHECK_INCOMING, VACUUM_NETWORK, \
-	   VACUUM_STATE, CONTROLER_NETWORK, \
-           MESSAGE_PLANNER_REPORT_VACUUM_ORDERS, \
-           MESSAGE_RECOMMEND_ORDER_COMMANDER_PLANNER, \
-           MESSAGE_RECOMMEND_ORDER_PLANNER_COMMANDER, \
-           MESSAGE_MOVE_ORDER_COMMANDER_VACUUM, \
-           MESSAGE_MOVE_ORDER_COMMANDER_PLANNER, \
-           MESSAGE_GET_REPORT_VACUUM_COMMANDER, \
-           MESSAGE_WORLD_STATUS, \
-           MESSAGE_WORLD_WETNESS, \
-           MESSAGE_UPDATE_WORLD_PLANNER, \
-           MESSAGE_UPDATE_REQUEST_PLANNER_SENSOR, \
-           MESSAGE_STATUS_SENSOR_PLANNER, \
-           MESSAGE_WETNESS_SENSOR_PLANNER, \
-           MESSAGE_VACUUM_NEW_POSITION_PLANNER, \
-           MESSAGE_WORLD_VACUUM_CURRENT_TIME, \
-           MESSAGE_VACUUM_WORLD_ADD_EXPENDITURE, \
-           MESSAGE_VACUUM_WORLD_CLEAN_GRID, \
+    EMPTY, CHECK_INCOMING, \
 	   MESSAGE_EXTERNAL_PARAMETER, \
-	   MESSAGE_EXTERNAL_COMMAND = range(23)
+	   MESSAGE_EXTERNAL_COMMAND = range(4)
 	
 
 

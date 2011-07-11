@@ -99,20 +99,20 @@ class Channel:
     DEBUG = False
     
     
-    def __init__(self,world=None,sensor=None,planner=None,commander=None) :
+    def __init__(self) :
 
         self.setWorking(True)        
         self.delay = 0.0           # transmission delay - not yet implemented
 
-        self.setWorld(world)
+	self.myAgents = []
         self.vacuumArray = [] # array of object handles
-        self.setSensor(sensor)
-        self.setPlanner(planner)
-        self.setCommander(commander)
 
-	self.router = SocketRouter(self)
+	self.setWorld(None)
+        self.setSensor(None)
+        self.setPlanner(None)
 	self.vacuum = None
 
+	self.router = SocketRouter(self)
 	self.myAgent = None
 
 
@@ -134,11 +134,6 @@ class Channel:
     def getSensor(self) :
         return(self.sensor)
 
-    def setCommander(self,value):
-        self.commander = value
-
-    def getCommander(self) :
-        return(self.commander)
 
     def setPlanner(self,planner) :
         self.planner = planner
@@ -148,6 +143,12 @@ class Channel:
 
     def getRouter(self) :
 	return(self.router)
+
+    def setWorld(self,value) :
+        self.world = value
+
+    def getWorld(self) :
+        return(self.world)
 
     def setVacuum(self,vacuum) :
 	self.vacuum = vacuum
@@ -229,11 +230,37 @@ class Channel:
 		    
 
 
-    def setWorld(self,value) :
-        self.world = value
 
-    def getWorld(self) :
-        return(self.world)
+    def addAgent(self,agent,type,id,debug=False) :
+
+	if(agent != None):
+	    for agentList in self.myAgents :
+		# Check to see if this agent is already defined. We can
+		# get into this routine from a variety of places. It might
+		# be possible to have already called this routine.
+		if(agent in agentList) :
+		    if(debug):
+			print("Channel.addAgent - This agent is already defined {1},{2}".format(type,id))
+		    return
+
+        while(type >= len(self.myAgents)) :
+            # There are not enough agent objects defined. Create
+            # place holders as empty lists.
+            self.myAgents.append([None])
+
+
+        while(id >= len(self.myAgents[type])) :
+            # There are not enough agents of this type  defined. Create
+            # place holders.
+            self.myAgents[type].append(None)
+
+	# All the spaces are allocated. Go ahead and specify this agent.
+        self.myAgents[type][id] = agent
+
+	if(debug):
+	    print("Channel.addAgent - Added agent: {0},{1}\n{2}".format(
+		type,id,self.myAgents))
+
 
 
 
@@ -272,8 +299,8 @@ class Channel:
 	    #print("this is a message for the commander: {0}\n{1}".format(
 	    #    dif.getType(),dif.getPassedInformation()))
 
-	    if(self.commander) :
-		self.commander.handleMessage(dif.getType(),dif.getPassedInformation())
+	    if((len(self.myAgents)>=name) and self.myAgents[name][0]) :
+	       self.myAgents[name][0].handleMessage(dif.getType(),dif.getPassedInformation())
 
 
 
@@ -471,9 +498,12 @@ class Channel:
 			#self.planner.shutdownServer()
 			pass
 
-		    if(self.commander) :
-			#self.commander.shutdownServer()
-			pass
+		    if(len(self.myAgents)>Agent.COMMANDER) :
+			if (self.myAgents[Agent.COMMANDER][0]) :
+			    #self.myAgents[Agent.COMMANDER][0].shutdownServer()
+			    pass
+			    
+
 
 		    if(self.vacuum) :
 			#self.vacuum.shutdownServer()
@@ -509,9 +539,10 @@ class Channel:
 			#print("Shutting down the planner")
 			self.planner.shutdownServer()
 
-		    if(self.commander) :
-			#print("Shutting down the commander")
-			self.commander.shutdownServer()
+		    if(len(self.myAgents)>Agent.COMMANDER):
+			if (self.myAgents[Agent.COMMANDER][0]) :
+		              #print("Shutting down the commander")
+			      self.myAgents[Agent.COMMANDER][0].shutdownServer()
 
 		    if(self.vacuum) :
 			#print("Shutting down the vacuum")
@@ -716,6 +747,12 @@ if (__name__ =='__main__') :
     #parameter.setParameterValue(XMLMessageExternalCommand.POLL)
     #parameter.createRootNode()
     #print(parameter.xml2Char(True))
+
+    channel = Channel()
+    from Agent import Agent
+    channel.addAgent(Agent(Agent.COMMANDER),0,1,True)
+    channel.addAgent(Agent(Agent.SENSOR),2,4,True)
+    sys.exit()
 
     channel = Channel()
     channel.getRouter().setNumberVacuums(7)

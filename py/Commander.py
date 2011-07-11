@@ -129,7 +129,7 @@ class Commander (Agent) :
     def spawnCommander() :
 	commander = Commander()
 	channel = commander.initializeChannel()
-	channel.setCommander(commander)
+	channel.addAgent(commander,Agent.COMMANDER,0,False)
 	return(commander)
 
 
