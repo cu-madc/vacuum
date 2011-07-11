@@ -106,8 +106,6 @@ class Channel:
 
 	self.myAgents = []
         self.vacuumArray = [] # array of object handles
-
-        self.setPlanner(None)
 	self.vacuum = None
 
 	self.router = SocketRouter(self)
@@ -125,12 +123,6 @@ class Channel:
 
     def getWorking(self) :
         return(self.isWorking)
-
-    def setPlanner(self,planner) :
-        self.planner = planner
-
-    def getPlanner(self) :
-        return(self.planner)
 
     def getRouter(self) :
 	return(self.router)
@@ -317,9 +309,10 @@ class Channel:
 	    #print("this is a message for the planner: {0}\n{1}".format(
 	    #    dif.getType(),dif.getPassedInformation()))
 
-	    if(self.planner) :
-		self.planner.handleMessage(dif.getType(),dif.getPassedInformation())
-		
+	    if((len(self.myAgents)>Agent.PLANNER) and self.myAgents[Agent.PLANNER][0]) :
+		self.myAgents[Agent.PLANNER][0].handleMessage(dif.getType(),
+							      dif.getPassedInformation())
+
 
 
 	if (name == Agent.SENSORARRAY) :
@@ -344,9 +337,10 @@ class Channel:
 
 		if(item[0] == XMLMessageExternalParameter.DUST_RATE) :
 		    #print("dust rate: {0}".format(item[1]))
-		    if(self.planner) :
+
+		    if((len(self.myAgents)>Agent.PLANNER) and self.myAgents[Agent.PLANNER][0]) :
 			#print("send planner dirt rate")
-			self.planner.setUnnormalizedDirtRate(float(item[1]))
+			self.myAgents[Agent.PLANNER][0].setUnnormalizedDirtRate(float(item[1]))
 
 
 		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
@@ -357,9 +351,10 @@ class Channel:
 
 		    
 		elif(item[0] == XMLMessageExternalParameter.DUST_SIZE) :
-		    if(self.planner) :
+
+		    if((len(self.myAgents)>Agent.PLANNER) and self.myAgents[Agent.PLANNER][0]) :
 			#print("send planner dirt size")
-			self.planner.setUnnormalizedDirtSize(float(item[1]))
+			self.myAgents[Agent.PLANNER][0].setUnnormalizedDirtSize(float(item[1]))
 
 
 		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
@@ -389,9 +384,10 @@ class Channel:
 			    #print("Channel.receiveXMLReportParseAndDecide - XMLParser.GRID_SIZE")
 			    self.myAgents[Agent.SENSORARRAY][0].setGridSize(int(item[1]))
 
-		    if(self.planner):
+
+		    if((len(self.myAgents)>Agent.PLANNER) and self.myAgents[Agent.PLANNER][0]) :
 			#print("send planner grid size")
-			self.planner.setGridSize(int(item[1]))
+			self.myAgents[Agent.PLANNER][0].setGridSize(int(item[1]))
 		    
 		elif(item[0] == XMLMessageExternalParameter.NUMBER_OF_VACUUMS):
 		    #print("number vacs: {0}".format(int(item[1])))
@@ -492,9 +488,10 @@ class Channel:
 			if (self.myAgents[Agent.SENSORARRAY][0]) :
                             #self.myAgents[Agent.SENSORARRAY][0].shutdownServer()
 			    pass
-		    
-		    if(self.planner):
-			#self.planner.shutdownServer()
+
+
+		    if((len(self.myAgents)>Agent.PLANNER) and self.myAgents[Agent.PLANNER][0]) :
+			#self.myAgents[Agent.PLANNER][0].shutdownServer()
 			pass
 
 		    if(len(self.myAgents)>Agent.COMMANDER) :
@@ -536,10 +533,11 @@ class Channel:
 			if (self.myAgents[Agent.SENSORARRAY][0]) :
 			     #print("Shutting down the server")
 			     self.myAgents[Agent.SENSORARRAY][0].shutdownServer()
-		    
-		    if(self.planner):
+
+
+		    if((len(self.myAgents)>Agent.PLANNER) and self.myAgents[Agent.PLANNER][0]) :
 			#print("Shutting down the planner")
-			self.planner.shutdownServer()
+			self.myAgents[Agent.PLANNER][0].shutdownServer()
 
 		    if(len(self.myAgents)>Agent.COMMANDER):
 			if (self.myAgents[Agent.COMMANDER][0]) :

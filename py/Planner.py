@@ -328,7 +328,6 @@ class Planner (Agent) :
     def spawnPlanner(errGrowth,unnormalizeDirtRate,unnormalizeDirtSize,accuracy,N) :
 	planner = Planner(errGrowth,unnormalizeDirtRate,unnormalizeDirtSize,accuracy,N)
 	channel = planner.initializeChannel()
-	channel.setPlanner(planner)
 	return(planner)
 
 
