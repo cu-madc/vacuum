@@ -68,6 +68,7 @@ from SensorArray import SensorArray
 from Channel import Channel
 from Router import Router
 from Agent import Agent
+from XML.XMLMessageForAgent import XMLMessageForAgent
 
 class Planner (Agent) :
 
@@ -240,7 +241,7 @@ class Planner (Agent) :
             
         # get data from sensor, if available
 	#print("Planner.updateView: requesting sensor to send measured")
-        self.channel.sendMeasuredFromPlanner2Sensor()
+        self.sendMeasuredFromPlanner2Sensor()
             
         # update levels based on sensor information
         # (Bayesian update - see wikipedia page for now)
@@ -319,7 +320,7 @@ class Planner (Agent) :
 	    print("view: {0}\n {1}: {2} {3} from {4} {5}".format(A,I,xord,yord,xPos,yPos))
 	    
         #raw_input("Press Enter to continue...")
-        self.channel.sendRecommendOrderFromPlanner2Commander(xord,yord,id)
+        self.sendRecommendOrderFromPlanner2Commander(xord,yord,id)
     
 
     # Static method that is used as a helper to make it easier to
@@ -367,6 +368,32 @@ class Planner (Agent) :
 	elif (type=="Sensor Wetness") :
 	    self.setWet(passedInformation["array"])  # TODO - is this ever called?
 
+
+
+
+
+    ## sendRecommendOrderFromPlanner2Commander
+    #
+    # Routine that takes a recomendation order from the planner that
+    # identifies a particular vacuum and converts it into XML and
+    # passes the XML tree on to the commander.
+    def sendRecommendOrderFromPlanner2Commander(self,xPos,yPos,IDnum) :
+	#print("Planner.sendRecommendOrderFromPlanner2Commander - sending information.")
+	orders = XMLMessageForAgent()
+	orders.RecommendOrderFromPlanner2Commander(xPos,yPos,IDnum)
+	self.channel.sendString(Router.COMMANDER,orders.xml2Char())
+
+
+
+    ## sendMeasuredFromPlanner2Sensor
+    #
+    # Routine to take a request from the planner to get information
+    # from the sensor and send it to the sensor.
+    def sendMeasuredFromPlanner2Sensor(self) :
+	#print("Planner.sendMeasuredFromPlanner2Sensor - sending information.")
+	report = XMLMessageForAgent()
+	report.MeasuredFromPlanner2Sensor()
+	self.channel.sendString(Router.SENSORARRAY,report.xml2Char()) #,-1,True)
 
 
 

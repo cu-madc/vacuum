@@ -65,6 +65,7 @@ from numpy.linalg import *
 from Channel import Channel
 from Router import Router
 from Agent import Agent
+from XML.XMLMessageForAgent import XMLMessageForAgent
 
 
 class Vacuum (Agent): 
@@ -234,14 +235,14 @@ class Vacuum (Agent):
                 self.status=3                         # waiting new instruction
 
                 # report that cleaning complete, recieve new instruction
-                self.channel.sendReportFromVacuum2Commander(
+                self.sendReportFromVacuum2Commander(
                     self.xPos,self.yPos,2,self.getID());
                 
 
             elif ((self.status==3) and (len(self.moveQueue)==0)) :
                 # nothing in queue
 		#print("Vacuum.timeStep - sending report to vacuum")
-                self.channel.sendReportFromVacuum2Commander(
+                self.sendReportFromVacuum2Commander(
                     self.xPos,self.yPos,self.status,self.getID());
 
                 
@@ -284,6 +285,22 @@ class Vacuum (Agent):
 	    time     = int(passedInformation["time"])
             vacuumID = int(passedInformation["vacuumID"])
 	    self.timeStep(time,passedInformation["array"])
+
+
+
+    ## sendReportFromVacuum2Commander
+    #
+    # Routine to take a message from the vacuum that is a report for
+    # the commander. This routine relays that report to the commander.
+    def sendReportFromVacuum2Commander(self,xPos,yPos,status,IDnum) :
+	#Channel.checkInfoType = True
+	#print("Vacuum.sendReportFromVacuum2Commander - sending vacuum to commander")
+	report = XMLMessageForAgent()
+	report.ReportFromVacuum2Commander(xPos,yPos,status,IDnum)
+	self.channel.sendString(Router.COMMANDER,report.xml2Char(),-1,False)
+
+
+
 
 
 

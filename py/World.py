@@ -67,6 +67,7 @@ from numpy.linalg import *
 from Channel import Channel
 from Router import Router
 from Agent import Agent
+from XML.XMLMessageForAgent import XMLMessageForAgent
 
 class  World (Agent):
 
@@ -310,7 +311,7 @@ class  World (Agent):
 
 
         # Notify the Channel of the current status
-        self.channel.sendWorldStatusToSensor(self.A)
+        self.sendWorldStatusToSensor(self.A)
         
         # drying
         self.Moisture[self.Moisture>0] -= 1;
@@ -365,6 +366,20 @@ class  World (Agent):
 	    posY      = int(passedInformation["yPos"])
 	    vacuumID  =  int(passedInformation["vacuumID"])
 	    self.clean(posX,posY)
+
+
+
+
+    ## sendWorldStatusToSensor
+    #
+    # Routine to send the world's status to a sensor.
+    def sendWorldStatusToSensor(self,A) :
+	#print("World.sendWorldStatusToSensor - sending information")
+        worldData = XMLMessageForAgent()
+	worldData.sendWorldStatusToSensor(A)
+	self.channel.sendString(Router.SENSORARRAY,worldData.xml2Char(),-1)
+
+
 
 
 

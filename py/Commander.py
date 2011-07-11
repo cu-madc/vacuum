@@ -67,6 +67,7 @@ from World import World
 from Channel import Channel
 from Router import Router
 from Agent import Agent
+from XML.XMLMessageForAgent import XMLMessageForAgent
 
 
 class Commander (Agent) :
@@ -87,18 +88,18 @@ class Commander (Agent) :
             if (status==2) :
                 # just completed cleaning
                 # update planner status that location is clean
-                self.channel.sendVacuumReportFromCommander2Planner(xPos,yPos,IDnum)
+                self.sendVacuumReportFromCommander2Planner(xPos,yPos,IDnum)
 
 
             # send recommended order to the planner
-            self.channel.sendRecommendOrderFromCommander2Planner(IDnum,xPos,yPos)
+            self.sendRecommendOrderFromCommander2Planner(IDnum,xPos,yPos)
 
 
     def receiveReport(self,xord,yord,IDnum) :
         # pass order to vacuum and the planner
 	#print("commander receive report {0} {1} {2}".format(xord,yord,IDnum))
-        self.channel.sendMoveOrderFromCommander2Vacuum(xord,yord,IDnum)
-        self.channel.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
+        self.sendMoveOrderFromCommander2Vacuum(xord,yord,IDnum)
+        self.sendMoveOrderFromCommander2Planner(xord,yord,IDnum)
 
 
 
@@ -131,6 +132,57 @@ class Commander (Agent) :
 	channel = commander.initializeChannel()
 	channel.addAgent(commander,Agent.COMMANDER,0,False)
 	return(commander)
+
+
+
+    ## sendVacuumReportFromCommander2Planner
+    #
+    # Routine that takes a report from the commander that identifies a
+    # particular vacuum and converts it into XML and passes it along
+    # to the planner so it will know where the vacuum was sent.
+    #
+    def sendVacuumReportFromCommander2Planner(self,xPos,yPos,IDnum) :
+	#print("Commander.sendVacuumReportFromCommander2Planner - sending information.")
+        network = XMLMessageForAgent()
+	network.VacuumReportFromCommander2Planner(xPos,yPos,IDnum)
+	self.channel.sendString(Router.PLANNER,network.xml2Char())
+
+
+    ## sendRecommendOrderFromCommander2Planner
+    #
+    # Routine that takes a recommendation order from the commander
+    # that identifies a particular vacuum and converts it into XML and
+    # passes the XML tree on to the planner.
+    def sendRecommendOrderFromCommander2Planner(self,vacuumID,xPos,yPos) :
+	#print("Commander.sendRecommendOrderFromCommander2Planner - sending information.")
+	orders = XMLMessageForAgent()
+	orders.RecommendOrderFromCommander2Planner(vacuumID,xPos,yPos)
+	self.channel.sendString(Router.PLANNER,orders.xml2Char())
+
+
+    ## sendMoveOrderFromCommander2Vacuum
+    #
+    # Routine that takes an order from the commander and converts it
+    # into XML and passed the XML to the vacuum.
+    def sendMoveOrderFromCommander2Vacuum(self,xPos,yPos,vacuumID) :
+	#print("Commander.sendMoveOrderFromCommander2Vacuum - sending information.")
+	orders = XMLMessageForAgent()
+	orders.MoveOrderFromCommander2Vacuum(xPos,yPos,vacuumID)        
+	self.channel.sendString(Router.VACUUM,orders.xml2Char(),vacuumID)
+
+
+
+    ## sendMoveOrderFromCommander2Planner
+    #
+    # Routine to take a message from the commander that is an order to
+    # move a vacuum and relay it to the planner.
+    def sendMoveOrderFromCommander2Planner(self,xPos,yPos,IDnum) :
+	#print("Commander.sendMoveOrderFromCommander2Planner - sending information.")
+	report = XMLMessageForAgent()
+	report.MoveOrderFromCommander2Planner(xPos,yPos,IDnum)
+	self.channel.sendString(Router.PLANNER,report.xml2Char(),IDnum)
+
+
 
 
 

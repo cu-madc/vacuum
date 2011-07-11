@@ -66,6 +66,7 @@ from numpy.linalg import *
 from Channel import Channel
 from Router import Router
 from Agent import Agent
+from XML.XMLMessageForAgent import XMLMessageForAgent
 
 
 class SensorArray (Agent):
@@ -142,7 +143,7 @@ class SensorArray (Agent):
             noisyView =self.array*(
                 1.0+2.0*self.accuracy*(random.rand(self.N*self.N).reshape(self.N,self.N)-0.5))
             #print("SensorArray.measure:\n{0}\n{1}\n\n".format(self.array,noisyView))
-            self.channel.sendStatusSensor2Planner(noisyView)
+            self.sendStatusSensor2Planner(noisyView)
          
             self.Wet = self.Wet>0;
             wetted=self.Wet;
@@ -167,6 +168,20 @@ class SensorArray (Agent):
 
 	elif (type=="World Status") :
 	    self.setArray(passedInformation["array"])
+
+
+
+    ## sendStatusSensor2Planner
+    #
+    # Routine to send a noisy view of the world's grids to the planner
+    # from the sensor.
+    def sendStatusSensor2Planner(self,noisyView) :
+	#print("SensorArray.sendStatusSensor2Planner - sending information")
+        sensorData = XMLMessageForAgent()
+        sensorData.StatusSensor2Planner(noisyView)
+	self.channel.sendString(Router.PLANNER,sensorData.xml2Char()) #,-1,True)
+
+
 
 
     # Static method that is used as a helper to make it easier to
