@@ -203,10 +203,6 @@ class Agent (Process):
     # super classes. These are handlers for requests that come from an
     # outside data source.
 
-    # Routine to handle the shutdown requests
-    def shutdownServer(self) :
-	pass
-
 
     # Routine to handle the poll requests
     def poll(self) :
