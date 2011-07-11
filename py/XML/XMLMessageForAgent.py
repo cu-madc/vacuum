@@ -184,7 +184,7 @@ class XMLMessageForAgent (XMLMessageCreator) :
     # from the sensor to send it to the sensor.
     def MeasuredFromPlanner2Sensor(self) :
 	self.createRootNode(False)
-	self.createObjectClassElements(Agent.SENSOR,"Send Planner Update")
+	self.createObjectClassElements(Agent.SENSORARRAY,"Send Planner Update")
 	#print(self.xml2Char())
 
 
@@ -252,7 +252,7 @@ class XMLMessageForAgent (XMLMessageCreator) :
     # Routine to send the world's status to a sensor.
     def sendWorldStatusToSensor(self,A) :
         self.createRootNode(False)
-	self.createObjectClassElements(Agent.SENSOR,"World Status")
+	self.createObjectClassElements(Agent.SENSORARRAY,"World Status")
 	self.addArrayNode(A)
 	#print(self.xml2Char())
 
@@ -263,7 +263,7 @@ class XMLMessageForAgent (XMLMessageCreator) :
     # sensor.
     def WorldWetnessToSensor(self,Moisture):
         self.createRootNode(False)
-	self.createObjectClassElements(Agent.SENSOR,"World Wetness")
+	self.createObjectClassElements(Agent.SENSORARRAY,"World Wetness")
 	self.addArrayNode(Moisture)
 	#print(self.xml2Char())
 

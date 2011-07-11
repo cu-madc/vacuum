@@ -175,7 +175,7 @@ class SensorArray (Agent):
     def spawnSensorArray(accuracy=0.0) :
 	sensor = SensorArray(accuracy)
 	channel = sensor.initializeChannel()
-	channel.setSensor(sensor)
+	channel.addAgent(sensor,Agent.SENSORARRAY,0,False)
 	return(sensor)
 
 

@@ -108,7 +108,6 @@ class Channel:
         self.vacuumArray = [] # array of object handles
 
 	self.setWorld(None)
-        self.setSensor(None)
         self.setPlanner(None)
 	self.vacuum = None
 
@@ -127,13 +126,6 @@ class Channel:
 
     def getWorking(self) :
         return(self.isWorking)
-
-    def setSensor(self,sensor) :
-        self.sensor = sensor
-
-    def getSensor(self) :
-        return(self.sensor)
-
 
     def setPlanner(self,planner) :
         self.planner = planner
@@ -232,6 +224,11 @@ class Channel:
 
 
     def addAgent(self,agent,type,id,debug=False) :
+
+	#if(debug):
+	#    print("\n\nChannel.addAgent - request to agent: {0},{1}\n{3}-{2}".format(
+	#	type,id,self.myAgents,agent))
+
 
 	if(agent != None):
 	    for agentList in self.myAgents :
@@ -334,12 +331,12 @@ class Channel:
 		
 
 
-	if (name == Agent.SENSOR) :
+	if (name == Agent.SENSORARRAY) :
 	    #print("this is a message for the sensor: {0}\n{1}".format(
-	    #    dif.getType(),dif.getPassedInformation()))	    
+	    #    dif.getType(),dif.getPassedInformation()))
 
-            if(self.sensor) :
-		self.sensor.handleMessage(dif.getType(),dif.getPassedInformation())
+	    if((len(self.myAgents)>=name) and self.myAgents[name][0]) :
+		self.myAgents[name][0].handleMessage(dif.getType(),dif.getPassedInformation())
 
 
 
@@ -390,9 +387,11 @@ class Channel:
 		    if(self.world) :
 			self.world.setGridSize(int(item[1]))
 
-		    if(self.sensor):
-			#print("Channel.receiveXMLReportParseAndDecide - XMLParser.GRID_SIZE")
-			self.sensor.setGridSize(int(item[1]))
+		    if(len(self.myAgents)>Agent.SENSORARRAY):
+			if (self.myAgents[Agent.SENSORARRAY][0]) :
+
+			    #print("Channel.receiveXMLReportParseAndDecide - XMLParser.GRID_SIZE")
+			    self.myAgents[Agent.SENSORARRAY][0].setGridSize(int(item[1]))
 
 		    if(self.planner):
 			#print("send planner grid size")
@@ -490,9 +489,10 @@ class Channel:
 			pass
 
 
-	            if(self.sensor) :
-			#self.sensor.shutdownServer()
-			pass
+		    if(len(self.myAgents)>Agent.SENSORARRAY):
+			if (self.myAgents[Agent.SENSORARRAY][0]) :
+                            #self.myAgents[Agent.SENSORARRAY][0].shutdownServer()
+			    pass
 		    
 		    if(self.planner):
 			#self.planner.shutdownServer()
@@ -531,9 +531,10 @@ class Channel:
 		elif(item == XMLMessageExternalCommand.EXIT) :
 		    #print("exit: {0}".format(item))
 
-		    if(self.sensor) :
-			#print("Shutting down the server")
-			self.sensor.shutdownServer()
+		    if(len(self.myAgents)>Agent.SENSORARRAY):
+			if (self.myAgents[Agent.SENSORARRAY][0]) :
+			     #print("Shutting down the server")
+			     self.myAgents[Agent.SENSORARRAY][0].shutdownServer()
 		    
 		    if(self.planner):
 			#print("Shutting down the planner")
@@ -751,7 +752,7 @@ if (__name__ =='__main__') :
     channel = Channel()
     from Agent import Agent
     channel.addAgent(Agent(Agent.COMMANDER),0,1,True)
-    channel.addAgent(Agent(Agent.SENSOR),2,4,True)
+    channel.addAgent(Agent(Agent.SENSORARRAY),2,4,True)
     sys.exit()
 
     channel = Channel()
