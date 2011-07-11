@@ -106,8 +106,7 @@ class Channel:
 
 	self.myAgents = []
         self.vacuumArray = [] # array of object handles
-	self.vacuum = None
-
+	
 	self.router = SocketRouter(self)
 
 
@@ -126,12 +125,6 @@ class Channel:
 
     def getRouter(self) :
 	return(self.router)
-
-    def setVacuum(self,vacuum) :
-	self.vacuum = vacuum
-
-    def getVacuum(self):
-	return(self.vacuum)
 
     def setDebug(self,value) :
 	Channel.DEBUG = value
@@ -287,7 +280,6 @@ class Channel:
 	    #print("this is a message for the world: {0}\n{1}".format(
 	    #    dif.getType(),dif.getPassedInformation()))
 
-
 	    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
 		self.myAgents[Agent.WORLD][0].handleMessage(dif.getType(),
 							    dif.getPassedInformation())
@@ -298,9 +290,9 @@ class Channel:
 	    #print("this is a message for the vacuum: {0}\n{1}".format(
 	    #    dif.getType(),dif.getPassedInformation()))
 
-	    if(self.vacuum) :
-		self.vacuum.handleMessage(dif.getType(),dif.getPassedInformation())
-
+	    if((len(self.myAgents)>Agent.VACUUM) and self.myAgents[Agent.VACUUM][0]) :
+		self.myAgents[Agent.VACUUM][0].handleMessage(dif.getType(),
+							    dif.getPassedInformation())
 		
 
 
@@ -500,12 +492,11 @@ class Channel:
 			    pass
 			    
 
-
-		    if(self.vacuum) :
-			#self.vacuum.shutdownServer()
-			self.vacuum.setWorking(True)
-			self.vacuum.setStatus(3)
-			self.vacuum.initializeTime(0.0)
+		    if((len(self.myAgents)>Agent.VACUUM) and self.myAgents[Agent.VACUUM][0]) :
+			#self.myAgents[Agent.VACUUM][0].shutdownServer()
+			self.myAgents[Agent.VACUUM][0].setWorking(True)
+			self.myAgents[Agent.VACUUM][0].setStatus(3)
+			self.myAgents[Agent.VACUUM][0].initializeTime(0.0)
 
 
 		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
@@ -544,9 +535,10 @@ class Channel:
 		              #print("Shutting down the commander")
 			      self.myAgents[Agent.COMMANDER][0].shutdownServer()
 
-		    if(self.vacuum) :
+
+		    if((len(self.myAgents)>Agent.VACUUM) and self.myAgents[Agent.VACUUM][0]) :
 			#print("Shutting down the vacuum")
-			self.vacuum.shutdownServer()
+			self.myAgents[Agent.VACUUM][0].shutdownServer()
 
 
 		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :

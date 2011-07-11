@@ -294,7 +294,6 @@ class Vacuum (Agent):
     def spawnVacuum(IDnum,currentTime=0.0) :
 	vacuum = Vacuum(IDnum,currentTime,None)
 	channel = vacuum.initializeChannel()
-	channel.setVacuum(vacuum)
 	return(vacuum)
 
     
