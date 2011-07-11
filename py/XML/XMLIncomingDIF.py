@@ -273,7 +273,10 @@ class XMLIncomingDIF (XMLMessageCreator) :
         [name,self.type] = self.getObjectClassNameAndType()
         incomingXML = None
 	#print("Name: {0} Type: {1}".format(name,self.type))
-	self.name = int(name)
+	try:
+	    self.name = int(name)
+	except ValueError:
+	    self.name = name
 
 
 

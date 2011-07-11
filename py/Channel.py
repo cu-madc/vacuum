@@ -266,7 +266,7 @@ class Channel:
 
 
 
-	if(name == Agent.COMMANDER) :
+	if((type(name) is 'int') and (name >= 0)) :
 	    #print("this is a message for the commander: {0}\n{1}".format(
 	    #    dif.getType(),dif.getPassedInformation()))
 
@@ -274,52 +274,10 @@ class Channel:
 	       self.myAgents[name][0].handleMessage(dif.getType(),dif.getPassedInformation())
 
 
-
-
-	elif (name == Agent.WORLD) :
-	    #print("this is a message for the world: {0}\n{1}".format(
-	    #    dif.getType(),dif.getPassedInformation()))
-
-	    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
-		self.myAgents[Agent.WORLD][0].handleMessage(dif.getType(),
-							    dif.getPassedInformation())
-
-
-
-	elif (name == Agent.VACUUM) :
-	    #print("this is a message for the vacuum: {0}\n{1}".format(
-	    #    dif.getType(),dif.getPassedInformation()))
-
-	    if((len(self.myAgents)>Agent.VACUUM) and self.myAgents[Agent.VACUUM][0]) :
-		self.myAgents[Agent.VACUUM][0].handleMessage(dif.getType(),
-							    dif.getPassedInformation())
-		
-
-
-
-	if (name == Agent.PLANNER) :
-	    #print("this is a message for the planner: {0}\n{1}".format(
-	    #    dif.getType(),dif.getPassedInformation()))
-
-	    if((len(self.myAgents)>Agent.PLANNER) and self.myAgents[Agent.PLANNER][0]) :
-		self.myAgents[Agent.PLANNER][0].handleMessage(dif.getType(),
-							      dif.getPassedInformation())
-
-
-
-	if (name == Agent.SENSORARRAY) :
-	    #print("this is a message for the sensor: {0}\n{1}".format(
-	    #    dif.getType(),dif.getPassedInformation()))
-
-	    if((len(self.myAgents)>=name) and self.myAgents[name][0]) :
-		self.myAgents[name][0].handleMessage(dif.getType(),dif.getPassedInformation())
-
-
-
 	elif(theType == XMLParser.MESSAGE_EXTERNAL_PARAMETER) :
 	    # This is a message from the outside with information
 	    # about a parameter to set.
-	    # print("External message")
+	    print("External message: {0}".format(name))
 	    host = ''
 	    port = -1
 	    hostType = -1
@@ -454,7 +412,7 @@ class Channel:
 	elif(theType == XMLParser.MESSAGE_EXTERNAL_COMMAND) :
 	    # This is a message from the outside with information
 	    # about a command request
-	    #print("External Command")
+	    print("External Command - {0}".format(name))
 	    for item in info.parameterList:
 
 		if(item == XMLMessageExternalCommand.STOP) :

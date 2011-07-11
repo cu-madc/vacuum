@@ -67,8 +67,9 @@ class Agent (Process):
 	       PLANNER, \
 	       SENSORARRAY, \
 	       VACUUM, \
-	       WORLD, \
-	       EXTERNAL = range(6)
+	       WORLD = range(5)
+
+    EXTERNAL = "ext"
 
     DEBUG = False
 
@@ -173,7 +174,7 @@ class Agent (Process):
 	from Channel import Channel
 	channel = Channel()
 	self.setChannel(channel)
-	channel.addAgent(self,self.getMyType(),0,True)
+	channel.addAgent(self,self.getMyType(),0,False)
 	return(channel)
 
 
