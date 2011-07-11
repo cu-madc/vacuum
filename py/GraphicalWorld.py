@@ -282,9 +282,7 @@ class  GraphicalWorld (World,Tk) :
     @staticmethod
     def spawnWorld(r=1.0,s=1.0,v=1.0,cloudsize=1.0) :
 	world = GraphicalWorld(r,s,v,cloudsize)
-	channel = Channel()
-	channel.setWorld(world)
-	world.setChannel(channel)
+	channel = world.initializeChannel()
 	return(world)
 
 

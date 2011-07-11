@@ -73,7 +73,7 @@ class  World (Agent):
 
 
     def __init__(self,r=1.0,s=1.0,v=1.0,cloudsize=1.0) :
-	Agent.__init__(self,Router.WORLD)
+	Agent.__init__(self,Agent.WORLD)
         self.time = 0
     
         self.N=5                   # %size of grid

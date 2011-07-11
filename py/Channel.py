@@ -107,12 +107,11 @@ class Channel:
 	self.myAgents = []
         self.vacuumArray = [] # array of object handles
 
-	self.setWorld(None)
         self.setPlanner(None)
 	self.vacuum = None
 
 	self.router = SocketRouter(self)
-	self.myAgent = None
+
 
 
     # Utility routines.
@@ -136,12 +135,6 @@ class Channel:
     def getRouter(self) :
 	return(self.router)
 
-    def setWorld(self,value) :
-        self.world = value
-
-    def getWorld(self) :
-        return(self.world)
-
     def setVacuum(self,vacuum) :
 	self.vacuum = vacuum
 
@@ -157,12 +150,6 @@ class Channel:
 
     def setRouterChannel(self,type,channel) :
 	self.router.setChannel(type,channel)
-
-    def setMyAgent(self,myAgent) :
-	self.myAgent = myAgent
-
-    def getMyAgent(self) :
-	return(self.myAgent)
 
     def printChannelInformation(self,toPrint) :
         print("Channel information {0}: {1} - {2}".format(toPrint,self,self.vacuumArray))
@@ -194,8 +181,10 @@ class Channel:
 	if(debug):
 	    print("Channel.addVacuum - vacuum array: {0}".format(self.vacuumArray))
 
-	if (vacuum and self.world):
-	    self.world.addVacuum(vacuum,debug)
+	if (vacuum and 
+	    ((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0])) :
+	    #print("Shutting down the world")
+	    self.myAgents[Agent.WORLD][0].addVacuum(vacuum,debug)
 
 
     def setNumberVacuums(self,number,x=0,y=0) :
@@ -217,8 +206,8 @@ class Channel:
 	    while(len(self.vacuumArray)>number) :
 		vacuum = self.vacuumArray.pop()
 		
-		if (self.world):
-		    self.world.deleteVacuum(vacuum)
+		if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
+		    self.myAgents[Agent.WORLD][0].deleteVacuum(vacuum)
 		    
 
 
@@ -306,8 +295,10 @@ class Channel:
 	    #print("this is a message for the world: {0}\n{1}".format(
 	    #    dif.getType(),dif.getPassedInformation()))
 
-	    if(self.world) :
-		self.world.handleMessage(dif.getType(),dif.getPassedInformation())
+
+	    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
+		self.myAgents[Agent.WORLD][0].handleMessage(dif.getType(),
+							    dif.getPassedInformation())
 
 
 
@@ -357,8 +348,9 @@ class Channel:
 			#print("send planner dirt rate")
 			self.planner.setUnnormalizedDirtRate(float(item[1]))
 
-		    if(self.world) :
-			self.world.setDirtRate(float(item[1]))
+
+		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
+			self.myAgents[Agent.WORLD][0].setDirtRate(float(item[1]))
 
 		    #print("this is a message for external data: *{0}*\n{1}".format(
 			#dif.getType(),dif.getPassedInformation()))
@@ -369,23 +361,27 @@ class Channel:
 			#print("send planner dirt size")
 			self.planner.setUnnormalizedDirtSize(float(item[1]))
 
-		    if(self.world) :
-			self.world.setDirtSize(float(item[1]))
+
+		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
+			self.myAgents[Agent.WORLD][0].setDirtSize(float(item[1]))
 
 		    
 		elif(item[0] == XMLMessageExternalParameter.RAIN_RATE):
-		    if(self.world) :
-			self.world.setRainRate(float(item[1]))
+
+		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
+			self.myAgents[Agent.WORLD][0].setRainRate(float(item[1]))
 
 			
 		elif(item[0] == XMLMessageExternalParameter.RAIN_SIZE):
-		    if(self.world) :
-			self.world.setRainSize(float(item[1]))
+
+		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
+			self.myAgents[Agent.WORLD][0].setRainSize(float(item[1]))
 
 		    
 		elif(item[0] == XMLMessageExternalParameter.GRID_SIZE):
-		    if(self.world) :
-			self.world.setGridSize(int(item[1]))
+		    
+		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
+			self.myAgents[Agent.WORLD][0].setGridSize(int(item[1]))
 
 		    if(len(self.myAgents)>Agent.SENSORARRAY):
 			if (self.myAgents[Agent.SENSORARRAY][0]) :
@@ -400,9 +396,9 @@ class Channel:
 		elif(item[0] == XMLMessageExternalParameter.NUMBER_OF_VACUUMS):
 		    #print("number vacs: {0}".format(int(item[1])))
 		    self.setNumberVacuums(int(item[1]))
-		    
-		    if(self.world) :
-			self.world.setNumberVacuums(int(item[1]))
+
+		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
+			self.myAgents[Agent.WORLD][0].setNumberVacuums(int(item[1]))
 
 
 		elif(item[0] == XMLMessageExternalParameter.HOST_ADDRESS):
@@ -475,17 +471,20 @@ class Channel:
 
 		if(item == XMLMessageExternalCommand.STOP) :
 		    print("stop: {0}".format(item))
-		    if(self.world) :
+
+		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
 			pass
 
 		elif(item == XMLMessageExternalCommand.START) :
 		    print("start: {0}".format(item))
-		    if(self.world) :
+
+		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
 			pass
 
 		elif(item == XMLMessageExternalCommand.RESTART) :
 		    #print("restart: {0}".format(item))
-		    if(self.world) :
+
+		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
 			pass
 
 
@@ -512,20 +511,22 @@ class Channel:
 			self.vacuum.initializeTime(0.0)
 
 
-		    if(self.world) :
-			#self.world.shutdownServer()
+		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
+			#self.myAgents[Agent.WORLD][0].shutdownServer()
 			pass
 
 
 
 		elif(item == XMLMessageExternalCommand.RESET) :
 		    print("reset: {0}".format(item))
-		    if(self.world) :
+
+		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
 			pass
 
 		elif(item == XMLMessageExternalCommand.POLL) :
 		    print("poll: {0}".format(item))
-		    if(self.world) :
+
+		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
 			pass
 
 		elif(item == XMLMessageExternalCommand.EXIT) :
@@ -549,9 +550,10 @@ class Channel:
 			#print("Shutting down the vacuum")
 			self.vacuum.shutdownServer()
 
-		    if(self.world) :
+
+		    if((len(self.myAgents)>Agent.WORLD) and self.myAgents[Agent.WORLD][0]) :
 			#print("Shutting down the world")
-			self.world.shutdownServer()
+			self.myAgents[Agent.WORLD][0].shutdownServer()
 
 
     ## sendVacuumReportFromCommander2Planner

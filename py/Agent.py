@@ -173,7 +173,7 @@ class Agent (Process):
 	from Channel import Channel
 	channel = Channel()
 	self.setChannel(channel)
-	channel.setMyAgent(self)
+	channel.addAgent(self,self.getMyType(),0,True)
 	return(channel)
 
 
