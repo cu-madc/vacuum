@@ -480,17 +480,6 @@ class Channel:
 
 
 
-    ## sendPlannerUpdateRequest
-    #
-    # Routine to send a request for an update to the planner. This
-    # tells the planner that it needs to take whatever actions are
-    # necessary during a world time step.
-    def sendPlannerUpdateRequest(self) :
-	report = XMLMessageForAgent()
-	report.PlannerUpdateRequest()
-	self.sendString(Router.PLANNER,report.xml2Char()) #,-1,True)
-	#self.receiveXMLReportParseAndDecide(update.xml2Char())
-
 
     ## sendPlannerVacuumMovedPosition
     #

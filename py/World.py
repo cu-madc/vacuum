@@ -337,7 +337,7 @@ class  World (Agent):
 
 	# Let the sensor know the current state of the world.
         self.sendWorldWetnessToSensor(self.Moisture)
-        self.channel.sendPlannerUpdateRequest()
+        self.sendPlannerUpdateRequest()
 
 	# Make sure that the vacuums update themselves.
         for vacuum in range(self.numberVacuums):
@@ -388,6 +388,18 @@ class  World (Agent):
 	worldWetness = XMLMessageForAgent()
 	worldWetness.WorldWetnessToSensor(Moisture)
 	self.channel.sendString(Router.SENSORARRAY,worldWetness.xml2Char())
+
+
+    ## sendPlannerUpdateRequest
+    #
+    # Routine to send a request for an update to the planner. This
+    # tells the planner that it needs to take whatever actions are
+    # necessary during a world time step.
+    def sendPlannerUpdateRequest(self) :
+	#print("World.sendPlannerUpdateRequest - sending information.")
+	report = XMLMessageForAgent()
+	report.PlannerUpdateRequest()
+	self.channel.sendString(Router.PLANNER,report.xml2Char()) #,-1,True)
 
 
 
