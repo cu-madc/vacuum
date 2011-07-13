@@ -336,7 +336,7 @@ class  World (Agent):
 
 
 	# Let the sensor know the current state of the world.
-        self.channel.sendWorldWetnessToSensor(self.Moisture)
+        self.sendWorldWetnessToSensor(self.Moisture)
         self.channel.sendPlannerUpdateRequest()
 
 	# Make sure that the vacuums update themselves.
@@ -378,6 +378,16 @@ class  World (Agent):
         worldData = XMLMessageForAgent()
 	worldData.sendWorldStatusToSensor(A)
 	self.channel.sendString(Router.SENSORARRAY,worldData.xml2Char(),-1)
+
+
+    ## sendWorldWetnessToSensor
+    #
+    # Routine to send the world's wetness levels to a sensor.
+    def sendWorldWetnessToSensor(self,Moisture):
+	#print('World.sendWorldWetnessToSensor - sending information.')
+	worldWetness = XMLMessageForAgent()
+	worldWetness.WorldWetnessToSensor(Moisture)
+	self.channel.sendString(Router.SENSORARRAY,worldWetness.xml2Char())
 
 
 
