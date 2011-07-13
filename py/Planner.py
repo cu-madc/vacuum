@@ -380,7 +380,12 @@ class Planner (Agent) :
     def sendRecommendOrderFromPlanner2Commander(self,xPos,yPos,IDnum) :
 	#print("Planner.sendRecommendOrderFromPlanner2Commander - sending information.")
 	orders = XMLMessageForAgent()
-	orders.RecommendOrderFromPlanner2Commander(xPos,yPos,IDnum)
+	orders.createRootNode(False)
+	orders.createObjectClassElements(Agent.COMMANDER,"Vacuum Recommendation")
+	orders.addPosition(xPos,yPos)
+	orders.vacuumID(IDnum)
+	#print(self.xml2Char())
+
 	self.channel.sendString(Router.COMMANDER,orders.xml2Char())
 
 
@@ -392,7 +397,10 @@ class Planner (Agent) :
     def sendMeasuredFromPlanner2Sensor(self) :
 	#print("Planner.sendMeasuredFromPlanner2Sensor - sending information.")
 	report = XMLMessageForAgent()
-	report.MeasuredFromPlanner2Sensor()
+	report.createRootNode(False)
+	report.createObjectClassElements(Agent.SENSORARRAY,"Send Planner Update")
+	#print(self.xml2Char())
+
 	self.channel.sendString(Router.SENSORARRAY,report.xml2Char()) #,-1,True)
 
 

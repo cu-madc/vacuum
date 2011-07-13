@@ -296,7 +296,13 @@ class Vacuum (Agent):
 	#Channel.checkInfoType = True
 	#print("Vacuum.sendReportFromVacuum2Commander - sending vacuum to commander")
 	report = XMLMessageForAgent()
-	report.ReportFromVacuum2Commander(xPos,yPos,status,IDnum)
+	report.createRootNode(False)
+	report.createObjectClassElements(Agent.COMMANDER,"Get Report")
+	report.addPosition(xPos,yPos)
+	report.vacuumID(IDnum)
+	report.addStatus(status)
+	#print(self.xml2Char())
+
 	self.channel.sendString(Router.COMMANDER,report.xml2Char(),-1,False)
 
 
@@ -308,7 +314,12 @@ class Vacuum (Agent):
     def sendPlannerVacuumMovedPosition(self,idnum,xpos,ypos) :
 	#print("Vacuum.sendPlannerVacuumMovedPosition sending information.")
         update = XMLMessageForAgent()
-        update.PlannerVacuumMovedPosition(idnum,xpos,ypos)
+        update.createRootNode(False)
+	update.createObjectClassElements(Agent.PLANNER,"New Vacuum Location")
+	update.addPosition(xpos,ypos)
+	update.vacuumID(idnum)
+	#print(self.xml2Char())
+
 	self.channel.sendString(Router.PLANNER,update.xml2Char())
 
 
@@ -319,10 +330,13 @@ class Vacuum (Agent):
     def sendVacuumWorldExpenditure(self,expenditure,id) :
 	#print("Vacuum.sendVacuumWorldExpenditure - sending information")
 	newExpenditure = XMLMessageForAgent()
-	newExpenditure.VacuumWorldExpenditure(expenditure,id)
+        newExpenditure.createRootNode(False)
+	newExpenditure.createObjectClassElements(Agent.WORLD,"Add Expenditure")
+	newExpenditure.vacuumID(id)
+	newExpenditure.addExpenditure(expenditure)
+	#print(self.xml2Char())
+
 	self.channel.sendString(Router.WORLD,newExpenditure.xml2Char(),id)
-
-
 
 
 
@@ -333,7 +347,12 @@ class Vacuum (Agent):
     def sendWorldCleanedGrid(self,idnum,xpos,ypos) :
 	#print("Vacuum.sendWorldCleanedGrid - sending information")
 	update = XMLMessageForAgent()
-	update.WorldCleanedGrid(idnum,xpos,ypos)
+        update.createRootNode(False)
+	update.createObjectClassElements(Agent.WORLD,"Clean Grid")
+	update.addPosition(xpos,ypos)
+	update.vacuumID(idnum)
+	#print(self.xml2Char())
+
 	self.channel.sendString(Router.WORLD,update.xml2Char(),idnum)
 
 

@@ -376,7 +376,11 @@ class  World (Agent):
     def sendWorldStatusToSensor(self,A) :
 	#print("World.sendWorldStatusToSensor - sending information")
         worldData = XMLMessageForAgent()
-	worldData.sendWorldStatusToSensor(A)
+        worldData.createRootNode(False)
+	worldData.createObjectClassElements(Agent.SENSORARRAY,"World Status")
+	worldData.addArrayNode(A)
+	#print(self.xml2Char())
+
 	self.channel.sendString(Router.SENSORARRAY,worldData.xml2Char(),-1)
 
 
@@ -386,7 +390,12 @@ class  World (Agent):
     def sendWorldWetnessToSensor(self,Moisture):
 	#print('World.sendWorldWetnessToSensor - sending information.')
 	worldWetness = XMLMessageForAgent()
-	worldWetness.WorldWetnessToSensor(Moisture)
+        worldWetness.createRootNode(False)
+	worldWetness.createObjectClassElements(Agent.SENSORARRAY,"World Wetness")
+	worldWetness.addArrayNode(Moisture)
+	#print(self.xml2Char())
+
+
 	self.channel.sendString(Router.SENSORARRAY,worldWetness.xml2Char())
 
 
@@ -398,7 +407,11 @@ class  World (Agent):
     def sendPlannerUpdateRequest(self) :
 	#print("World.sendPlannerUpdateRequest - sending information.")
 	report = XMLMessageForAgent()
-	report.PlannerUpdateRequest()
+	report.createRootNode(False)
+	report.createObjectClassElements(Agent.PLANNER,"Update")
+	#print(self.xml2Char())
+
+
 	self.channel.sendString(Router.PLANNER,report.xml2Char()) #,-1,True)
 
 
@@ -410,7 +423,13 @@ class  World (Agent):
     def sendVacuumWorldTime(self,T,id,wetness) :
 	#print("World.sendVacuumWorldTime - sending information")
 	newTime = XMLMessageForAgent()
-	newTime.sendVacuumWorldTime(T,id,wetness)
+        newTime.createRootNode(False)
+	newTime.createObjectClassElements(Agent.VACUUM,"World Time")
+	newTime.addArrayNode(wetness)
+	newTime.vacuumID(id)
+	newTime.addTime(T)
+	#print(self.xml2Char())
+
 	self.channel.sendString(Router.VACUUM,newTime.xml2Char(),id,False)
 
 

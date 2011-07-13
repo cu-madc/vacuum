@@ -178,7 +178,11 @@ class SensorArray (Agent):
     def sendStatusSensor2Planner(self,noisyView) :
 	#print("SensorArray.sendStatusSensor2Planner - sending information")
         sensorData = XMLMessageForAgent()
-        sensorData.StatusSensor2Planner(noisyView)
+        sensorData.createRootNode(False)
+	sensorData.createObjectClassElements(Agent.PLANNER,"Sensor Status")
+	sensorData.addArrayNode(noisyView)
+	#print(self.xml2Char())
+
 	self.channel.sendString(Router.PLANNER,sensorData.xml2Char()) #,-1,True)
 
 

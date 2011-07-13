@@ -144,7 +144,12 @@ class Commander (Agent) :
     def sendVacuumReportFromCommander2Planner(self,xPos,yPos,IDnum) :
 	#print("Commander.sendVacuumReportFromCommander2Planner - sending information.")
         network = XMLMessageForAgent()
-	network.VacuumReportFromCommander2Planner(xPos,yPos,IDnum)
+	network.createRootNode(False)
+	network.createObjectClassElements(Agent.PLANNER,"Vacuum Orders")
+	network.addPosition(xPos,yPos)
+	network.vacuumID(IDnum)
+	#print(self.xml2Char())
+
 	self.channel.sendString(Router.PLANNER,network.xml2Char())
 
 
@@ -156,7 +161,12 @@ class Commander (Agent) :
     def sendRecommendOrderFromCommander2Planner(self,vacuumID,xPos,yPos) :
 	#print("Commander.sendRecommendOrderFromCommander2Planner - sending information.")
 	orders = XMLMessageForAgent()
-	orders.RecommendOrderFromCommander2Planner(vacuumID,xPos,yPos)
+	orders.createRootNode(False)
+	orders.createObjectClassElements(Agent.PLANNER,"Vacuum Recommendation")
+	orders.addPosition(xPos,yPos)
+	orders.vacuumID(vacuumID)
+	#print(self.xml2Char())
+
 	self.channel.sendString(Router.PLANNER,orders.xml2Char())
 
 
@@ -167,7 +177,13 @@ class Commander (Agent) :
     def sendMoveOrderFromCommander2Vacuum(self,xPos,yPos,vacuumID) :
 	#print("Commander.sendMoveOrderFromCommander2Vacuum - sending information.")
 	orders = XMLMessageForAgent()
-	orders.MoveOrderFromCommander2Vacuum(xPos,yPos,vacuumID)        
+	orders.createRootNode(False)
+	orders.createObjectClassElements(Agent.VACUUM,"Move Order")
+	orders.addPosition(xPos,yPos)
+	orders.vacuumID(vacuumID)
+	#print(self.xml2Char())
+
+
 	self.channel.sendString(Router.VACUUM,orders.xml2Char(),vacuumID)
 
 
@@ -179,7 +195,12 @@ class Commander (Agent) :
     def sendMoveOrderFromCommander2Planner(self,xPos,yPos,IDnum) :
 	#print("Commander.sendMoveOrderFromCommander2Planner - sending information.")
 	report = XMLMessageForAgent()
-	report.MoveOrderFromCommander2Planner(xPos,yPos,IDnum)
+	report.createRootNode(False)
+	report.createObjectClassElements(Agent.PLANNER,"Move Order")
+	report.addPosition(xPos,yPos)
+	report.vacuumID(IDnum)
+	#print(self.xml2Char())
+
 	self.channel.sendString(Router.PLANNER,report.xml2Char(),IDnum)
 
 
