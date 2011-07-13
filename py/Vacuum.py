@@ -231,7 +231,7 @@ class Vacuum (Agent):
             if (self.status==2) :
                 #just finished cleaning
                 # update world that location has been cleaned
-                self.channel.sendWorldCleanedGrid(self.IDnum,self.xPos,self.yPos)
+                self.sendWorldCleanedGrid(self.IDnum,self.xPos,self.yPos)
                 self.status=3                         # waiting new instruction
 
                 # report that cleaning complete, recieve new instruction
@@ -323,6 +323,18 @@ class Vacuum (Agent):
 	self.channel.sendString(Router.WORLD,newExpenditure.xml2Char(),id)
 
 
+
+
+
+    ## sendWorldCleanedGrid
+    #
+    # Routine to let a vacuum send an update to the world to let it
+    # know that a grid area has been cleaned.
+    def sendWorldCleanedGrid(self,idnum,xpos,ypos) :
+	print("Vacuum.sendWorldCleanedGrid - sending information")
+	update = XMLMessageForAgent()
+	update.WorldCleanedGrid(idnum,xpos,ypos)
+	self.channel.sendString(Router.WORLD,update.xml2Char(),idnum)
 
 
 

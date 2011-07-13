@@ -474,28 +474,6 @@ class Channel:
 
 
 
-
-
-
-
-
-
-
-
-
-
-    ## sendWorldCleanedGrid
-    #
-    # Routine to let a vacuum send an update to the world to let it
-    # know that a grid area has been cleaned.
-    def sendWorldCleanedGrid(self,idnum,xpos,ypos) :
-	update = XMLMessageForAgent()
-	update.WorldCleanedGrid(idnum,xpos,ypos)
-	self.sendString(Router.WORLD,update.xml2Char(),idnum)
-	#self.receiveXMLReportParseAndDecide(update.xml2Char())
-
-
-
 if (__name__ =='__main__') :
     from XML.XMLMessageExternalCommand import XMLMessageExternalCommand
     import sys
