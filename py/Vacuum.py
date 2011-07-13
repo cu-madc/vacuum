@@ -103,7 +103,7 @@ class Vacuum (Agent):
         Agent.setChannel(self,value)
         if(self.channel) :
             pos = self.getPosition()
-            self.channel.sendPlannerVacuumMovedPosition(self.IDnum,pos[0],pos[1])
+            self.sendPlannerVacuumMovedPosition(self.IDnum,pos[0],pos[1])
 
     def setWetness(self,wet) :
         self.Moisture = wet
@@ -179,7 +179,7 @@ class Vacuum (Agent):
 
             # Let the planner know that I have moved.
             #print("Moving vacuum {0}".format(self.IDnum))
-            self.channel.sendPlannerVacuumMovedPosition(self.IDnum,x,y)
+            self.sendPlannerVacuumMovedPosition(self.IDnum,x,y)
             
             
             if ((type(self.Moisture) is ndarray) and (self.Moisture[x,y] > 0 )) :
@@ -298,6 +298,18 @@ class Vacuum (Agent):
 	report = XMLMessageForAgent()
 	report.ReportFromVacuum2Commander(xPos,yPos,status,IDnum)
 	self.channel.sendString(Router.COMMANDER,report.xml2Char(),-1,False)
+
+
+
+    ## sendPlannerVacuumMovedPosition
+    #
+    # Routine to send the new position of a vacuum. This comes from a
+    # vacuum and is sent to a planner.
+    def sendPlannerVacuumMovedPosition(self,idnum,xpos,ypos) :
+	#print("Vacuum.sendPlannerVacuumMovedPosition sending information.")
+        update = XMLMessageForAgent()
+        update.PlannerVacuumMovedPosition(idnum,xpos,ypos)
+	self.channel.sendString(Router.PLANNER,update.xml2Char())
 
 
 

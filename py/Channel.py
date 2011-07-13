@@ -481,17 +481,6 @@ class Channel:
 
 
 
-    ## sendPlannerVacuumMovedPosition
-    #
-    # Routine to send the new position of a vacuum. This comes from a
-    # vacuum and is sent to a planner.
-    def sendPlannerVacuumMovedPosition(self,idnum,xpos,ypos) :
-        #update = XMLMessageVaccumMovedReportToPlanner()
-        update = XMLMessageForAgent()
-        update.PlannerVacuumMovedPosition(idnum,xpos,ypos)
-	self.sendString(Router.PLANNER,update.xml2Char())
-	#self.receiveXMLReportParseAndDecide(update.xml2Char())
-
 
     ## sendVacuumWorldTime
     #
