@@ -483,15 +483,6 @@ class Channel:
 
 
 
-    ## sendVacuumWorldExpenditure
-    #
-    # Routine to send an expenditure from a vacuum to the world. 
-    def sendVacuumWorldExpenditure(self,expenditure,id) :
-	newExpenditure = XMLMessageForAgent()
-	newExpenditure.VacuumWorldExpenditure(expenditure,id)
-	self.sendString(Router.WORLD,newExpenditure.xml2Char(),id)
-	#self.receiveXMLReportParseAndDecide(newExpenditure.xml2Char())
-
 
     ## sendWorldCleanedGrid
     #

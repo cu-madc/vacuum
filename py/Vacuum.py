@@ -157,7 +157,7 @@ class Vacuum (Agent):
 	    ordered_distance=abs(self.xPos-x)+abs(self.yPos-y)
 	    if (ordered_distance <= self.range) :
 		self.setPosition([x,y]);
-		self.channel.sendVacuumWorldExpenditure(self.moveCost,self.IDnum)
+		self.sendVacuumWorldExpenditure(self.moveCost,self.IDnum)
 		#self.timeDone += 1;
 		#self.status=1;
 
@@ -175,7 +175,7 @@ class Vacuum (Agent):
             self.setPosition([x,y])
             self.odometer += R
             self.missions += 1
-            self.channel.sendVacuumWorldExpenditure(self.moveCost,self.IDnum)
+            self.sendVacuumWorldExpenditure(self.moveCost,self.IDnum)
 
             # Let the planner know that I have moved.
             #print("Moving vacuum {0}".format(self.IDnum))
@@ -188,7 +188,7 @@ class Vacuum (Agent):
                 # repairs required before cleaning
                 self.timeDone=self.time+self.timeToRepair 
                 self.status=4;
-                self.channel.sendVacuumWorldExpenditure(self.repairCost,self.IDnum)
+                self.sendVacuumWorldExpenditure(self.repairCost,self.IDnum)
                 self.repairs += 1;
                 
             else :
@@ -310,6 +310,17 @@ class Vacuum (Agent):
         update = XMLMessageForAgent()
         update.PlannerVacuumMovedPosition(idnum,xpos,ypos)
 	self.channel.sendString(Router.PLANNER,update.xml2Char())
+
+
+
+    ## sendVacuumWorldExpenditure
+    #
+    # Routine to send an expenditure from a vacuum to the world. 
+    def sendVacuumWorldExpenditure(self,expenditure,id) :
+	#print("Vacuum.sendVacuumWorldExpenditure - sending information")
+	newExpenditure = XMLMessageForAgent()
+	newExpenditure.VacuumWorldExpenditure(expenditure,id)
+	self.channel.sendString(Router.WORLD,newExpenditure.xml2Char(),id)
 
 
 
