@@ -442,7 +442,7 @@ if (__name__ =='__main__') :
     #print("Planner channel: {0}".format(plan.getChannel()))
     plan.setIPInformation(agentInterfaces)                 # tell the agent's ip info to the planner
     plan.getChannel().setNumberVacuums(numVacs)            # tell the planner how many vac's to use
-    plan.setQueueUse(True)                                 # tell the planner to use the queue's
+    plan.setQueueUse(False)                                # tell the planner to not use the queue's
                                                            # information to get input from the world
 						           # as to what is happening.
     

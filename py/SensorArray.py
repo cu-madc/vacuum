@@ -233,8 +233,8 @@ if (__name__ =='__main__') :
     #print("Sensor Channel: {0}".format(sensor.getChannel()))
     sensor.setIPInformation(agentInterfaces)               # set the agent's ip info on the sensor.
     sensor.getChannel().setNumberVacuums(numVacs)          # tell the sensor how many vac's to use
-    sensor.setQueueUse(True)                               # tell the sensor to use the queue's
-                                                           # information to get input from the world
+    sensor.setQueueUse(False)                              # tell the sensor to not use the queue's
+                                                           # information to  get input from the world
 			  			           # as to what is happening.
 
     # Create vacuums

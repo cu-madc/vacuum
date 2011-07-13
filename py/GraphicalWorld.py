@@ -319,7 +319,7 @@ if (__name__ =='__main__') :
     #print("World channel: {0}".format(W.getChannel()))
     N = W.getNumber()
     chan = W.getChannel()                     # Get the world's channel object
-    W.getChannel().setNumberVacuums(numVacs)  # Let the world's channel know how many vac's to use
+    chan.setNumberVacuums(numVacs)            # Let the world's channel know how many vac's to use
     W.setIPInformation(agentInterfaces)       # Let the world know all the ip info about the agents.
 
 
