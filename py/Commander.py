@@ -209,22 +209,49 @@ class Commander (Agent) :
 
 
 if (__name__ =='__main__') :
-    from Vacuum import Vacuum
+    # Set the host addresses and ports for the different agents
+    agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+		       Router.PLANNER    :['10.0.1.11',10001],
+		       Router.COMMANDER  :['10.0.1.12',10002],
+		       Router.WORLD      :['10.0.1.13',10003]}
+
+    # Set the host addresses and ports for the different vacuums 
+    vacummInterfaces = [ ['10.0.1.14',10004],
+			 ['10.0.1.15',10005],
+			 ['10.0.1.16',10006]]
+
+    # Set the other mission parameters
+    numVacs=len(vacummInterfaces)
+
+    # Set the parameters associated with the world.
+    # Set the rate and size for dirtfall
+    r = 1.8
+    s = 12.0
+
+    # Set the rate constant and size for rain
+    v         = .2
+    cloudsize = 20
+
+
+    # create and set the commander
+    command = Commander.spawnCommander()   
+    #print("Comander channel: {0}".format(command.getChannel()))
+    command.setIPInformation(agentInterfaces)              # tell the agent's ip info to the commander
+    command.getChannel().setNumberVacuums(numVacs)         # tell the commander  how many vac's to use
+
+
     
-    commander = Commander()
-    commander = Commander.spawnCommander()
-    commander.setHostInformation(Router.PLANNER,  "10.0.1.11",10001,None)
-    commander.setHostInformation(Router.COMMANDER,"10.0.1.12",10002,None)
-    commander.setHostname("10.0.1.12")
-    commander.setPort(10002)
+    # Create vacuums
+    vacArray = []
+    for i in range(numVacs) :
+	pos = [0,0]                                        # get the default pos.
 
-    commander.getChannel().setNumberVacuums(1)
+	# Let the commander know about this vacuum including it's ip information.
+	command.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
 
-    vacuum = Vacuum.spawnVacuum(0,0)
-    vacuum.getChannel().setNumberVacuums(1)
-    vacuum.setRouterChannel(Router.COMMANDER,commander.getChannel())
-    commander.setVacuumRouterInformation(vacuum.getChannel(),0,0,0)
 
-    commander.start()
-    print("The commander is running")
-    commander.join()
+
+    # Set the ip info for the commander and start it in its own process
+    command.setHostname(agentInterfaces[Router.COMMANDER][0])
+    command.setPort(agentInterfaces[Router.COMMANDER][1])
+    command.run()

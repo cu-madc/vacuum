@@ -203,6 +203,49 @@ class SensorArray (Agent):
 
 
 if (__name__ =='__main__') :
-    sensor = SensorArray.spawnSensorArray(0.2)
-    #print(sensor.array)
+    # Set the host addresses and ports for the different agents
+    agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+		       Router.PLANNER    :['10.0.1.11',10001],
+		       Router.COMMANDER  :['10.0.1.12',10002],
+		       Router.WORLD      :['10.0.1.13',10003]}
 
+    # Set the host addresses and ports for the different vacuums 
+    vacummInterfaces = [ ['10.0.1.14',10004],
+			 ['10.0.1.15',10005],
+			 ['10.0.1.16',10006]]
+
+    # Set the other mission parameters
+    numVacs=len(vacummInterfaces)
+
+    # Set the parameters associated with the world.
+    # Set the rate and size for dirtfall
+    r = 1.8
+    s = 12.0
+
+    # Set the rate constant and size for rain
+    v         = .2
+    cloudsize = 20
+
+
+    # create and set the sensor
+    accuracy = 0.4
+    sensor = SensorArray.spawnSensorArray(accuracy) 
+    #print("Sensor Channel: {0}".format(sensor.getChannel()))
+    sensor.setIPInformation(agentInterfaces)               # set the agent's ip info on the sensor.
+    sensor.getChannel().setNumberVacuums(numVacs)          # tell the sensor how many vac's to use
+    sensor.setQueueUse(True)                               # tell the sensor to use the queue's
+                                                           # information to get input from the world
+			  			           # as to what is happening.
+
+    # Create vacuums
+    vacArray = []
+    for i in range(numVacs) :
+	pos = [0,0]                                        # get the default pos.
+	# Let the sensor know about this vacuum including it's ip information.
+	sensor.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+
+
+    # Set the ip info for the sensor and start it in its own process
+    sensor.setHostname(agentInterfaces[Router.SENSORARRAY][0])
+    sensor.setPort(agentInterfaces[Router.SENSORARRAY][1])
+    sensor.run()
