@@ -342,7 +342,7 @@ class  World (Agent):
 	# Make sure that the vacuums update themselves.
         for vacuum in range(self.numberVacuums):
 	    #print("World.inc: Sending to vacuum {0}".format(vacuum))
-            self.channel.sendVacuumWorldTime(T,vacuum,self.Moisture)
+            self.sendVacuumWorldTime(T,vacuum,self.Moisture)
 
 
 	# Check the message queue one last time just in case something
@@ -400,6 +400,18 @@ class  World (Agent):
 	report = XMLMessageForAgent()
 	report.PlannerUpdateRequest()
 	self.channel.sendString(Router.PLANNER,report.xml2Char()) #,-1,True)
+
+
+    ## sendVacuumWorldTime
+    #
+    # Routine to send the current world time from the world to a
+    # vacuum. This tells the vacuum that it needs to take whatever
+    # actions are appropriate for a given time step.
+    def sendVacuumWorldTime(self,T,id,wetness) :
+	#print("World.sendVacuumWorldTime - sending information")
+	newTime = XMLMessageForAgent()
+	newTime.sendVacuumWorldTime(T,id,wetness)
+	self.channel.sendString(Router.VACUUM,newTime.xml2Char(),id,False)
 
 
 

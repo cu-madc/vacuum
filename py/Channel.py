@@ -482,17 +482,6 @@ class Channel:
 
 
 
-    ## sendVacuumWorldTime
-    #
-    # Routine to send the current world time from the world to a
-    # vacuum. This tells the vacuum that it needs to take whatever
-    # actions are appropriate for a given time step.
-    def sendVacuumWorldTime(self,T,id,wetness) :
-	newTime = XMLMessageForAgent()
-	newTime.sendVacuumWorldTime(T,id,wetness)
-	self.sendString(Router.VACUUM,newTime.xml2Char(),id,False)
-	#self.receiveXMLReportParseAndDecide(newTime.xml2Char())
-
 
     ## sendVacuumWorldExpenditure
     #
