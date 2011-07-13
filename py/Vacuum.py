@@ -331,7 +331,7 @@ class Vacuum (Agent):
     # Routine to let a vacuum send an update to the world to let it
     # know that a grid area has been cleaned.
     def sendWorldCleanedGrid(self,idnum,xpos,ypos) :
-	print("Vacuum.sendWorldCleanedGrid - sending information")
+	#print("Vacuum.sendWorldCleanedGrid - sending information")
 	update = XMLMessageForAgent()
 	update.WorldCleanedGrid(idnum,xpos,ypos)
 	self.channel.sendString(Router.WORLD,update.xml2Char(),idnum)
