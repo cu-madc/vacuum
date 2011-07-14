@@ -447,21 +447,112 @@ class  World (Agent):
             
             
 if (__name__ =='__main__') :
-    world = World.spawnWorld()
-    #world.inc()
-    world.randomDust()
-    world.randomMoisture()
+    from Vacuum import Vacuum
 
-    print(world.A)
-    print(world.Moisture)
-
-    world.setGridSize(8)
     
-    print(world.A)
-    print(world.Moisture)
+    # Set the host addresses and ports for the different agents
+    agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+		       Router.PLANNER    :['10.0.1.11',10001],
+		       Router.COMMANDER  :['10.0.1.12',10002],
+		       Router.WORLD      :['10.0.1.13',10003]}
 
-    world.setGridSize(3)
+    # Set the host addresses and ports for the different vacuums 
+    vacummInterfaces = [ ['10.0.1.14',10004],
+			 ['10.0.1.15',10005],
+			 ['10.0.1.16',10006]]
 
-    print(world.A)
-    print(world.Moisture)
+    # Set the other mission parameters
+    numVacs=len(vacummInterfaces)
+
+    # Set the parameters associated with the world.
+    # Set the rate and size for dirtfall
+    r = 1.8
+    s = 12.0
+
+    # Set the rate constant and size for rain
+    v         = .2
+    cloudsize = 20
+
+
+    # Create the world and get the gridsize
+    W = World.spawnWorld(r,s,v,cloudsize);
+    #print("World channel: {0}".format(W.getChannel()))
+    N = W.getNumber()
+    chan = W.getChannel()                     # Get the world's channel object
+    chan.setNumberVacuums(numVacs)            # Let the world's channel know how many vac's to use
+    W.setIPInformation(agentInterfaces)       # Let the world know all the ip info about the agents.
+
+
+
+
+    # Create vacuums
+    vacArray = []
+    for i in range(numVacs) :
+	vacuum = Vacuum.spawnVacuum(i,0)
+	#print("New Vacuum: {0} - {1}, {2}".format(vacuum,id(vacuum),i))
+	vacuum.getChannel().setNumberVacuums(numVacs)      # Tell the vacuum how many other
+							   # vacuums there will be
+	vacuum.setQueueUse(True)                           # Tell the vacuum to get info
+							   # from the world through the queue.
+	vacArray.append(vacuum)                            # Append this to the vac's kept track of here.
+	pos = vacuum.getPosition()                         # get the default pos.
+	chan.getRouter().addVacuum(vacuum.getChannel(),i)  # Tell the world where the vacuum starts.
+
+	W.addVacuum(vacuum,False)                          # Add the vacuum to the world's list of vac's
+
+
+	chan.addVacuum(vacuum,i,pos[0],pos[1],False)       # Let the world's channel know about this vac
+
+	# Let this vacuum know about the ip information about all of the other agents and the world.
+	vacuum.setIPInformation(agentInterfaces)
+	vacuum.setRouterChannel(Router.WORLD,W.getChannel())
+
+
+	# Set the ip information for this particular vacuum.
+	#print("Setting vacuum {0} - {1}:{2}".format(i,vacummInterfaces[i][0],vacummInterfaces[i][1]))
+	vacuum.setHostname(vacummInterfaces[i][0])
+	vacuum.setPort(vacummInterfaces[i][1])
+
+	# If you want the vacuum to run in its own process then uncomment out the next line (.start)
+	#vacuum.start()
+
+	# If you want the vacuum to run in this process with a direct
+	# connection to the world then uncomment out the next line.
+	vacuum.getChannel().getRouter().createAndInitializeSocket()
+
+
+
+    # Set the ip info for the world and start up the graphical interface
+    W.setHostname(agentInterfaces[Router.WORLD][0])
+    W.setPort(agentInterfaces[Router.WORLD][1])
+    W.getChannel().getRouter().createAndInitializeSocket()
+
+
+    from XML.XMLMessageExternalCommand import XMLMessageExternalCommand
+    parameter = XMLMessageExternalCommand()
+    parameter.setParameterValue(XMLMessageExternalCommand.RESTART)
+    parameter.createRootNode()
+    for vacuum in vacArray:
+	# Turn on each of the vacuums - i.e. reset the vacuum.
+	# print("GraphicalWorld.start - Vacuum: {0}".format(vacuum))
+	#vacuum.setWorking(True)
+	#vacuum.setStatus(3)
+	#vacuum.initializeTime(0.0)
+	W.channel.getRouter().sendString(
+	    Router.VACUUM,parameter.xml2Char(False),vacuum.getID())
+
+    H = []
+    R = []
+    skip = 10;
+    numSteps = 20
+    for i in range(numSteps) :
+	#import time # DEBUG
+	#time.sleep(1) # DEBUG
+	W.inc()
+	#if(i%skip==0) :
+	print(i)
+
+
+
+    W.quit()
     

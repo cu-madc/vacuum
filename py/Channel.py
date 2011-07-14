@@ -277,7 +277,7 @@ class Channel:
 	elif(theType == XMLParser.MESSAGE_EXTERNAL_PARAMETER) :
 	    # This is a message from the outside with information
 	    # about a parameter to set.
-	    print("External message: {0}".format(name))
+	    #print("External message: {0}".format(name))
 	    host = ''
 	    port = -1
 	    hostType = -1

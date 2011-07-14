@@ -277,10 +277,11 @@ class Router:
 	    # agent. Send the information over the
 	    # network.
 
-	    if(debug) :
-		print("SENDING TO {0} {1} ".format(self.agents[destination]['host'],self.agents[destination]['port']))
 	    self.sendMessageOverSocket([self.agents[destination]['host'],self.agents[destination]['port']],
 				       message)
+
+	    if(debug) :
+		print("SENT TO {0} {1} ".format(self.agents[destination]['host'],self.agents[destination]['port']))
 
 
 	elif('parent' in self.agents[destination]):

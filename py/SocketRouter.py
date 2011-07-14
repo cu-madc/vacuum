@@ -254,6 +254,7 @@ class SocketRouter(Router):
 	    print("checking the incoming queue")
 
 	numberItems = 0
+	#print("SocketRouter.checkIncomingQueue - aquiring data lock")
 	self.dataLock.acquire()
 	entry = None
 	while(not self.incomingTCP.empty()):
@@ -274,6 +275,7 @@ class SocketRouter(Router):
 	    pass
 
 	self.dataLock.release()
+	#print("SocketRouter.checkIncomingQueue - releasing data lock")
 
 	#if(self.getRunning()) :
 	#    threading.Timer(1.0, self.checkIncomingQueue).start()
@@ -298,16 +300,21 @@ class SocketRouter(Router):
     ## sendMessageOverSocket
     #
     # Sends message over TCP socket in our var len string format
-    def sendMessageOverSocket(self,hostTuple,message) :
-	if(SocketRouter.DEBUG) :
+    def sendMessageOverSocket(self,hostTuple,message,debug=False) :
+
+	if(SocketRouter.DEBUG or debug) :
 	    print("SocketRouter.sendMessageOverSocket, {1}, {2} - sending:\n{0}".format(
 		"",hostTuple[0],hostTuple[1])) # message
 	    
         import socket
+	#print("creating socket")
         mySocket = socket.socket()
         try:
+	    #print("trying to connect")
             mySocket.connect((hostTuple[0],hostTuple[1]))
+	    #print("sending message")
             mySocket.send(message) #self.myComm.makeChunk(message))
+	    #print("sent message")
 
         except EnvironmentError as exc:
             if(exc.errno == errno.ECONNREFUSED):
