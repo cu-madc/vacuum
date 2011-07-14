@@ -68,7 +68,7 @@ from Channel import Channel
 from Commander import Commander
 from Planner import Planner
 from SensorArray import SensorArray
-from World import World
+from GraphicalWorld import GraphicalWorld
 from Vacuum import Vacuum
 from Router import Router
 
@@ -103,7 +103,7 @@ cloudsize = 20
 
 
 # Create the world and get the gridsize
-W = World.spawnWorld(r,s,v,cloudsize);
+W = GraphicalWorld.spawnWorld(r,s,v,cloudsize);
 #print("World channel: {0}".format(W.getChannel()))
 N = W.getNumber()
 chan = W.getChannel()                     # Get the world's channel object
@@ -234,18 +234,4 @@ plan.start()
 W.setHostname(agentInterfaces[Router.WORLD][0])
 W.setPort(agentInterfaces[Router.WORLD][1])
 W.getChannel().getRouter().createAndInitializeSocket()
-
-
-
-numSteps = 20
-skip = 1
-for i in range(numSteps) :
-    import time      # DEBUG
-    time.sleep(0.06) # DEBUG
-    W.inc()
-    if(i%skip==0) :
-	print(i)
-
-
-
-W.quit()
+W.mainloop()
