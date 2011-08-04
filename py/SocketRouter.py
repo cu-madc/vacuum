@@ -8,8 +8,8 @@
 #       class definition for a super class of the router object using
 #       sockets
 # 
-#  This material is based on research sponsored by DARPA under agreement
-#  number FA8750-10-2-0165. The U.S. Government is authorized to
+#  This material is based on research sponsored by AFRL under agreement
+#  number FA8750-10-2-0245. The U.S. Government is authorized to
 #  reproduce and distribute reprints for Governmental purposes
 #  notwithstanding any copyright notation thereon.
 # 
@@ -319,7 +319,7 @@ class SocketRouter(Router):
         except EnvironmentError as exc:
             if(exc.errno == errno.ECONNREFUSED):
                 print("SocketRouter.sendMessageOverSocket - Error trying to connect - {0}:{1}".format(
-		    hostTuple[0],hostTuple[1]))
+		    hostTuple[0],hostTuple[1],message))
 	    else :
 		print("SocketRouter.sendMessageOverSocket - Unkown error trying to connect: {0}".format(exc.errno))
                 

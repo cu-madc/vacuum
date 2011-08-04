@@ -8,8 +8,8 @@
 #       class definition for the world object used in the vacuum
 #       simulation.
 # 
-#  This material is based on research sponsored by DARPA under agreement
-#  number FA8750-10-2-0165. The U.S. Government is authorized to
+#  This material is based on research sponsored by AFRL under agreement
+#  number FA8750-10-2-0245. The U.S. Government is authorized to
 #  reproduce and distribute reprints for Governmental purposes
 #  notwithstanding any copyright notation thereon.
 # 
@@ -110,9 +110,10 @@ class  World (Agent):
 	parameter.createRootNode()
 
 	# Send the message to each agent.
-	self.channel.sendString(Router.SENSORARRAY,parameter.xml2Char(False))
-	self.channel.sendString(Router.PLANNER,parameter.xml2Char(False))
 	self.channel.sendString(Router.COMMANDER,parameter.xml2Char(False))
+	self.channel.sendString(Router.PLANNER,parameter.xml2Char(False))
+	self.channel.sendString(Router.SENSORARRAY,parameter.xml2Char(False))
+
 	
 	for definedVacuum in self.vacuumArray :
 	    # Send the message to each vacuum

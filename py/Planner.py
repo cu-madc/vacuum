@@ -8,8 +8,8 @@
 #       class definition for the planner object used in the vacuum
 #       simulation.
 # 
-#  This material is based on research sponsored by DARPA under agreement
-#  number FA8750-10-2-0165. The U.S. Government is authorized to
+#  This material is based on research sponsored by AFRL under agreement
+#  number FA8750-10-2-0245. The U.S. Government is authorized to
 #  reproduce and distribute reprints for Governmental purposes
 #  notwithstanding any copyright notation thereon.
 # 
