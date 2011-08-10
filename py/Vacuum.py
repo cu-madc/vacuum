@@ -303,7 +303,7 @@ class Vacuum (Agent):
 	report.addStatus(status)
 	#print(self.xml2Char())
 
-	self.channel.sendString(Router.COMMANDER,report.xml2Char(),-1,False)
+	self.channel.sendString(Router.COMMANDER,report.xml2Char(),-1,False,False)
 
 
 

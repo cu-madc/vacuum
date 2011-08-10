@@ -214,7 +214,7 @@ class Router:
 		    
 
 	
-    def sendString(self,destination,message,vacuumID=-1,debug=False):
+    def sendString(self,destination,message,vacuumID=-1,overrideSocket=False,debug=False):
 
 	#if((hostType<0) or (hostType>=len(self.agents))) :
 	#    # This is not a valid destination. Just return.

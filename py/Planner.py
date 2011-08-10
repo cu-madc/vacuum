@@ -401,7 +401,7 @@ class Planner (Agent) :
 	report.createObjectClassElements(Agent.SENSORARRAY,"Send Planner Update")
 	#print(self.xml2Char())
 
-	self.channel.sendString(Router.SENSORARRAY,report.xml2Char()) #,-1,True)
+	self.channel.sendString(Router.SENSORARRAY,report.xml2Char()) #,-1,False,True)
 
 
 

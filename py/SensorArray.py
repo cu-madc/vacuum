@@ -183,7 +183,7 @@ class SensorArray (Agent):
 	sensorData.addArrayNode(noisyView)
 	#print(self.xml2Char())
 
-	self.channel.sendString(Router.PLANNER,sensorData.xml2Char()) #,-1,True)
+	self.channel.sendString(Router.PLANNER,sensorData.xml2Char()) #,-1,False,True)
 
 
 

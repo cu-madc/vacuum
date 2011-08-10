@@ -140,9 +140,9 @@ class Channel:
         print("Channel information {0}: {1} - {2}".format(toPrint,self,self.vacuumArray))
 
 
-    def sendString(self,type,message,id=-1,debug=False) :
+    def sendString(self,type,message,id=-1,overrideSocket=False,debug=False) :
 	if(self.router) :
-	    self.router.sendString(type,message,id,debug)
+	    self.router.sendString(type,message,id,overrideSocket,debug)
 
     def addVacuum(self,vacuum,id,xpos,ypos,debug=False) :
 

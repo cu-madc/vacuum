@@ -413,7 +413,7 @@ class  World (Agent):
 	#print(self.xml2Char())
 
 
-	self.channel.sendString(Router.PLANNER,report.xml2Char()) #,-1,True)
+	self.channel.sendString(Router.PLANNER,report.xml2Char()) #,-1,False,True)
 
 
     ## sendVacuumWorldTime
@@ -431,7 +431,7 @@ class  World (Agent):
 	newTime.addTime(T)
 	#print(self.xml2Char())
 
-	self.channel.sendString(Router.VACUUM,newTime.xml2Char(),id,False)
+	self.channel.sendString(Router.VACUUM,newTime.xml2Char(),id,False,False)
 
 
     # Routines that are overridden from the Agent class. These are
