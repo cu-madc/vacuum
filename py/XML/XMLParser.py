@@ -204,7 +204,7 @@ class XMLParser (xml.sax.handler.ContentHandler):
     # XML tree.
     #  
     def parseXMLString(self,xmlString) :
-	parser = xml.sax.make_parser(['IncrementalParser'])
+	parser = xml.sax.make_parser([])
 	parser.setContentHandler(self)
 	parser.reset()
         parser.feed(xmlString)

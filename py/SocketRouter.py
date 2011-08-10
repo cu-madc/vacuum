@@ -310,7 +310,7 @@ class SocketRouter(Router):
 	#print("creating socket")
         mySocket = socket.socket()
         try:
-	    #print("trying to connect")
+	    #print("trying to connect: {0}".format(hostTuple[0]))
             mySocket.connect((hostTuple[0],hostTuple[1]))
 	    #print("sending message")
             mySocket.send(message) #self.myComm.makeChunk(message))
