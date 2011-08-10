@@ -110,6 +110,13 @@ class Router:
 
 	self.agents[type]['parent'] = channel
 
+    def setDataCallback(self,type,dataCB) :
+	if(Router.DEBUG) :
+	    print("Router, Setting data callback: {0}-{1}".format(type,dataCB))
+
+	self.agents[type]['data callback'] = dataCB
+
+
     def getChannel(self,type) :
 	return(self.agents[type]['parent'])
 
