@@ -434,6 +434,47 @@ class  World (Agent):
 	self.channel.sendString(Router.VACUUM,newTime.xml2Char(),id,False)
 
 
+    # Routines that are overridden from the Agent class. These are
+    # handlers for requests that come from an outside data source.
+
+
+    # Routine to handle the poll requests
+    def poll(self) :
+	pass
+
+
+    # Routine to handle the reset requests
+    def reset(self) :
+	pass
+
+
+    # Routine to handle the reset requests
+    def restart(self) :
+	pass
+
+
+    # Routine to handle the start requests
+    def startSimulation(self) :
+	pass
+
+
+    # Routine to handle the stop requests
+    def stopSimulation(self) :
+	pass
+
+
+
+    # Routine to perform a number of time steps of the simulation. It
+    # assumes that all of the parameters are set and proceeds with the
+    # time steps.
+    def stepInTime(self,numSteps,start=0,skip=1):
+    
+	for i in range(numSteps) :
+	    import time      # DEBUG
+	    #time.sleep(0.06) # DEBUG
+	    self.inc()
+	    if((skip>0) and (i%skip==0)) :
+		print(i)
 
 
 
