@@ -471,7 +471,7 @@ class  World (Agent):
     
 	for i in range(numSteps) :
 	    import time      # DEBUG
-	    #time.sleep(0.06) # DEBUG
+	    time.sleep(0.06) # DEBUG
 	    self.inc()
 	    if((skip>0) and (i%skip==0)) :
 		print(i)
