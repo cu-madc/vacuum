@@ -239,7 +239,8 @@ class Router:
 
 		if((type(self.vacuumArray[vacuumID]) is dict) and
 		   ('host' in self.vacuumArray[vacuumID]) and
-		   ('port' in self.vacuumArray[vacuumID])) :
+		   ('port' in self.vacuumArray[vacuumID]) and
+		   not overrideSocket) :
 		    # IP iformation is available for this
 		    # agent. Send the information over the
 		    # network.
@@ -251,7 +252,7 @@ class Router:
 						self.vacuumArray[vacuumID]['port']],
 					       message)
 
-		elif(self.sendMessage()) :
+		elif(self.sendMessage() or overrideSocket) :
 		    # The information held for this object is a
 		    # pointer to the vacuums channel.
 
@@ -272,7 +273,8 @@ class Router:
 
 
 	elif (('host' in self.agents[destination]) and
-	      ('port' in self.agents[destination])) :
+	      ('port' in self.agents[destination]) and
+	      not overrideSocket) :
 	    # IP iformation is available for this
 	    # agent. Send the information over the
 	    # network.
@@ -289,7 +291,7 @@ class Router:
 		if(debug):
 		    print("Sending to an agent directly: {0}".format(self.agents[destination]))
 
-		if((self.agents[destination]['parent']) and (self.sendMessage())) :
+		if((self.agents[destination]['parent']) and (self.sendMessage()) or overrideSocket) :
 
 		    # The information held for this object is a
 		    # pointer to the agent's channel.
