@@ -308,3 +308,55 @@ class Router:
 
 
 
+    def sendStringDirect(self,type,message,id=-1,debug=False) :
+
+	if(destination == self.VACUUM):
+	    # This is a message for a vacuum. Need to check to see if
+	    # it has a proper ID.
+
+	    if(debug):
+		print("Router.sendStringDirect, Send message to vacuum {0} , {1}".format(vacuumID,self.channel))
+		
+	    if((vacuumID>-1) and (vacuumID < len(self.vacuumArray))) :
+		# This is a well formed message for a vacuum.
+
+		# The information held for this object is a
+		# pointer to the vacuums channel.
+
+		if(debug) :
+		    print("Router.sendString: {0}".format(vacuumID))
+		    self.vacuumArray[vacuumID].checkInfoType = True
+
+		#print("Router.sendString vacuum array: {0}  channel: {1}".format(self.vacuumArray,self.channel))
+		if((vacuumID > -1) and (vacuumID < len(self.vacuumArray)) and self.vacuumArray[vacuumID]) :
+		    if(debug):
+			print("Sending message to {0}".format(self.vacuumArray[vacuumID]))
+
+		    self.vacuumArray[vacuumID].receiveXMLReportParseAndDecide(message)
+
+		else :
+		    print("Router.sendString bad vacuum id: {0}".format(vacuumID))
+
+
+
+
+	elif('parent' in self.agents[destination]):
+		# This is a message for an agent that is not a vacuum.
+		if(debug):
+		    print("Sending to an agent directly: {0}".format(self.agents[destination]))
+
+		if(self.agents[destination]['parent']) :
+
+		    # The information held for this object is a
+		    # pointer to the agent's channel.
+
+		    if(debug) :
+			print("Send message directly to agent")
+			self.agents[destination]['parent'].checkInfoType = True
+
+		    self.agents[destination]['parent'].receiveXMLReportParseAndDecide(message)
+
+
+	elif(debug) :
+	    print("Router.sendMessage: Message not sent?")
+

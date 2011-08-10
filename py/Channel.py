@@ -144,6 +144,10 @@ class Channel:
 	if(self.router) :
 	    self.router.sendString(type,message,id,overrideSocket,debug)
 
+    def sendStringDirect(self,type,message,id=-1,debug=False) :
+	if(self.router) :
+	    self.router.sendStringDirect(type,message,id,debug)
+
     def addVacuum(self,vacuum,id,xpos,ypos,debug=False) :
 
 	if(vacuum != None):
