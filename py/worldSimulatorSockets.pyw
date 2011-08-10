@@ -237,15 +237,5 @@ W.getChannel().getRouter().createAndInitializeSocket()
 
 
 
-numSteps = 20
-skip = 1
-for i in range(numSteps) :
-    import time      # DEBUG
-    time.sleep(0.06) # DEBUG
-    W.inc()
-    if(i%skip==0) :
-	print(i)
-
-
-
+W.stepInTime(20,0,1)
 W.quit()
