@@ -83,6 +83,8 @@ class Agent (Process):
 
 	self.worldFileName  = ""
 	self.vacuumFileName = ""
+	self.setDataCollection()
+	self.setDataCollectionFrequency()
 
 	self.setWorking(True)
 
@@ -128,8 +130,23 @@ class Agent (Process):
     	self.worldFileName  = name
 
     def setVacuumFileName(self,name) :
-	self.vacuumFileName = ""
+	self.vacuumFileName = name
 
+    def setDataCollection(self,value=False) :
+	self.collectData = value
+
+    def getDataCollection(self) :
+	return(self.collectData)
+
+    def setDataCollectionFrequency(self,skip=1) :
+	# Set which time steps should be used to collect data. If
+	# skip=1 then data is collected at every time step. If skip=2
+	# then every other step is used.
+	if(skip > 0) :
+	    self.dataSkip = skip
+
+	else:
+	    self.dataSkip = 1
 
 
     # call this routine when you want to poll the hostname/socket

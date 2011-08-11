@@ -472,6 +472,12 @@ class  World (Agent):
 	for i in range(numSteps) :
 	    import time      # DEBUG
 	    time.sleep(0.06) # DEBUG
+
+	    if(self.getDataCollection()) :
+		if(i%self.dataSkip == 0) :
+		    # We need to collect data on this time step.
+		    pass
+		
 	    self.inc()
 	    if((skip>0) and (i%skip==0)) :
 		print(i)
