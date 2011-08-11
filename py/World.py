@@ -64,6 +64,9 @@
 from numpy import *
 from numpy.linalg import *
 
+import csv
+import sys
+
 from Channel import Channel
 from Router import Router
 from Agent import Agent
@@ -85,6 +88,14 @@ class  World (Agent):
 
 	self.setSensor(None)
 	self.setPlanner(None)
+
+	self.worldDataWriter  = csv.writer(sys.stdout, delimiter=',',
+					   quotechar='\'',
+					   quoting=csv.QUOTE_MINIMAL)
+	
+	self.vacuumDataWriter = csv.writer(sys.stdout, delimiter=',',
+					   quotechar='\'',
+					   quoting=csv.QUOTE_MINIMAL)
 
 
     def setSensor(self,sensor) :
@@ -181,6 +192,8 @@ class  World (Agent):
 	    
         self.vacuumArray.append(vacuum)
 	self.setNumberVacuums(len(self.vacuumArray))
+	vacuum.getChannel().setDataCallback(Router.WORLD,self.getVacuumData)
+
 	if(debug) :
 	    print("Adding Vacuum: {0}".format(vacuum))
 	    self.printVacuumInfo(0)
@@ -471,16 +484,41 @@ class  World (Agent):
     
 	for i in range(numSteps) :
 	    import time      # DEBUG
-	    time.sleep(0.06) # DEBUG
+	    time.sleep(0.09) # DEBUG
 
 	    if(self.getDataCollection()) :
 		if(i%self.dataSkip == 0) :
 		    # We need to collect data on this time step.
-		    pass
+		    self.getData(i)
 		
 	    self.inc()
 	    if((skip>0) and (i%skip==0)) :
 		print(i)
+
+
+    ## Routine to get the required data.
+    def getData(self,timeStep) :
+
+
+	for vacuum in self.vacuumArray:
+	    # Request info from the given vacuum.
+	    vacuum.poll()
+
+	# Get the appropriate data associated with the world.
+        # self.A is the array of values for dirt levels
+        # self.Moisture is the array of values for moisture level
+	#sys.stdout
+	for row in range(self.N) :
+	    for col in range(self.N) :
+		self.worldDataWriter.writerow([timeStep,row,col,self.A[row][col],self.Moisture[row][col]])
+		
+	#self.vacuumDataWriter
+
+
+    # Get data from a vacuum
+    def getVacuumData(self,info) :
+	self.vacuumDataWriter.writerow(info)
+	
 
 
 

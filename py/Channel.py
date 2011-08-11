@@ -200,6 +200,13 @@ class Channel:
 		    
 
 
+    # Pass a callback definition to the router
+    def setDataCallback(self,type,dataCB) :
+	self.router.setDataCallback(type,dataCB)
+
+    def sendInfoViaCallback(self,type,info) :
+	self.router.sendInfoViaCallback(type,info)
+
 
     def addAgent(self,agent,type,id,debug=False) :
 

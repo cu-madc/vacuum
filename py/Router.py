@@ -367,3 +367,9 @@ class Router:
 	elif(debug) :
 	    print("Router.sendMessage: Message not sent?")
 
+
+    # Send information via a callback
+    def sendInfoViaCallback(self,type,info) :
+
+	if(self.agents[type] and ('data callback' in self.agents[type])) :
+	    self.agents[type]['data callback'](info)

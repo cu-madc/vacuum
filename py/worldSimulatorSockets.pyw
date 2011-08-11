@@ -105,8 +105,6 @@ if(len(sys.argv) >= 2) :
 #print(vacuumOutputFileName)
 
 
-
-
 # Set the host addresses and ports for the different agents
 agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
 		   Router.PLANNER    :['10.0.1.11',10001],
@@ -138,6 +136,13 @@ N = W.getNumber()
 chan = W.getChannel()                     # Get the world's channel object
 W.getChannel().setNumberVacuums(numVacs)  # Let the world's channel know how many vac's to use
 W.setIPInformation(agentInterfaces)       # Let the world know all the ip info about the agents.
+
+# Set the world up to record data
+W.setVacuumFileName(vacuumOutputFileName)
+W.setWorldFileName(worldOutputFileName)
+W.setDataCollection(True)
+W.setDataCollectionFrequency(1)
+
 
 
 # create and set the sensor

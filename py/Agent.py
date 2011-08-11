@@ -81,10 +81,16 @@ class Agent (Process):
 	self.queue = Queue()
 	self.queueUse = False
 
+	# Initialize the data collection.
 	self.worldFileName  = ""
 	self.vacuumFileName = ""
+	self.worldDataFile = None
+	self.vacuumDataFile = None
+
 	self.setDataCollection()
 	self.setDataCollectionFrequency()
+
+
 
 	self.setWorking(True)
 
@@ -128,9 +134,18 @@ class Agent (Process):
     # Used for the output of data
     def setWorldFileName(self,name) :
     	self.worldFileName  = name
+	
+	if(self.worldDataFile) :
+	    self.worldDataFile.close()
+	self.worldDataFile  = open(self.worldFileName,"w")
 
     def setVacuumFileName(self,name) :
 	self.vacuumFileName = name
+
+	if(self.vacuumDataFile) :
+	    self.vacuumDataFile.close()
+	self.vacuumDataFile = open(self.vacuumFileName,"w")
+
 
     def setDataCollection(self,value=False) :
 	self.collectData = value

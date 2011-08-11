@@ -72,7 +72,7 @@ class Vacuum (Agent):
     # robot vaccum object
 
 
-    def __init__(self,IDnum,currentTime=0.0,channel=None) : #class constructor
+    def __init__(self,IDnum,currentTime=0,channel=None) : #class constructor
 	Agent.__init__(self,Router.VACUUM)
 	
         self.xPos   = 0
@@ -142,6 +142,8 @@ class Vacuum (Agent):
     def setStatus(self,value) :
         self.status = value
 
+    def getStatus(self) :
+	return(self.status)
 
 
 
@@ -363,8 +365,15 @@ class Vacuum (Agent):
 	#self..shutdownServer()
 	self.setWorking(True)
 	self.setStatus(3)
-	self.initializeTime(0.0)
+	self.initializeTime(0)
 
+
+    # Routine to handle requests to record data
+    def poll(self) :
+	myPos = self.getPosition()
+	myInfo = [self.time,self.getID(),self.getStatus(),self.getWorking(),
+		  myPos[0],myPos[1],self.repairs,self.odometer,self.missions]
+	self.channel.sendInfoViaCallback(Router.WORLD,myInfo)
 
 
 
