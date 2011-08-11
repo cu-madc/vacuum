@@ -65,7 +65,7 @@ from numpy import *
 from numpy.linalg import *
 
 import csv
-import sys
+#import sys
 
 from Channel import Channel
 from Router import Router
@@ -89,13 +89,6 @@ class  World (Agent):
 	self.setSensor(None)
 	self.setPlanner(None)
 
-	self.worldDataWriter  = csv.writer(sys.stdout, delimiter=',',
-					   quotechar='\'',
-					   quoting=csv.QUOTE_MINIMAL)
-	
-	self.vacuumDataWriter = csv.writer(sys.stdout, delimiter=',',
-					   quotechar='\'',
-					   quoting=csv.QUOTE_MINIMAL)
 
 
     def setSensor(self,sensor) :
@@ -131,7 +124,11 @@ class  World (Agent):
 	    self.channel.sendString(Router.VACUUM,parameter.xml2Char(False),definedVacuum.getID())
 	    definedVacuum.checkIncomingQueue()  # Make sure the vacuum processes its world queue.
 	    
-		    
+
+	if(self.getDataCollection()) :
+	    self.worldDataFile.close()
+	    self.vacuumDataFile.close()
+	    
         exit(0) # Say bye bye!
 
     
@@ -296,6 +293,25 @@ class  World (Agent):
 
     def setRainSize(self,cloudsize) :
         self.cloudsize = cloudsize # average size of rain event
+
+
+    # Used for the output of data
+    def setWorldFileName(self,name) :
+	Agent.setWorldFileName(self,name)
+
+	self.worldDataWriter  = csv.writer(self.worldDataFile, delimiter=',',
+					   quotechar='\'',
+					   quoting=csv.QUOTE_MINIMAL)
+	
+
+
+    def setVacuumFileName(self,name) :
+	Agent.setVacuumFileName(self,name)
+
+	self.vacuumDataWriter = csv.writer(self.vacuumDataFile, delimiter=',',
+					   quotechar='\'',
+					   quoting=csv.QUOTE_MINIMAL)
+
 
 
     def inc(self) :
@@ -507,7 +523,6 @@ class  World (Agent):
 	# Get the appropriate data associated with the world.
         # self.A is the array of values for dirt levels
         # self.Moisture is the array of values for moisture level
-	#sys.stdout
 	for row in range(self.N) :
 	    for col in range(self.N) :
 		self.worldDataWriter.writerow([timeStep,row,col,self.A[row][col],self.Moisture[row][col]])
