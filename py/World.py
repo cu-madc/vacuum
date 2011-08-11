@@ -302,6 +302,8 @@ class  World (Agent):
 	self.worldDataWriter  = csv.writer(self.worldDataFile, delimiter=',',
 					   quotechar='\'',
 					   quoting=csv.QUOTE_MINIMAL)
+
+	self.worldDataWriter.writerow(["time","row","col","dust","moisture"])
 	
 
 
@@ -312,6 +314,8 @@ class  World (Agent):
 					   quotechar='\'',
 					   quoting=csv.QUOTE_MINIMAL)
 
+	self.vacuumDataWriter.writerow(["time","id","status","working",
+				       "xpos","ypos","repairs","odomoter","missions"])
 
 
     def inc(self) :
