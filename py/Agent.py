@@ -81,6 +81,9 @@ class Agent (Process):
 	self.queue = Queue()
 	self.queueUse = False
 
+	self.worldFileName  = ""
+	self.vacuumFileName = ""
+
 	self.setWorking(True)
 
     def __del__(self) :
@@ -119,6 +122,14 @@ class Agent (Process):
 
     def getWorking(self) :
         return(self.isWorking)
+
+    # Used for the output of data
+    def setWorldFileName(self,name) :
+    	self.worldFileName  = name
+
+    def setVacuumFileName(self,name) :
+	self.vacuumFileName = ""
+
 
 
     # call this routine when you want to poll the hostname/socket
