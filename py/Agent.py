@@ -203,6 +203,9 @@ class Agent (Process):
     # super classes. These are handlers for requests that come from an
     # outside data source.
 
+    # Routine to deal with incoming poll data
+    def pollData(self,data):
+	pass
 
     # Routine to handle the poll requests
     def poll(self) :
