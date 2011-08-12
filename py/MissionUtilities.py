@@ -67,6 +67,7 @@ import re
 import getopt
 import csv
 
+from Router import Router
 
 class MissionUtilities: 
     # Class to offer some helper utilities to make setting up a
@@ -108,7 +109,9 @@ class MissionUtilities:
 		self.setVacuumOutputFileName(argument[1])
 
 	    if("--ipInfo" in argument) :
+		#print("setting ip information: {0}".format(argument[1]))
 		self.setIPInfoFileName(argument[1])
+		self.parseIPInformation()
 
 
 
@@ -215,11 +218,72 @@ class MissionUtilities:
 	    return(False)
 
 	reader = csv.reader(fp)
+	lineNumber = 1;
 	for row in reader:
 	    print(row)
+	    #self.vacuumInfo    = vacuumInfo
+
+	    if(len(row)>0) :
+	
+		if(row[0] == 'planner') :
+		    self.setIPInformation(self.plannerInfo,row,lineNumber)
+
+		elif(row[0] == 'commander') :
+		    self.setIPInformation(self.commanderInfo,row,lineNumber)
+
+		elif(row[0] == 'sensor') :
+		    self.setIPInformation(self.sensorInfo,row,lineNumber)
+
+		elif(row[0] == 'world') :
+		    self.setIPInformation(self.worldInfo,row,lineNumber)
+
+	    lineNumber += 1
+
 
 	fp.close()
 
+
+    ## setIPInformation(self,theInfo,agent,ipAddress,portNumber,lineNumber)
+    #
+    # Helper routine to set the information in the dictionary given by
+    # theInfo
+    def setIPInformation(self,theInfo,row,lineNumber):
+
+	# determine which kind of agent this is for.
+	agent = row[1]
+
+	# Determine the port number and ip address.
+	if(agent=='vacuum'):
+	    portNumber = row[4]
+	    ipAddress  = row[3]
+	else :
+	    portNumber = row[3]
+	    ipAddress  = row[2]
+	    
+
+	# Convert the port number to an integer type.
+	try:
+	    portNumber = int(portNumber)
+	except ValueError:
+	    print("Error reading the ip information file, line {0}. Port number not valid. Ignoring the line.".format(lineNumber))
+	    return
+
+
+	if(agent == 'sensor') :
+	    theInfo[Router.SENSORARRAY] = [ipAddress,portNumber]
+	    
+	elif(agent == 'planner') :
+	    theInfo[Router.PLANNER] = [ipAddress,portNumber]
+	    
+	elif(agent == 'commander') :
+	    theInfo[Router.COMMANDER] = [ipAddress,portNumber]
+	    
+	elif(agent == 'world') :
+	    theInfo[Router.WORLD] = [ipAddress,portNumber]
+
+	elif(agent == 'vacuum') :
+	    pass
+	    
 
 
 if (__name__ =='__main__') :
