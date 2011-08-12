@@ -65,6 +65,7 @@ import sys
 from datetime import date
 import re
 import getopt
+import csv
 
 
 class MissionUtilities: 
@@ -81,6 +82,15 @@ class MissionUtilities:
 	# Set the default file names
 	self.setWorldOutputFileName("worldOutput-#DATESTAMP#.csv")
 	self.setVacuumOutputFileName("vacuumOuput-#DATESTAMP#.csv")
+	self.setIPInfoFileName("")
+
+
+	# Create empty ip address information.
+	self.vacuumInfo    = ()
+	self.worldInfo     = {}
+	self.sensorInfo    = {}
+	self.plannerInfo   = {}
+	self.commanderInfo = {}
 
 
     ## parseCommandLine(self)
@@ -96,6 +106,9 @@ class MissionUtilities:
 
 	    if("--vacuumData" in argument) :
 		self.setVacuumOutputFileName(argument[1])
+
+	    if("--ipInfo" in argument) :
+		self.setIPInfoFileName(argument[1])
 
 
 
@@ -135,18 +148,86 @@ class MissionUtilities:
 	return(self.vacuumOutputFileName)
 
 
-    
+
+    ## setIPInfoFileName(self,fileName)
+    #
+    # Routine to set the name of the data file that has the ip address information.
+    def setIPInfoFileName(self,fileName) :
+	self.ipInfoFileName = fileName
 
 
-    # Static method set a file name for the data file used to output
-    # world data
-    @staticmethod
-    def setWorldDataInformation(self,) :
-	pass
+    ## getIPInfoFileName(self)
+    #
+    # Routine to get the name of the data file that has the ip address information.
+    def getIPInfoFileName(self) :
+	return(self.ipInfoFileName)
+
+
+    ## setDefaultIPInformation(self,)
+    #
+    # Routine to set the default ip information to be used in the simulation
+    def setDefaultIPInformation(self,vacuumInfo,worldInfo,sensorInfo,plannerInfo,commanderInfo) :
+    	self.vacuumInfo    = vacuumInfo
+	self.worldInfo     = worldInfo
+	self.sensorInfo    = sensorInfo
+	self.plannerInfo   = plannerInfo
+	self.commanderInfo = commanderInfo
+
+    ## getIPInformationVacuum(self)
+    #
+    # Routine to get the  ip information to be used in the simulation for the vacuum
+    def getIPInformationVacuum(self) :
+    	return(self.vacuumInfo)
+
+    ## getIIPnformationWorld(self)
+    #
+    # Routine to get the  ip information to be used in the simulation for the world
+    def getIPInformationWorld(self) :
+	return(self.worldInfo)
+	
+    ## getIIPnformationSensor(self)
+    #
+    # Routine to get the  ip information to be used in the simulation for the sensor
+    def getIPInformationSensor(self) :
+	return(self.sensorInfo)
+	
+    ## getIIPnformationPlanner(self)
+    #
+    # Routine to get the  ip information to be used in the simulation for the planner
+    def getIPInformationPlanner(self) :
+	return(self.plannerInfo)
+	
+    ## getIIPnformationCommander(self)
+    #
+    # Routine to get the  ip information to be used in the simulation for the commander
+    def getIPInformationCommander(self) :
+	return(self.commanderInfo)
+
+
+    ## parseIIPnformation(self)
+    #
+    # Routine to read in the file that has the ip information and parse it.
+    def parseIPInformation(self):
+
+	try:
+	    fp = open(self.ipInfoFileName,"r")
+	except IOError:
+	    return(False)
+
+	reader = csv.reader(fp)
+	for row in reader:
+	    print(row)
+
+	fp.close()
+
 
 
 if (__name__ =='__main__') :
     mission = MissionUtilities()
     mission.parseCommandLine()
-    print(mission.getWorldOutputFileName())
-    print(mission.getvacuumOutputFileName())
+    #print(mission.getWorldOutputFileName())
+    #print(mission.getvacuumOutputFileName())
+    #print(mission.getIIPnfoFileName())
+
+    mission.setIPInfoFileName("trial.csv")
+    mission.parseIPInformation()

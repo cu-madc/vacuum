@@ -73,6 +73,7 @@ from World import World
 from Vacuum import Vacuum
 from Router import Router
 
+from MissionUtilities import MissionUtilities
 
 
 
@@ -82,14 +83,6 @@ from Router import Router
 # ./worldSimulatorSocket.pyw --worldData=worldOutput-#DATESTAMP#.csv --vacuumData=vacuumOutput-#DATESTAMP#.csv --ipInfo=ipInfo.dat
 #
 #
-
-if(len(sys.argv) >= 3) :
-    # The name of the vacuum data file is specified.
-    vacuumOutputFileName = sys.argv[2]
-
-if(len(sys.argv) >= 2) :
-    # The name of the world data file is specified
-    worldOutputFileName = sys.argv[1]
 
 
 
@@ -103,6 +96,26 @@ agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
 vacummInterfaces = [ ['10.0.1.14',10004],
 		     ['10.0.1.15',10005],
 		     ['10.0.1.16',10006]]
+
+
+
+
+utilityHelper = MissionUtilities()
+utilityHelper.setDefaultIPInformation(
+    vacummInterfaces,agentInterfaces,agentInterfaces,agentInterfaces,agentInterfaces)
+utilityHelper.parseCommandLine()
+
+sensorInterfaces    = utilityHelper.getIPInformationSensor()
+plannerInterfaces   = utilityHelper.getIPInformationPlanner()
+commanderInterfaces = utilityHelper.getIPInformationCommander()
+worldInterfaces     = utilityHelper.getIPInformationWorld()
+
+print(sensorInterfaces)
+print(plannerInterfaces)
+print(commanderInterfaces)
+print(worldInterfaces)
+exit(0)
+
 
 # Set the other mission parameters
 numVacs=len(vacummInterfaces)
@@ -123,11 +136,11 @@ W = World.spawnWorld(r,s,v,cloudsize);
 N = W.getNumber()
 chan = W.getChannel()                     # Get the world's channel object
 W.getChannel().setNumberVacuums(numVacs)  # Let the world's channel know how many vac's to use
-W.setIPInformation(agentInterfaces)       # Let the world know all the ip info about the agents.
+W.setIPInformation(worldInterfaces)       # Let the world know all the ip info about the agents.
 
 # Set the world up to record data
-W.setVacuumFileName(vacuumOutputFileName)
-W.setWorldFileName(worldOutputFileName)
+W.setVacuumFileName(utilityHelper.getvacuumOutputFileName())
+W.setWorldFileName(utilityHelper.getWorldOutputFileName())
 W.setDataCollection(True)
 W.setDataCollectionFrequency(1)
 
@@ -139,7 +152,7 @@ sensor = SensorArray.spawnSensorArray(accuracy)
 #print("Sensor Channel: {0}".format(sensor.getChannel()))
 sensor.setRouterChannel(Router.WORLD,W.getChannel())   # inform the sensor about the world's channel
 W.setSensor(sensor)                                    # tell the world what its sensor is
-sensor.setIPInformation(agentInterfaces)               # set the agent's ip info on the sensor.
+sensor.setIPInformation(sensorInterfaces)              # set the agent's ip info on the sensor.
 sensor.getChannel().setNumberVacuums(numVacs)          # tell the sensor how many vac's to use
 sensor.setQueueUse(True)                               # tell the sensor to use the queue's
                                                        # information to get input from the world
@@ -152,7 +165,7 @@ plan=Planner.spawnPlanner(r*s/float(N*N),r,s,accuracy,N)
 #print("Planner channel: {0}".format(plan.getChannel()))
 plan.setRouterChannel(Router.WORLD,W.getChannel())     # inform the planner about the world's channel
 W.setPlanner(plan)                                     # tell the world what its planner is
-plan.setIPInformation(agentInterfaces)                 # tell the agent's ip info to the planner
+plan.setIPInformation(plannerInterfaces)               # tell the agent's ip info to the planner
 plan.getChannel().setNumberVacuums(numVacs)            # tell the planner how many vac's to use
 plan.setQueueUse(True)                                 # tell the planner to use the queue's
                                                        # information to get input from the world
@@ -164,7 +177,7 @@ plan.setQueueUse(True)                                 # tell the planner to use
 command = Commander.spawnCommander()   
 #print("Comander channel: {0}".format(command.getChannel()))
 command.setRouterChannel(Router.WORLD,W.getChannel())  # inform the commander about the world's channel
-command.setIPInformation(agentInterfaces)              # tell the agent's ip info to the commander
+command.setIPInformation(commanderInterfaces)              # tell the agent's ip info to the commander
 command.getChannel().setNumberVacuums(numVacs)         # tell the commander  how many vac's to use
 
 
