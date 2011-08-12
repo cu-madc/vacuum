@@ -109,11 +109,11 @@ plannerInterfaces   = utilityHelper.getIPInformationPlanner()
 commanderInterfaces = utilityHelper.getIPInformationCommander()
 worldInterfaces     = utilityHelper.getIPInformationWorld()
 
-print(sensorInterfaces)
-print(plannerInterfaces)
-print(commanderInterfaces)
-print(worldInterfaces)
-exit(0)
+#print(sensorInterfaces)
+#print(plannerInterfaces)
+#print(commanderInterfaces)
+#print(worldInterfaces)
+#exit(0)
 
 
 # Set the other mission parameters

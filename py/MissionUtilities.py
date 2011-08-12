@@ -227,7 +227,6 @@ class MissionUtilities:
 	lineNumber = 1;
 	for row in reader:
 	    print(row)
-	    #self.vacuumInfo    = vacuumInfo
 
 	    if(len(row)>0) :
 	
@@ -251,6 +250,9 @@ class MissionUtilities:
 		    self.setIPInformation(self.worldInfo,row,lineNumber)
 		    #print(self.worldInfo)
 
+		elif(row[0] == "vacuum") :
+		    self.setVacuumIPInformation(self.vacuumInfo,row,lineNumber)
+
 	    lineNumber += 1
 
 
@@ -273,7 +275,7 @@ class MissionUtilities:
 		# determine the vacuum number.
 		vacuumNumber = int(row[2])
 	    except ValueError:
-		print("Error reading the ip information file, line {0}. Port number not valid. Ignoring the line.".format(lineNumber))
+		print("Error reading the ip information file, line {0}. Vacuum number not valid. Ignoring the line.".format(lineNumber))
 		return
 	    
 	    portNumber   = row[4]
@@ -292,16 +294,17 @@ class MissionUtilities:
 
 
 	if(agent == 'sensor') :
-	    theInfo[Router.SENSORARRAY] = [ipAddress,portNumber]
+	    index = Router.SENSORARRAY
 	    
 	elif(agent == 'planner') :
-	    theInfo[Router.PLANNER] = [ipAddress,portNumber]
+	    index = Router.PLANNER
 	    
 	elif(agent == 'commander') :
-	    theInfo[Router.COMMANDER] = [ipAddress,portNumber]
+	    index = Router.COMMANDER
 	    
 	elif(agent == 'world') :
-	    theInfo[Router.WORLD] = [ipAddress,portNumber]
+	    index = Router.WORLD
+	    
 
 	elif(agent == 'vacuum') :
 	    if(Router.VACUUM not in theInfo) :
@@ -313,7 +316,83 @@ class MissionUtilities:
 
 	    theInfo[Router.VACUUM][vacuumNumber] = [ipAddress,portNumber]
 	    #print("added vacuum number {0} - {1}: {2}".format(vacuumNumber,ipAddress,theInfo[Router.VACUUM]))
+	    return
 
+	while(len(theInfo)<=index) :
+	    theInfo.append([])
+
+	theInfo[index] = [ipAddress,portNumber]
+
+    ## setVacuumIPInformation(self,theInfo,agent,ipAddress,portNumber,lineNumber)
+    #
+    # Helper routine to set the information in the dictionary given by
+    # theInfo
+    def setVacuumIPInformation(self,theInfo,row,lineNumber):
+
+	# determine which kind of agent this is for.
+	agent = row[2]
+
+	# Determine the port number and ip address.
+	if(agent=='vacuum'):
+	    
+	    try:
+		# determine the vacuum number.
+		vacuumNumber = int(row[3])
+	    except ValueError:
+		print("Error reading the ip information file, line {0}. Vacuum number not valid. Ignoring the line.".format(lineNumber))
+		return
+	    
+	    portNumber   = row[5]
+	    ipAddress    = row[4]
+	else :
+	    portNumber = row[4]
+	    ipAddress  = row[3]
+	    
+
+	# Convert the port number to an integer type.
+	try:
+	    portNumber = int(portNumber)
+	except ValueError:
+	    print("Error reading the ip information file, line {0}. Port number not valid. Ignoring the line.".format(lineNumber))
+	    return
+
+	try:
+	    row[1] = int(row[1])
+	except ValueError:
+	    print("Error reading the ip information file, line {0}. Vacuum ID not valid. Ignoring the line.".format(lineNumber))
+	    return
+	    
+	    
+
+	if(agent == 'sensor') :
+	    index = Router.SENSORARRAY
+	    
+	elif(agent == 'planner') :
+	    index = Router.PLANNER
+	    
+	elif(agent == 'commander') :
+	    index = Router.COMMANDER
+	    
+	elif(agent == 'world') :
+	    index = Router.WORLD
+
+	elif(agent == 'vacuum') :
+	    if(Router.VACUUM not in theInfo) :
+		theInfo[Router.VACUUM] = []
+		
+	    #print("vacuum info: {0}, {1}".format(id(theInfo[Router.VACUUM]),theInfo[Router.VACUUM]))
+	    while(len(theInfo[Router.VACUUM])<=vacuumNumber) :
+		theInfo[Router.VACUUM].append([])
+
+	    theInfo[Router.VACUUM][vacuumNumber] = [ipAddress,portNumber]
+	    #print("added vacuum number {0} - {1}: {2}".format(vacuumNumber,ipAddress,theInfo[Router.VACUUM]))
+	    return
+
+	while(len(theInfo)<=index) :
+	    theInfo.append({})
+
+	theInfo[index] = [ipAddress,portNumber]
+	print(theInfo)
 	    
 
 
