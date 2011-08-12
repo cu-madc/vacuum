@@ -86,23 +86,22 @@ from MissionUtilities import MissionUtilities
 
 
 
+# Set the host addresses and ports for the different vacuums 
+vacuumInterfaces = [ ['10.0.1.14',10004],
+		     ['10.0.1.15',10005],
+		     ['10.0.1.16',10006]]
+
 # Set the host addresses and ports for the different agents
 agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
 		   Router.PLANNER    :['10.0.1.11',10001],
 		   Router.COMMANDER  :['10.0.1.12',10002],
-		   Router.WORLD      :['10.0.1.13',10003]}
-
-# Set the host addresses and ports for the different vacuums 
-vacummInterfaces = [ ['10.0.1.14',10004],
-		     ['10.0.1.15',10005],
-		     ['10.0.1.16',10006]]
-
-
+		   Router.WORLD      :['10.0.1.13',10003],
+		   Router.VACUUM     : vacuumInterfaces}
 
 
 utilityHelper = MissionUtilities()
 utilityHelper.setDefaultIPInformation(
-    vacummInterfaces,agentInterfaces,agentInterfaces,agentInterfaces,agentInterfaces)
+    vacuumInterfaces,agentInterfaces,agentInterfaces,agentInterfaces,agentInterfaces)
 utilityHelper.parseCommandLine()
 
 sensorInterfaces    = utilityHelper.getIPInformationSensor()
@@ -118,7 +117,7 @@ exit(0)
 
 
 # Set the other mission parameters
-numVacs=len(vacummInterfaces)
+numVacs=len(vacuumInterfaces)
 
 # Set the parameters associated with the world.
 # Set the rate and size for dirtfall
@@ -213,17 +212,17 @@ for i in range(numVacs) :
 
     # Let the planner know about this vacuum including it's ip information.
     plan.setVacuumLocation(i,pos[0],pos[1])        
-    plan.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    plan.setHostInformation(Router.VACUUM,vacuumInterfaces[i][0],vacuumInterfaces[i][1],i)
 
     # Let the sensor know about this vacuum including it's ip information.
-    sensor.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    sensor.setHostInformation(Router.VACUUM,vacuumInterfaces[i][0],vacuumInterfaces[i][1],i)
 
     # Let the commander know about this vacuum including it's ip information.
-    command.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    command.setHostInformation(Router.VACUUM,vacuumInterfaces[i][0],vacuumInterfaces[i][1],i)
 
     # Let the world know about this vacuum including it's ip information.
     # (uncomment out this line if it is not running in the current process. ex: on an other machine.)
-    #W.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    #W.setHostInformation(Router.VACUUM,vacuumInterfaces[i][0],vacuumInterfaces[i][1],i)
 
     # Let this vacuum know about the ip information about all of the other agents and the world.
     vacuum.setIPInformation(agentInterfaces)
@@ -231,9 +230,9 @@ for i in range(numVacs) :
 
 
     # Set the ip information for this particular vacuum.
-    #print("Setting vacuum {0} - {1}:{2}".format(i,vacummInterfaces[i][0],vacummInterfaces[i][1]))
-    vacuum.setHostname(vacummInterfaces[i][0])
-    vacuum.setPort(vacummInterfaces[i][1])
+    #print("Setting vacuum {0} - {1}:{2}".format(i,vacuumInterfaces[i][0],vacuumInterfaces[i][1]))
+    vacuum.setHostname(vacuumInterfaces[i][0])
+    vacuum.setPort(vacuumInterfaces[i][1])
 
     # If you want the vacuum to run in its own process then uncomment out the next line (.start)
     #vacuum.start()

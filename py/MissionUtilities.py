@@ -66,6 +66,7 @@ from datetime import date
 import re
 import getopt
 import csv
+import copy
 
 from Router import Router
 
@@ -87,7 +88,7 @@ class MissionUtilities:
 
 
 	# Create empty ip address information.
-	self.vacuumInfo    = ()
+	self.vacuumInfo    = {}
 	self.worldInfo     = {}
 	self.sensorInfo    = {}
 	self.plannerInfo   = {}
@@ -170,17 +171,22 @@ class MissionUtilities:
     #
     # Routine to set the default ip information to be used in the simulation
     def setDefaultIPInformation(self,vacuumInfo,worldInfo,sensorInfo,plannerInfo,commanderInfo) :
-    	self.vacuumInfo    = vacuumInfo
-	self.worldInfo     = worldInfo
-	self.sensorInfo    = sensorInfo
-	self.plannerInfo   = plannerInfo
-	self.commanderInfo = commanderInfo
+    	self.vacuumInfo    = copy.deepcopy(vacuumInfo)
+	self.worldInfo     = copy.deepcopy(worldInfo)
+	self.sensorInfo    = copy.deepcopy(sensorInfo)
+	self.plannerInfo   = copy.deepcopy(plannerInfo)
+	self.commanderInfo = copy.deepcopy(commanderInfo)
 
-    ## getIPInformationVacuum(self)
+    ## getIPInformationVacuum(self,agent)
     #
     # Routine to get the  ip information to be used in the simulation for the vacuum
-    def getIPInformationVacuum(self) :
-    	return(self.vacuumInfo)
+    def getIPInformationVacuum(self,agent) :
+	
+	if(agent in self.vacuumInfo) :
+	    return(self.vacuumInfo[agent])
+
+	else:
+	    return(None)
 
     ## getIIPnformationWorld(self)
     #
@@ -213,7 +219,7 @@ class MissionUtilities:
     def parseIPInformation(self):
 
 	try:
-	    fp = open(self.ipInfoFileName,"r")
+	    fp = open(self.getIPInfoFileName(),"r")
 	except IOError:
 	    return(False)
 
@@ -226,16 +232,24 @@ class MissionUtilities:
 	    if(len(row)>0) :
 	
 		if(row[0] == 'planner') :
+		    #print("This is a planner line")
 		    self.setIPInformation(self.plannerInfo,row,lineNumber)
+		    #print(self.plannerInfo)
 
 		elif(row[0] == 'commander') :
+		    #print("This is a commander line")
 		    self.setIPInformation(self.commanderInfo,row,lineNumber)
+		    #print(self.commanderInfo)
 
 		elif(row[0] == 'sensor') :
+		    #print("This is a sensor line")
 		    self.setIPInformation(self.sensorInfo,row,lineNumber)
+		    #print(self.sensorInfo)
 
 		elif(row[0] == 'world') :
+		    #print("This is a world line")
 		    self.setIPInformation(self.worldInfo,row,lineNumber)
+		    #print(self.worldInfo)
 
 	    lineNumber += 1
 
@@ -254,8 +268,16 @@ class MissionUtilities:
 
 	# Determine the port number and ip address.
 	if(agent=='vacuum'):
-	    portNumber = row[4]
-	    ipAddress  = row[3]
+	    
+	    try:
+		# determine the vacuum number.
+		vacuumNumber = int(row[2])
+	    except ValueError:
+		print("Error reading the ip information file, line {0}. Port number not valid. Ignoring the line.".format(lineNumber))
+		return
+	    
+	    portNumber   = row[4]
+	    ipAddress    = row[3]
 	else :
 	    portNumber = row[3]
 	    ipAddress  = row[2]
@@ -282,7 +304,16 @@ class MissionUtilities:
 	    theInfo[Router.WORLD] = [ipAddress,portNumber]
 
 	elif(agent == 'vacuum') :
-	    pass
+	    if(Router.VACUUM not in theInfo) :
+		theInfo[Router.VACUUM] = []
+		
+	    #print("vacuum info: {0}, {1}".format(id(theInfo[Router.VACUUM]),theInfo[Router.VACUUM]))
+	    while(len(theInfo[Router.VACUUM])<=vacuumNumber) :
+		theInfo[Router.VACUUM].append([])
+
+	    theInfo[Router.VACUUM][vacuumNumber] = [ipAddress,portNumber]
+	    #print("added vacuum number {0} - {1}: {2}".format(vacuumNumber,ipAddress,theInfo[Router.VACUUM]))
+
 	    
 
 
