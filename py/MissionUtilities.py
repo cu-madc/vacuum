@@ -83,13 +83,25 @@ class MissionUtilities:
 	self.setVacuumOutputFileName("vacuumOuput-#DATESTAMP#.csv")
 
 
+    ## parseCommandLine(self)
+    #
+    # Routine to parse the command line options.
+    #
     def parseCommandLine(self) :
-	args = getopt.getopt(sys.argv[1:],'',["worldData=","vaccumData=","ipInfo="])
+	args = getopt.getopt(sys.argv[1:],'',["worldData=","vacuumData=","ipInfo="])
 	for argument in args[0]:
-	    if("worldData" in argument) :
-		self.setWorldOutputFileName(argument["worldData"])
+
+	    if("--worldData" in argument) :
+		self.setWorldOutputFileName(argument[1])
+
+	    if("--vacuumData" in argument) :
+		self.setVacuumOutputFileName(argument[1])
 
 
+
+    ## setWorldOutputFileName(self,fileName)
+    #
+    # Routine to set the value of the output file for the world data file.
     def setWorldOutputFileName(self,fileName) :
 	# Replace the string #DATESTAMP# (if it exists) with
 	# a... well, a date stamp of the form YYYY-MM-DD
@@ -98,6 +110,9 @@ class MissionUtilities:
 	self.worldOutputFileName  = re.sub(r"#DATESTAMP#",dateStamp,fileName)
 
 
+    ## setVacuumOutputFileName(self,fileName)
+    #
+    # Routine to set the value of the output file for the vacuum data file.
     def setVacuumOutputFileName(self,fileName) :
 	# Replace the string #DATESTAMP# (if it exists) with
 	# a... well, a date stamp of the form YYYY-MM-DD
@@ -106,10 +121,16 @@ class MissionUtilities:
 	self.vacuumOutputFileName  = re.sub(r"#DATESTAMP#",dateStamp,fileName)
 
 
+    ## getWorldOutputFileName(self)
+    #
+    # Routine to get the value of the file name for the world data file.
     def getWorldOutputFileName(self):
 	return(self.worldOutputFileName)
 
 
+    ## getVacuumOutputFileName(self)
+    #
+    # Routine to get the value of the file name for the vacuum data file.
     def getvacuumOutputFileName(self):
 	return(self.vacuumOutputFileName)
 

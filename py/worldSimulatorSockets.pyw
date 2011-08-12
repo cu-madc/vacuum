@@ -60,8 +60,6 @@
 # 
 #
 
-import sys
-from datetime import date
 
 from numpy import *
 from numpy.linalg import *
@@ -81,17 +79,9 @@ from Router import Router
 # Handle the command line arguments
 # The assumed form for the command line is the following
 #
-# ./worldSimulatorSocket.pyw worldOutput.txt vacuumOutput.txt
+# ./worldSimulatorSocket.pyw --worldData=worldOutput-#DATESTAMP#.csv --vacuumData=vacuumOutput-#DATESTAMP#.csv --ipInfo=ipInfo.dat
 #
-#  where the first argument is the name of the output file for the
-#  world data, and the second argument is the name of the output file
-#  for the vacuum data.
 #
-theDate = date.today()
-worldOutputFileName  = "./worldOutput-" + \
-    str(theDate.year) + "-" + str(theDate.month) + "-" + str(theDate.day) + ".txt" 
-vacuumOutputFileName = "./vacuumOutput-" + \
-    str(theDate.year) + "-" + str(theDate.month) + "-" + str(theDate.day) + ".txt"
 
 if(len(sys.argv) >= 3) :
     # The name of the vacuum data file is specified.
@@ -101,8 +91,6 @@ if(len(sys.argv) >= 2) :
     # The name of the world data file is specified
     worldOutputFileName = sys.argv[1]
 
-#print(worldOutputFileName)
-#print(vacuumOutputFileName)
 
 
 # Set the host addresses and ports for the different agents
