@@ -100,20 +100,22 @@ agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
 
 
 utilityHelper = MissionUtilities()
-utilityHelper.setDefaultIPInformation(
-    vacuumInterfaces,agentInterfaces,agentInterfaces,agentInterfaces,agentInterfaces)
+utilityHelper.setDefaultIPInformation(agentInterfaces,Router.SENSORARRAY)
+utilityHelper.setDefaultIPInformation(agentInterfaces,Router.PLANNER)
+utilityHelper.setDefaultIPInformation(agentInterfaces,Router.COMMANDER)
+utilityHelper.setDefaultIPInformation(agentInterfaces,Router.WORLD)
 utilityHelper.parseCommandLine()
 
-sensorInterfaces    = utilityHelper.getIPInformationSensor()
-plannerInterfaces   = utilityHelper.getIPInformationPlanner()
-commanderInterfaces = utilityHelper.getIPInformationCommander()
-worldInterfaces     = utilityHelper.getIPInformationWorld()
+sensorInterfaces    = utilityHelper.getAgentInformation(Router.SENSORARRAY)
+plannerInterfaces   = utilityHelper.getAgentInformation(Router.PLANNER)
+commanderInterfaces = utilityHelper.getAgentInformation(Router.COMMANDER)
+worldInterfaces     = utilityHelper.getAgentInformation(Router.WORLD)
 
-#print(sensorInterfaces)
-#print(plannerInterfaces)
-#print(commanderInterfaces)
-#print(worldInterfaces)
-#exit(0)
+print("Sensor:    {0}".format(sensorInterfaces))
+print("Planner:   {0}".format(plannerInterfaces))
+print("Commander: {0}".format(commanderInterfaces))
+print("World:     {0}".format(worldInterfaces))
+exit(0)
 
 
 # Set the other mission parameters

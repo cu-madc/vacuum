@@ -88,11 +88,7 @@ class MissionUtilities:
 
 
 	# Create empty ip address information.
-	self.vacuumInfo    = {}
-	self.worldInfo     = {}
-	self.sensorInfo    = {}
-	self.plannerInfo   = {}
-	self.commanderInfo = {}
+	self.ipInformation = []
 
 
     ## parseCommandLine(self)
@@ -138,6 +134,7 @@ class MissionUtilities:
 	self.vacuumOutputFileName  = re.sub(r"#DATESTAMP#",dateStamp,fileName)
 
 
+
     ## getWorldOutputFileName(self)
     #
     # Routine to get the value of the file name for the world data file.
@@ -167,15 +164,15 @@ class MissionUtilities:
 	return(self.ipInfoFileName)
 
 
-    ## setDefaultIPInformation(self,)
+    ## setDefaultIPInformation(self,ipInfo,agentType)
     #
-    # Routine to set the default ip information to be used in the simulation
-    def setDefaultIPInformation(self,vacuumInfo,worldInfo,sensorInfo,plannerInfo,commanderInfo) :
-    	self.vacuumInfo    = copy.deepcopy(vacuumInfo)
-	self.worldInfo     = copy.deepcopy(worldInfo)
-	self.sensorInfo    = copy.deepcopy(sensorInfo)
-	self.plannerInfo   = copy.deepcopy(plannerInfo)
-	self.commanderInfo = copy.deepcopy(commanderInfo)
+    # Routine to set the default ip information for an agent type.
+    def setDefaultIPInformation(self,ipInfo,agentType) :
+
+	while(len(self.ipInformation) <= agentType) :
+	    self.ipInformation.append(None)
+
+	self.ipInformation[agentType] = copy.deepcopy(ipInfo)
 
     ## getIPInformationVacuum(self,agent)
     #
@@ -188,29 +185,36 @@ class MissionUtilities:
 	else:
 	    return(None)
 
-    ## getIIPnformationWorld(self)
+
+    ## getAgentInformation(self,agentType,id=-1) :
     #
-    # Routine to get the  ip information to be used in the simulation for the world
-    def getIPInformationWorld(self) :
-	return(self.worldInfo)
-	
-    ## getIIPnformationSensor(self)
-    #
-    # Routine to get the  ip information to be used in the simulation for the sensor
-    def getIPInformationSensor(self) :
-	return(self.sensorInfo)
-	
-    ## getIIPnformationPlanner(self)
-    #
-    # Routine to get the  ip information to be used in the simulation for the planner
-    def getIPInformationPlanner(self) :
-	return(self.plannerInfo)
-	
-    ## getIIPnformationCommander(self)
-    #
-    # Routine to get the  ip information to be used in the simulation for the commander
-    def getIPInformationCommander(self) :
-	return(self.commanderInfo)
+    # Routine to get the ip information of the agent of the given type
+    def getAgentInformation(self,agentType,id=-1) :
+
+	if(agentType < len(self.ipInformation)) :
+	    # There is an entry for agents of this type.
+	    
+	    if(agentType == Router.VACUUM) :
+		# This is a vacuum. See if the vacuum is defined.
+		
+		if((id>=0) and (id < len(self.ipInformation[agentType]))) :
+		    # This vacuum exists.
+		    return(self.ipInformation[agentType][id])
+		
+		else :
+		    # This vacuum does not exist.
+		    return(None)
+		
+	    else:
+		# This is an agent that is not a vacuum
+		return(self.ipInformation[agentType])
+
+	else:
+	    # We have no record of this item.
+	    return(None)
+
+
+
 
 
     ## parseIIPnformation(self)
@@ -229,29 +233,9 @@ class MissionUtilities:
 	    print(row)
 
 	    if(len(row)>0) :
-	
-		if(row[0] == 'planner') :
-		    #print("This is a planner line")
-		    self.setIPInformation(self.plannerInfo,row,lineNumber)
-		    #print(self.plannerInfo)
-
-		elif(row[0] == 'commander') :
-		    #print("This is a commander line")
-		    self.setIPInformation(self.commanderInfo,row,lineNumber)
-		    #print(self.commanderInfo)
-
-		elif(row[0] == 'sensor') :
-		    #print("This is a sensor line")
-		    self.setIPInformation(self.sensorInfo,row,lineNumber)
-		    #print(self.sensorInfo)
-
-		elif(row[0] == 'world') :
-		    #print("This is a world line")
-		    self.setIPInformation(self.worldInfo,row,lineNumber)
-		    #print(self.worldInfo)
-
-		elif(row[0] == "vacuum") :
-		    self.setVacuumIPInformation(self.vacuumInfo,row,lineNumber)
+		#print("This is a planner line: {0}".format(row))
+		self.setIPInformation(row,lineNumber)
+		#print(self.plannerInfo)
 
 	    lineNumber += 1
 
@@ -259,31 +243,91 @@ class MissionUtilities:
 	fp.close()
 
 
-    ## setIPInformation(self,theInfo,agent,ipAddress,portNumber,lineNumber)
+    ## convertNameToIndex(self,agent) :
     #
-    # Helper routine to set the information in the dictionary given by
-    # theInfo
-    def setIPInformation(self,theInfo,row,lineNumber):
+    # Helper routine to take the name of an agent and convert it to
+    # the index given in the router class.
+    def convertNameToIndex(self,agent) :
 
-	# determine which kind of agent this is for.
-	agent = row[1]
-
-	# Determine the port number and ip address.
-	if(agent=='vacuum'):
+	if(agent == 'sensor') :
+	    return(Router.SENSORARRAY)
 	    
-	    try:
-		# determine the vacuum number.
-		vacuumNumber = int(row[2])
-	    except ValueError:
-		print("Error reading the ip information file, line {0}. Vacuum number not valid. Ignoring the line.".format(lineNumber))
+	elif(agent == 'planner') :
+	    return(Router.PLANNER)
+	    
+	elif(agent == 'commander') :
+	    return(Router.COMMANDER)
+	    
+	elif(agent == 'world') :
+	    return(Router.WORLD)
+
+	elif(agent == 'vacuum') :
+	    return(Router.VACUUM)
+
+	return(-1)
+
+
+    ## getVacuumID(self,id,lineNumber)
+    #
+    # Helper routine to determine the vacuum id from the given string.
+    def getVacuumID(self,id,lineNumber):
+	print("get vacuum {0}".format(id))
+	
+	# Convert the name to an integer type.
+	try:
+	    id = int(id)
+	except ValueError:
+	    print("Error reading the ip information file, line {0}. Vacuum id not valid. Ignoring the line.".format(lineNumber))
+	    return(-1)
+
+	return(id)
+
+
+
+
+    ## setIPInformation(self,row,lineNumber)
+    #
+    # Helper routine to set the information in the dictionary keeping
+    # track of the ip info. It is assumed that this is not for a
+    # vacuum
+    def setIPInformation(self,row,lineNumber):
+
+	# determine the information on this line. It is assumed it is
+	# not for a vacuum.
+
+	# Get the type of agent that this is for.
+	agent = self.convertNameToIndex(row.pop(0))
+	if(agent < 0) :
+	    return
+
+	if(agent == Router.VACUUM) :
+	    # This is for a vacuum. Get its ID.
+	    vacuumID = self.getVacuumID(row.pop(0),lineNumber)
+	    if(vacuumID < 0) :
 		return
-	    
-	    portNumber   = row[4]
-	    ipAddress    = row[3]
 	else :
-	    portNumber = row[3]
-	    ipAddress  = row[2]
-	    
+	    vacuumID = -1
+
+	
+
+	# Get the destination agent for this line.
+	destID = self.convertNameToIndex(row.pop(0))
+	if(destID < 0) :
+	    return
+
+	if(destID == Router.VACUUM) :
+	    # It is a vacuum. Get its id.
+	    destVacuumID = self.getVacuumID(row.pop(0),lineNumber)
+	    if(destVacuumID < 0) :
+		return
+	else :
+	    destVacuumID = -1
+
+
+	ipAddress  = row[0]
+	portNumber = row[1]
+
+
 
 	# Convert the port number to an integer type.
 	try:
@@ -292,108 +336,20 @@ class MissionUtilities:
 	    print("Error reading the ip information file, line {0}. Port number not valid. Ignoring the line.".format(lineNumber))
 	    return
 
-
-	if(agent == 'sensor') :
-	    index = Router.SENSORARRAY
 	    
-	elif(agent == 'planner') :
-	    index = Router.PLANNER
+	while(len(self.ipInformation)<=agent) :
+	    self.ipInformation.append(None)
+
+	if(not self.ipInformation[agent]) :
+	    self.ipInformation[agent] = {}
+
+	
 	    
-	elif(agent == 'commander') :
-	    index = Router.COMMANDER
-	    
-	elif(agent == 'world') :
-	    index = Router.WORLD
-	    
+	self.ipInformation[agent][destID] = [ipAddress,portNumber]
 
-	elif(agent == 'vacuum') :
-	    if(Router.VACUUM not in theInfo) :
-		theInfo[Router.VACUUM] = []
-		
-	    #print("vacuum info: {0}, {1}".format(id(theInfo[Router.VACUUM]),theInfo[Router.VACUUM]))
-	    while(len(theInfo[Router.VACUUM])<=vacuumNumber) :
-		theInfo[Router.VACUUM].append([])
 
-	    theInfo[Router.VACUUM][vacuumNumber] = [ipAddress,portNumber]
-	    #print("added vacuum number {0} - {1}: {2}".format(vacuumNumber,ipAddress,theInfo[Router.VACUUM]))
-	    return
+	
 
-	while(len(theInfo)<=index) :
-	    theInfo.append([])
-
-	theInfo[index] = [ipAddress,portNumber]
-
-    ## setVacuumIPInformation(self,theInfo,agent,ipAddress,portNumber,lineNumber)
-    #
-    # Helper routine to set the information in the dictionary given by
-    # theInfo
-    def setVacuumIPInformation(self,theInfo,row,lineNumber):
-
-	# determine which kind of agent this is for.
-	agent = row[2]
-
-	# Determine the port number and ip address.
-	if(agent=='vacuum'):
-	    
-	    try:
-		# determine the vacuum number.
-		vacuumNumber = int(row[3])
-	    except ValueError:
-		print("Error reading the ip information file, line {0}. Vacuum number not valid. Ignoring the line.".format(lineNumber))
-		return
-	    
-	    portNumber   = row[5]
-	    ipAddress    = row[4]
-	else :
-	    portNumber = row[4]
-	    ipAddress  = row[3]
-	    
-
-	# Convert the port number to an integer type.
-	try:
-	    portNumber = int(portNumber)
-	except ValueError:
-	    print("Error reading the ip information file, line {0}. Port number not valid. Ignoring the line.".format(lineNumber))
-	    return
-
-	try:
-	    row[1] = int(row[1])
-	except ValueError:
-	    print("Error reading the ip information file, line {0}. Vacuum ID not valid. Ignoring the line.".format(lineNumber))
-	    return
-	    
-	    
-
-	if(agent == 'sensor') :
-	    index = Router.SENSORARRAY
-	    
-	elif(agent == 'planner') :
-	    index = Router.PLANNER
-	    
-	elif(agent == 'commander') :
-	    index = Router.COMMANDER
-	    
-	elif(agent == 'world') :
-	    index = Router.WORLD
-
-	elif(agent == 'vacuum') :
-	    if(Router.VACUUM not in theInfo) :
-		theInfo[Router.VACUUM] = []
-		
-	    #print("vacuum info: {0}, {1}".format(id(theInfo[Router.VACUUM]),theInfo[Router.VACUUM]))
-	    while(len(theInfo[Router.VACUUM])<=vacuumNumber) :
-		theInfo[Router.VACUUM].append([])
-
-	    theInfo[Router.VACUUM][vacuumNumber] = [ipAddress,portNumber]
-	    #print("added vacuum number {0} - {1}: {2}".format(vacuumNumber,ipAddress,theInfo[Router.VACUUM]))
-	    return
-
-	while(len(theInfo)<=index) :
-	    theInfo.append({})
-
-	theInfo[index] = [ipAddress,portNumber]
-	print(theInfo)
-	    
 
 
 if (__name__ =='__main__') :
