@@ -336,7 +336,27 @@ class MissionUtilities:
 	    print("Error reading the ip information file, line {0}. Port number not valid. Ignoring the line.".format(lineNumber))
 	    return
 
-	    
+
+	if((agent != Router.VACUUM) and (destID != Router.VACUUM)) :
+	    # This is information for two agents and neither is a vacuum.
+	    self.setAgentIPInformationForNonVacuum(agent,destID,ipAddress,portNumber)
+
+	elif(agent != Router.VACUUM) :
+	    #This is information to be given to an agent that is not a
+	    #vacuum, but the information is for a vacuum.
+	    pass 
+
+	else :
+	    # This is vacuum informaiton to be kept by a vacuum.
+	    pass
+
+
+    ## setAgentIPInformationForNonVacuum(self,agent,destID,ipAddress,portNumber)
+    #
+    # Routine to set the ip information for a nonvacuum that will be
+    # used by an agent that is not a vacuum.
+    def setAgentIPInformationForNonVacuum(self,agent,destID,ipAddress,portNumber) :
+	
 	while(len(self.ipInformation)<=agent) :
 	    self.ipInformation.append(None)
 
