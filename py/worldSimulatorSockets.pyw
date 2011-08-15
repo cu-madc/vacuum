@@ -106,18 +106,49 @@ if(len(sys.argv) >= 2) :
 
 
 # Set the host addresses and ports for the different agents
-agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
-		   Router.PLANNER    :['10.0.1.11',10001],
-		   Router.COMMANDER  :['10.0.1.12',10002],
-		   Router.WORLD      :['10.0.1.13',10003]}
+#agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+#		   Router.PLANNER    :['10.0.1.11',10001],
+#		   Router.COMMANDER  :['10.0.1.12',10002],
+#		   Router.WORLD      :['10.0.1.13',10003]}
+
+worldAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+                        Router.PLANNER    :['10.0.1.11',10001],
+                        Router.COMMANDER  :['10.0.1.12',10002],
+                        Router.WORLD      :['10.0.1.13',10003]}
+
+sensorAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+                         Router.PLANNER    :['10.0.1.11',10001],
+                         Router.COMMANDER  :['10.0.1.12',10002],
+                         Router.WORLD      :['10.0.1.13',10003]}
+
+plannerAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+                          Router.PLANNER    :['10.0.1.11',10001],
+                          Router.COMMANDER  :['10.0.1.12',10002],
+                          Router.WORLD      :['10.0.1.13',10003]}
+
+commanderAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+                            Router.PLANNER    :['10.0.1.11',10001],
+                            Router.COMMANDER  :['10.0.1.12',10002],
+                            Router.WORLD      :['10.0.1.13',10003]}
+
+vacuumAgentInterfaces = {Router.WORLD      :['10.0.1.13',10003]}
+
 
 # Set the host addresses and ports for the different vacuums 
-vacummInterfaces = [ ['10.0.1.14',10004],
-		     ['10.0.1.15',10005],
-		     ['10.0.1.16',10006]]
+#vacummInterfaces = [ ['10.0.1.14',10004],
+#		     ['10.0.1.15',10005],
+#		     ['10.0.1.16',10006]]
+
+commander2Vacuums = [ ['10.0.1.14',10004],
+                      ['10.0.1.15',10005],
+                      ['10.0.1.16',10006]]
+
+vacuums2Commander = [ ['10.0.1.11',10001],
+                      ['10.0.1.11',10001],
+                      ['10.0.1.11',10001]]
 
 # Set the other mission parameters
-numVacs=len(vacummInterfaces)
+numVacs=len(commander2Vacuums)
 
 # Set the parameters associated with the world.
 # Set the rate and size for dirtfall
@@ -135,7 +166,7 @@ W = World.spawnWorld(r,s,v,cloudsize);
 N = W.getNumber()
 chan = W.getChannel()                     # Get the world's channel object
 W.getChannel().setNumberVacuums(numVacs)  # Let the world's channel know how many vac's to use
-W.setIPInformation(agentInterfaces)       # Let the world know all the ip info about the agents.
+W.setIPInformation(worldAgentInterfaces)  # Let the world know all the ip info about the agents.
 
 # Set the world up to record data
 W.setVacuumFileName(vacuumOutputFileName)
@@ -151,7 +182,7 @@ sensor = SensorArray.spawnSensorArray(accuracy)
 #print("Sensor Channel: {0}".format(sensor.getChannel()))
 sensor.setRouterChannel(Router.WORLD,W.getChannel())   # inform the sensor about the world's channel
 W.setSensor(sensor)                                    # tell the world what its sensor is
-sensor.setIPInformation(agentInterfaces)               # set the agent's ip info on the sensor.
+sensor.setIPInformation(sensorAgentInterfaces)         # set the agent's ip info on the sensor.
 sensor.getChannel().setNumberVacuums(numVacs)          # tell the sensor how many vac's to use
 sensor.setQueueUse(True)                               # tell the sensor to use the queue's
                                                        # information to get input from the world
@@ -164,7 +195,7 @@ plan=Planner.spawnPlanner(r*s/float(N*N),r,s,accuracy,N)
 #print("Planner channel: {0}".format(plan.getChannel()))
 plan.setRouterChannel(Router.WORLD,W.getChannel())     # inform the planner about the world's channel
 W.setPlanner(plan)                                     # tell the world what its planner is
-plan.setIPInformation(agentInterfaces)                 # tell the agent's ip info to the planner
+plan.setIPInformation(plannerAgentInterfaces)          # tell the agent's ip info to the planner
 plan.getChannel().setNumberVacuums(numVacs)            # tell the planner how many vac's to use
 plan.setQueueUse(True)                                 # tell the planner to use the queue's
                                                        # information to get input from the world
@@ -176,7 +207,7 @@ plan.setQueueUse(True)                                 # tell the planner to use
 command = Commander.spawnCommander()   
 #print("Comander channel: {0}".format(command.getChannel()))
 command.setRouterChannel(Router.WORLD,W.getChannel())  # inform the commander about the world's channel
-command.setIPInformation(agentInterfaces)              # tell the agent's ip info to the commander
+command.setIPInformation(commanderAgentInterfaces)     # tell the agent's ip info to the commander
 command.getChannel().setNumberVacuums(numVacs)         # tell the commander  how many vac's to use
 
 
@@ -212,27 +243,27 @@ for i in range(numVacs) :
 
     # Let the planner know about this vacuum including it's ip information.
     plan.setVacuumLocation(i,pos[0],pos[1])        
-    plan.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    #PW#plan.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
 
     # Let the sensor know about this vacuum including it's ip information.
-    sensor.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    #PW#sensor.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
 
     # Let the commander know about this vacuum including it's ip information.
-    command.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+    command.setHostInformation(Router.VACUUM,commander2Vacuums[i][0],commander2Vacuums[i][1],i)
 
     # Let the world know about this vacuum including it's ip information.
     # (uncomment out this line if it is not running in the current process. ex: on an other machine.)
     #W.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
 
     # Let this vacuum know about the ip information about all of the other agents and the world.
-    vacuum.setIPInformation(agentInterfaces)
+    vacuum.setIPInformation(vacuumAgentInterfaces)
     vacuum.setRouterChannel(Router.WORLD,W.getChannel())
-
+    vacuum.setHostInformation(Router.COMMANDER,vacuums2Commander[i][0],vacuums2Commander[i][1],i)
 
     # Set the ip information for this particular vacuum.
     #print("Setting vacuum {0} - {1}:{2}".format(i,vacummInterfaces[i][0],vacummInterfaces[i][1]))
-    vacuum.setHostname(vacummInterfaces[i][0])
-    vacuum.setPort(vacummInterfaces[i][1])
+    vacuum.setHostname(commander2Vacuums[i][0])
+    vacuum.setPort(commander2Vacuums[i][1])
 
     # If you want the vacuum to run in its own process then uncomment out the next line (.start)
     #vacuum.start()
