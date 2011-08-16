@@ -214,6 +214,20 @@ class MissionUtilities:
 	    return(None)
 
 
+    ## getAgentsVacuumInformation(self,agent,vacuumNumber)
+    #
+    # Routine to return the list that contains the list of vacuum ip
+    # information for a given agent.
+    def getAgentsVacuumInformation(self,agent,vacuumNumber) :
+
+	if((agent == Router.VACUUM) or \
+	   (len(self.ipInformation) < agent) or \
+	   (Router.VACUUM not in self.ipInformation[agent]) or \
+	   (len(self.ipInformation[agent][Router.VACUUM]) < vacuumNumber)):
+	        return(None)
+
+	return(self.ipInformation[agent][Router.VACUUM][vacuumNumber])
+
 
 
 
@@ -387,6 +401,7 @@ class MissionUtilities:
 	    self.ipInformation[agent][Router.VACUUM].append([])
 	
 	self.ipInformation[agent][Router.VACUUM][destID] = [ipAddress,portNumber]
+
 
 
 

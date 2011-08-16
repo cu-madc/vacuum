@@ -111,10 +111,12 @@ plannerInterfaces   = utilityHelper.getAgentInformation(Router.PLANNER)
 commanderInterfaces = utilityHelper.getAgentInformation(Router.COMMANDER)
 worldInterfaces     = utilityHelper.getAgentInformation(Router.WORLD)
 
-print("Sensor:    {0}".format(sensorInterfaces))
-print("Planner:   {0}".format(plannerInterfaces))
-print("Commander: {0}".format(commanderInterfaces))
-print("World:     {0}".format(worldInterfaces))
+print("Sensor:    {0} - {1}".format(sensorInterfaces,utilityHelper.getAgentsVacuumInformation(Router.SENSORARRAY,0)))
+print("Planner:   {0} - {1}".format(plannerInterfaces,utilityHelper.getAgentsVacuumInformation(Router.PLANNER,1)))
+print("Commander: {0} - {1}".format(commanderInterfaces,utilityHelper.getAgentsVacuumInformation(Router.COMMANDER,2)))
+print("World:     {0} - {1}".format(worldInterfaces,utilityHelper.getAgentsVacuumInformation(Router.WORLD,0)))
+
+
 exit(0)
 
 
@@ -213,14 +215,26 @@ for i in range(numVacs) :
     chan.addVacuum(vacuum,i,pos[0],pos[1],False)       # Let the world's channel know about this vac
 
     # Let the planner know about this vacuum including it's ip information.
-    plan.setVacuumLocation(i,pos[0],pos[1])        
-    plan.setHostInformation(Router.VACUUM,vacuumInterfaces[i][0],vacuumInterfaces[i][1],i)
+    info = utilityHelper.getAgentsVacuumInformation(Router.PLANNER,i)
+    if(not info) :
+	info = vacuumInterfaces[i]
+	
+    plan.setVacuumLocation(i,info[0],info[1])        
+    plan.setHostInformation(Router.VACUUM,info[0],info[1],i)
 
     # Let the sensor know about this vacuum including it's ip information.
-    sensor.setHostInformation(Router.VACUUM,vacuumInterfaces[i][0],vacuumInterfaces[i][1],i)
+    info = utilityHelper.getAgentsVacuumInformation(Router.SENSORARRAY,i)
+    if(not info) :
+	info = vacuumInterfaces[i]
+
+    sensor.setHostInformation(Router.VACUUM,info[0],info[1],i)
 
     # Let the commander know about this vacuum including it's ip information.
-    command.setHostInformation(Router.VACUUM,vacuumInterfaces[i][0],vacuumInterfaces[i][1],i)
+    info = utilityHelper.getAgentsVacuumInformation(Router.COMMANDER,i)
+    if(not info) :
+	info = vacuumInterfaces[i]
+
+    command.setHostInformation(Router.VACUUM,info[0],info[1],i)
 
     # Let the world know about this vacuum including it's ip information.
     # (uncomment out this line if it is not running in the current process. ex: on an other machine.)
