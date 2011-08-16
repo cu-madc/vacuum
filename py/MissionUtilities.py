@@ -186,20 +186,6 @@ class MissionUtilities:
 	    return(None)
 
 
-    ## getVacuumIPInformationForAnotherVacuum(self,sourceID,destID) :
-    #
-    # Routine to get the ip information for a vacuum that is used by
-    # another vacuum
-    def getVacuumIPInformationForAnotherVacuum(self,sourceID,destID) :
-
-	if((len(self.ipInformation)>= Router.VACUUM) and
-	   (len(self.ipInformation[Router.VACUUM])>sourceID) and
-	   (len(self.ipInformation[Router.VACUUM][sourceID])>destID)) :
-	    return(self.ipInformation[Router.VACUUM][sourceID][destID])
-
-	return(None)
-
-
     ## getAgentInformation(self,agentType,id=-1) :
     #
     # Routine to get the ip information of the agent of the given type
@@ -233,15 +219,53 @@ class MissionUtilities:
     # Routine to return the list that contains the list of vacuum ip
     # information for a given agent.
     def getAgentsVacuumInformation(self,agent,vacuumNumber) :
+	return(self.getAgentsVacuumInformationFromList(agent,vacuumNumber,self.ipInformation))
+
+
+    ## getAgentsVacuumInformationFromList(self,agent,vacuumNumber,ipInformation)
+    #
+    # Routine to return the list that contains the list of vacuum ip
+    # information for a given agent.
+    def getAgentsVacuumInformationFromList(self,agent,vacuumNumber,ipInformation) :
 
 	if((agent == Router.VACUUM) or \
-	   (len(self.ipInformation) < agent) or \
-	   (Router.VACUUM not in self.ipInformation[agent]) or \
-	   (len(self.ipInformation[agent][Router.VACUUM]) < vacuumNumber)):
+	   (len(ipInformation) <= agent) or \
+	   (Router.VACUUM not in ipInformation[agent]) or \
+	   (len(ipInformation[agent][Router.VACUUM]) <= vacuumNumber)):
 	        return(None)
 
-	return(self.ipInformation[agent][Router.VACUUM][vacuumNumber])
+	return(ipInformation[agent][Router.VACUUM][vacuumNumber])
 
+
+
+    ## getVacuumIPInformationForAnotherVacuum(self,sourceID,destID) :
+    #
+    # Routine to get the ip information for a vacuum that is used by
+    # another vacuum
+    def getVacuumIPInformationForAnotherVacuum(self,sourceID,destID) :
+
+	if((len(self.ipInformation)>= Router.VACUUM) and
+	   (len(self.ipInformation[Router.VACUUM]) > sourceID) and
+	   (self.ipInformation[Router.VACUUM][sourceID]) ):
+	    print("B: {0}".format(self.ipInformation[Router.VACUUM]))
+	    return(self.getVacuumInformationFromVacuumList( \
+		destID,self.ipInformation[Router.VACUUM][sourceID]))
+
+	return(None)
+
+
+    ## getVacuumInformationFromVacuumList(self,destID,ipInformation)
+    #
+    # Routine to return the IP information for a vacuum that is being
+    # used for another vacuum
+    def getVacuumInformationFromVacuumList(self,destID,ipInformation) :
+
+	if((len(ipInformation) <= Router.VACUUM) or \
+	   (Router.VACUUM not in ipInformation[Router.VACUUM]) or \
+	   (len(ipInformation[Router.VACUUM][Router.VACUUM]) <= destID)):
+	        return(None)
+
+	return(ipInformation[Router.VACUUM][Router.VACUUM][destID])
 
 
 
@@ -373,10 +397,12 @@ class MissionUtilities:
 	elif(agent != Router.VACUUM) :
 	    #This is information to be given to an agent that is not a
 	    #vacuum, but the information is for a vacuum.
-	    self.setAgentIPInformationForVacuum(agent,destVacuumID,ipAddress,portNumber)
+	    self.setAgentIPInformationForVacuum(self.ipInformation,agent,destVacuumID,ipAddress,portNumber)
 
 	elif(destID != Router.VACUUM) :
-	    pass
+	    # This is a vacuum that needs to set its information for a non-vacuum agent.
+	    self.setVacuumIPInformationForNonVacuum(destID,ipAddress,portNumber)
+	    
 
 	else :
 	    # This is vacuum information to be kept by a vacuum.
@@ -400,27 +426,27 @@ class MissionUtilities:
 	ipInformation[agent][destID] = [ipAddress,portNumber]
 
 
-    ## setAgentIPInformationForVacuum(self,agent,destID,ipAddress,portNumber)
+    ## setAgentIPInformationForVacuum(self,ipInformation,agent,destID,ipAddress,portNumber)
     #
     # Routine to set the ip information for a vacuum (destID) that
     # will be used by an agent that is not a vacuum.
-    def setAgentIPInformationForVacuum(self,agent,destID,ipAddress,portNumber) :
+    def setAgentIPInformationForVacuum(self,ipInformation,agent,destID,ipAddress,portNumber) :
 	#print("Setting information for {0} with dest {1}".format(agent,destID))
 	
-	while(len(self.ipInformation)<=agent) :
-	    self.ipInformation.append(None)
+	while(len(ipInformation)<=agent) :
+	    ipInformation.append(None)
 
-	if(not self.ipInformation[agent]) :
-	    self.ipInformation[agent] = {}
+	if(not ipInformation[agent]) :
+	    ipInformation[agent] = {}
 
-	if(Router.VACUUM not in self.ipInformation[agent]) :
-	    self.ipInformation[agent][Router.VACUUM] = []
+	if(Router.VACUUM not in ipInformation[agent]) :
+	    ipInformation[agent][Router.VACUUM] = []
 
-	while(len(self.ipInformation[agent][Router.VACUUM]) <= destID) :
-	    self.ipInformation[agent][Router.VACUUM].append(None)
+	while(len(ipInformation[agent][Router.VACUUM]) <= destID) :
+	    ipInformation[agent][Router.VACUUM].append(None)
 
 	
-	self.ipInformation[agent][Router.VACUUM][destID] = [ipAddress,portNumber]
+	ipInformation[agent][Router.VACUUM][destID] = [ipAddress,portNumber]
 
 
     ## setVacuumInformationForVacuum(self,vacuumID,destID,ipAddress,portNumber)
@@ -435,22 +461,20 @@ class MissionUtilities:
 	if(not self.ipInformation[Router.VACUUM]) :
 	    self.ipInformation[Router.VACUUM] = []
 
-	#print("vacuum: {1}/{2}\n{0}".format(self.ipInformation[Router.VACUUM],
-	#				    vacuumID,destVacuumID))
-
 	while(len(self.ipInformation[Router.VACUUM]) <= vacuumID) :
 	    self.ipInformation[Router.VACUUM].append(None)
 
 	if(not self.ipInformation[Router.VACUUM][vacuumID]) :
 	    self.ipInformation[Router.VACUUM][vacuumID] = []
-	    
-	while(len(self.ipInformation[Router.VACUUM][vacuumID]) <= destVacuumID) :
-	    self.ipInformation[Router.VACUUM][vacuumID].append(None)
 
-	self.ipInformation[Router.VACUUM][vacuumID][destVacuumID] = [ipAddress,portNumber]
+	print("vacuum: {1}/{2}\n{0}".format(self.ipInformation[Router.VACUUM],
+					    vacuumID,destVacuumID))
+
+	self.setAgentIPInformationForVacuum(self.ipInformation[Router.VACUUM][vacuumID],
+					    Router.VACUUM,destVacuumID,ipAddress,portNumber)
 	    
-	#print("vacuum: {1}/{2}\n{0}".format(self.ipInformation[Router.VACUUM],
-	#				    vacuumID,destVacuumID))
+	print("vacuum: {1}/{2}\n{0}".format(self.ipInformation[Router.VACUUM],
+					    vacuumID,destVacuumID))
 
 
 if (__name__ =='__main__') :
@@ -462,4 +486,5 @@ if (__name__ =='__main__') :
 
     mission.setIPInfoFileName("trial.csv")
     mission.parseIPInformation()
-    print(mission.getVacuumIPInformationForAnotherVacuum(2,2))
+    #print(mission.getAgentsVacuumInformation(Router.PLANNER,0))
+    #print(mission.getVacuumIPInformationForAnotherVacuum(2,0))
