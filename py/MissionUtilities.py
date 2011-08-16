@@ -339,12 +339,13 @@ class MissionUtilities:
 
 	if((agent != Router.VACUUM) and (destID != Router.VACUUM)) :
 	    # This is information for two agents and neither is a vacuum.
-	    self.setAgentIPInformationForNonVacuum(agent,destID,ipAddress,portNumber)
+	    self.setAgentIPInformationForNonVacuum(self.ipInformation,agent,destID,
+						   ipAddress,portNumber)
 
 	elif(agent != Router.VACUUM) :
 	    #This is information to be given to an agent that is not a
 	    #vacuum, but the information is for a vacuum.
-	    pass 
+	    self.setAgentIPInformationForVacuum(agent,destVacuumID,ipAddress,portNumber)
 
 	else :
 	    # This is vacuum informaiton to be kept by a vacuum.
@@ -355,7 +356,23 @@ class MissionUtilities:
     #
     # Routine to set the ip information for a nonvacuum that will be
     # used by an agent that is not a vacuum.
-    def setAgentIPInformationForNonVacuum(self,agent,destID,ipAddress,portNumber) :
+    def setAgentIPInformationForNonVacuum(self,ipInformation,agent,destID,ipAddress,portNumber) :
+	
+	while(len(ipInformation)<=agent) :
+	    ipInformation.append(None)
+
+	if(not ipInformation[agent]) :
+	    ipInformation[agent] = {}
+ 
+	ipInformation[agent][destID] = [ipAddress,portNumber]
+
+
+    ## setAgentIPInformationForVacuum(self,agent,destID,ipAddress,portNumber)
+    #
+    # Routine to set the ip information for a vacuum (destID) that
+    # will be used by an agent that is not a vacuum.
+    def setAgentIPInformationForVacuum(self,agent,destID,ipAddress,portNumber) :
+	print("Setting information for {0} with dest {1}".format(agent,destID))
 	
 	while(len(self.ipInformation)<=agent) :
 	    self.ipInformation.append(None)
@@ -363,12 +380,13 @@ class MissionUtilities:
 	if(not self.ipInformation[agent]) :
 	    self.ipInformation[agent] = {}
 
-	
-	    
-	self.ipInformation[agent][destID] = [ipAddress,portNumber]
+	if(Router.VACUUM not in self.ipInformation[agent]) :
+	    self.ipInformation[agent][Router.VACUUM] = []
 
-
+	while(len(self.ipInformation[agent][Router.VACUUM]) <= destID) :
+	    self.ipInformation[agent][Router.VACUUM].append([])
 	
+	self.ipInformation[agent][Router.VACUUM][destID] = [ipAddress,portNumber]
 
 
 
