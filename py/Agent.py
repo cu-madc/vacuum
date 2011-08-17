@@ -226,6 +226,7 @@ class Agent (Process):
     # objects. this way the ip information can be set in one
     # dictionary and changed all at one time.
     def setIPInformation(self,interfaces) :
+	#TODO fix this! does not work for vacuums???
 	for agentType, ipInfo in interfaces.iteritems():
 	    self.setHostInformation(agentType,ipInfo[0],ipInfo[1],None)
 

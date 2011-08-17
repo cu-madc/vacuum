@@ -112,29 +112,35 @@ utilityHelper.setDefaultIPInformation(agentInterfaces,Router.VACUUM,0)
 utilityHelper.setDefaultIPInformation(agentInterfaces,Router.VACUUM,1)
 utilityHelper.setDefaultIPInformation(agentInterfaces,Router.VACUUM,2)
 
+
+# Go through the command line options and act on them.
 utilityHelper.parseCommandLine()
 
+
+# Defing the ip information that will be used for each agent.
 sensorInterfaces    = utilityHelper.getAgentInformation(Router.SENSORARRAY)
 plannerInterfaces   = utilityHelper.getAgentInformation(Router.PLANNER)
 commanderInterfaces = utilityHelper.getAgentInformation(Router.COMMANDER)
 worldInterfaces     = utilityHelper.getAgentInformation(Router.WORLD)
-vacuum0Interfaces   = utilityHelper.getAgentInformation(Router.VACUUM,0)
-vacuum1Interfaces   = utilityHelper.getAgentInformation(Router.VACUUM,1)
-vacuum2Interfaces   = utilityHelper.getAgentInformation(Router.VACUUM,2)
+vacuumInterfaceList = [utilityHelper.getAgentInformation(Router.VACUUM,0),
+		       utilityHelper.getAgentInformation(Router.VACUUM,1),
+		       utilityHelper.getAgentInformation(Router.VACUUM,2)]
 
 
 if(DEBUG) :
+    # Print out the ip information to see if it is correct
     print("Sensor:    {0}".format(sensorInterfaces))
     print("Planner:   {0}".format(plannerInterfaces))
     print("Commander: {0}".format(commanderInterfaces))
     print("World:     {0}".format(worldInterfaces))
 
-    print("vacuum 0:  {0}".format(vacuum0Interfaces))
-    print("vacuum 1:  {0}".format(vacuum1Interfaces))
-    print("vacuum 2:  {0}".format(vacuum2Interfaces))
+    print("vacuum 0:  {0}".format(vacuumInterfaceList[0]))
+    print("vacuum 1:  {0}".format(vacuumInterfaceList[1]))
+    print("vacuum 2:  {0}".format(vacuumInterfaceList[2]))
 
 
-exit(0)
+
+
 
 # Set the other mission parameters
 numVacs=len(vacuumInterfaces)
@@ -231,40 +237,53 @@ for i in range(numVacs) :
     chan.addVacuum(vacuum,i,pos[0],pos[1],False)       # Let the world's channel know about this vac
 
     # Let the planner know about this vacuum including it's ip information.
-    info = utilityHelper.getAgentsVacuumInformation(Router.PLANNER,i)
-    if(not info) :
-	info = vacuumInterfaces[i]
-	
-    plan.setVacuumLocation(i,info[0],info[1])        
-    plan.setHostInformation(Router.VACUUM,info[0],info[1],i)
+    plan.setVacuumLocation(i,0,0)
+    if(DEBUG) :
+	print("Vacuum {2} Planner ip info: {0}-{1}".format(
+	    vacuumInterfaceList[i][Router.PLANNER][0],
+	    vacuumInterfaceList[i][Router.PLANNER][1],i))
+    plan.setHostInformation(Router.VACUUM,
+			    vacuumInterfaceList[i][Router.PLANNER][0],
+			    vacuumInterfaceList[i][Router.PLANNER][1],i)
+    
 
     # Let the sensor know about this vacuum including it's ip information.
-    info = utilityHelper.getAgentsVacuumInformation(Router.SENSORARRAY,i)
-    if(not info) :
-	info = vacuumInterfaces[i]
+    if(DEBUG) :
+	print("Vacuum {2} Sensor ip info: {0}-{1}".format(
+	    vacuumInterfaceList[i][Router.SENSORARRAY][0],
+	    vacuumInterfaceList[i][Router.SENSORARRAY][1],i))
+    sensor.setHostInformation(Router.VACUUM,
+			      vacuumInterfaceList[i][Router.SENSORARRAY][0],
+			      vacuumInterfaceList[i][Router.SENSORARRAY][1],i)
 
-    sensor.setHostInformation(Router.VACUUM,info[0],info[1],i)
 
     # Let the commander know about this vacuum including it's ip information.
-    info = utilityHelper.getAgentsVacuumInformation(Router.COMMANDER,i)
-    if(not info) :
-	info = vacuumInterfaces[i]
+    if(DEBUG) :
+	print("Vacuum {2} Commander ip info: {0}-{1}".format(
+	    vacuumInterfaceList[i][Router.COMMANDER][0],
+	    vacuumInterfaceList[i][Router.COMMANDER][1],i))
+    command.setHostInformation(Router.VACUUM,
+			       vacuumInterfaceList[i][Router.COMMANDER][0],
+			       vacuumInterfaceList[i][Router.COMMANDER][1],i)
 
-    command.setHostInformation(Router.VACUUM,info[0],info[1],i)
 
     # Let the world know about this vacuum including it's ip information.
+    # the following guideline is OUT OF DATE!
     # (uncomment out this line if it is not running in the current process. ex: on an other machine.)
     #W.setHostInformation(Router.VACUUM,vacuumInterfaces[i][0],vacuumInterfaces[i][1],i)
 
     # Let this vacuum know about the ip information about all of the other agents and the world.
-    vacuum.setIPInformation(agentInterfaces)
+    vacuum.setIPInformation(vacuumInterfaceList[i])
     vacuum.setRouterChannel(Router.WORLD,W.getChannel())
 
 
     # Set the ip information for this particular vacuum.
-    #print("Setting vacuum {0} - {1}:{2}".format(i,vacuumInterfaces[i][0],vacuumInterfaces[i][1]))
-    vacuum.setHostname(vacuumInterfaces[i][0])
-    vacuum.setPort(vacuumInterfaces[i][1])
+    if(DEBUG) :
+	print("Setting vacuum {0} - {1}:{2}".format(
+	    i,vacuumInterfaceList[i][Router.VACUUM][i][0],
+	    vacuumInterfaceList[i][Router.VACUUM][i][1]))
+    vacuum.setHostname(vacuumInterfaceList[i][Router.VACUUM][i][0])
+    vacuum.setPort(vacuumInterfaceList[i][Router.VACUUM][i][1])
 
     # If you want the vacuum to run in its own process then uncomment out the next line (.start)
     #vacuum.start()
@@ -282,23 +301,23 @@ for i in range(numVacs) :
 
 
 # Set the ip info for the commander and start it in its own process
-command.setHostname(agentInterfaces[Router.COMMANDER][0])
-command.setPort(agentInterfaces[Router.COMMANDER][1])
+command.setHostname(commanderInterfaces[Router.COMMANDER][0])
+command.setPort(commanderInterfaces[Router.COMMANDER][1])
 command.start()
 
 # Set the ip info for the sensor and start it in its own process
-sensor.setHostname(agentInterfaces[Router.SENSORARRAY][0])
-sensor.setPort(agentInterfaces[Router.SENSORARRAY][1])
+sensor.setHostname(sensorInterfaces[Router.SENSORARRAY][0])
+sensor.setPort(sensorInterfaces[Router.SENSORARRAY][1])
 sensor.start()
 
 # Set the ip info for the planner and start it in its own process
-plan.setHostname(agentInterfaces[Router.PLANNER][0])
-plan.setPort(agentInterfaces[Router.PLANNER][1])
+plan.setHostname(plannerInterfaces[Router.PLANNER][0])
+plan.setPorta(plannerInterfaces[Router.PLANNER][1])
 plan.start()
 
 # Set the ip info for the world and start up the graphical interface
-W.setHostname(agentInterfaces[Router.WORLD][0])
-W.setPort(agentInterfaces[Router.WORLD][1])
+W.setHostname(worldInterfaces[Router.WORLD][0])
+W.setPort(worldInterfaces[Router.WORLD][1])
 W.getChannel().getRouter().createAndInitializeSocket()
 
 
