@@ -84,7 +84,7 @@ from MissionUtilities import MissionUtilities
 #
 #
 
-DEBUG = True
+DEBUG = False
 
 
 # Set the host addresses and ports for the different vacuums 
@@ -202,7 +202,7 @@ plan.setQueueUse(True)                                 # tell the planner to use
 command = Commander.spawnCommander()   
 #print("Comander channel: {0}".format(command.getChannel()))
 command.setRouterChannel(Router.WORLD,W.getChannel())  # inform the commander about the world's channel
-command.setIPInformation(commanderInterfaces)              # tell the agent's ip info to the commander
+command.setIPInformation(commanderInterfaces)          # tell the agent's ip info to the commander
 command.getChannel().setNumberVacuums(numVacs)         # tell the commander  how many vac's to use
 
 
@@ -236,6 +236,10 @@ for i in range(numVacs) :
 
     chan.addVacuum(vacuum,i,pos[0],pos[1],False)       # Let the world's channel know about this vac
 
+    # QUESTION: Are these calls to the other agents necessary? This
+    # should be set above in the calls to the ip setting
+    # routines. (???)
+    
     # Let the planner know about this vacuum including it's ip information.
     plan.setVacuumLocation(i,0,0)
     if(DEBUG) :
@@ -268,9 +272,8 @@ for i in range(numVacs) :
 
 
     # Let the world know about this vacuum including it's ip information.
-    # the following guideline is OUT OF DATE!
     # (uncomment out this line if it is not running in the current process. ex: on an other machine.)
-    #W.setHostInformation(Router.VACUUM,vacuumInterfaces[i][0],vacuumInterfaces[i][1],i)
+    #W.setHostInformation(Router.VACUUM,vacuumInterfaces[i][Router.WORLD][0],vacuumInterfaces[i][Router.WORLD][1],i)
 
     # Let this vacuum know about the ip information about all of the other agents and the world.
     vacuum.setIPInformation(vacuumInterfaceList[i])
