@@ -60,6 +60,7 @@
 # 
 
 from multiprocessing import Process, Queue
+from Router import Router
 
 class Agent (Process):
 
@@ -226,9 +227,22 @@ class Agent (Process):
     # objects. this way the ip information can be set in one
     # dictionary and changed all at one time.
     def setIPInformation(self,interfaces) :
-	#TODO fix this! does not work for vacuums???
+
 	for agentType, ipInfo in interfaces.iteritems():
-	    self.setHostInformation(agentType,ipInfo[0],ipInfo[1],None)
+
+	    if(agentType == Router.VACUUM) :
+		# This is a list of ip info for each vacuum
+		id = 0
+		for row in ipInfo :
+		    #print("Setting vaccum information {0}: {1}:{2}".format(
+                    #      id,row[0],row[1]))
+		    self.setHostInformation(Router.VACUUM,row[0],row[1],id)
+		    id += 1
+
+	    else :
+		#print("setting ip information for object {0} with info {1}".format(
+		#    agentType,ipInfo))
+		self.setHostInformation(agentType,ipInfo[0],ipInfo[1],None)
 
     # Tell the router to shut down its socket.
     def shutdownServer(self) :
