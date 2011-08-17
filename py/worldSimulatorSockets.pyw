@@ -84,6 +84,7 @@ from MissionUtilities import MissionUtilities
 #
 #
 
+DEBUG = True
 
 
 # Set the host addresses and ports for the different vacuums 
@@ -99,26 +100,41 @@ agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
 		   Router.VACUUM     : vacuumInterfaces}
 
 
+# Create the parser to help fix the default ip values and parse the
+# configuration files.
 utilityHelper = MissionUtilities()
 utilityHelper.setDefaultIPInformation(agentInterfaces,Router.SENSORARRAY)
 utilityHelper.setDefaultIPInformation(agentInterfaces,Router.PLANNER)
 utilityHelper.setDefaultIPInformation(agentInterfaces,Router.COMMANDER)
 utilityHelper.setDefaultIPInformation(agentInterfaces,Router.WORLD)
+
+utilityHelper.setDefaultIPInformation(agentInterfaces,Router.VACUUM,0)
+utilityHelper.setDefaultIPInformation(agentInterfaces,Router.VACUUM,1)
+utilityHelper.setDefaultIPInformation(agentInterfaces,Router.VACUUM,2)
+
 utilityHelper.parseCommandLine()
 
 sensorInterfaces    = utilityHelper.getAgentInformation(Router.SENSORARRAY)
 plannerInterfaces   = utilityHelper.getAgentInformation(Router.PLANNER)
 commanderInterfaces = utilityHelper.getAgentInformation(Router.COMMANDER)
 worldInterfaces     = utilityHelper.getAgentInformation(Router.WORLD)
+vacuum0Interfaces   = utilityHelper.getAgentInformation(Router.VACUUM,0)
+vacuum1Interfaces   = utilityHelper.getAgentInformation(Router.VACUUM,1)
+vacuum2Interfaces   = utilityHelper.getAgentInformation(Router.VACUUM,2)
 
-print("Sensor:    {0} - {1}".format(sensorInterfaces,utilityHelper.getAgentsVacuumInformation(Router.SENSORARRAY,0)))
-print("Planner:   {0} - {1}".format(plannerInterfaces,utilityHelper.getAgentsVacuumInformation(Router.PLANNER,1)))
-print("Commander: {0} - {1}".format(commanderInterfaces,utilityHelper.getAgentsVacuumInformation(Router.COMMANDER,2)))
-print("World:     {0} - {1}".format(worldInterfaces,utilityHelper.getAgentsVacuumInformation(Router.WORLD,0)))
+
+if(DEBUG) :
+    print("Sensor:    {0}".format(sensorInterfaces))
+    print("Planner:   {0}".format(plannerInterfaces))
+    print("Commander: {0}".format(commanderInterfaces))
+    print("World:     {0}".format(worldInterfaces))
+
+    print("vacuum 0:  {0}".format(vacuum0Interfaces))
+    print("vacuum 1:  {0}".format(vacuum1Interfaces))
+    print("vacuum 2:  {0}".format(vacuum2Interfaces))
 
 
 exit(0)
-
 
 # Set the other mission parameters
 numVacs=len(vacuumInterfaces)

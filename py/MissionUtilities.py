@@ -167,12 +167,23 @@ class MissionUtilities:
     ## setDefaultIPInformation(self,ipInfo,agentType)
     #
     # Routine to set the default ip information for an agent type.
-    def setDefaultIPInformation(self,ipInfo,agentType) :
+    def setDefaultIPInformation(self,ipInfo,agentType,vacuumID=-1) :
 
 	while(len(self.ipInformation) <= agentType) :
 	    self.ipInformation.append(None)
 
-	self.ipInformation[agentType] = copy.deepcopy(ipInfo)
+	if(agentType != Router.VACUUM) :
+	    self.ipInformation[agentType] = copy.deepcopy(ipInfo)
+
+	else :
+	    if(not self.ipInformation[agentType]) :
+		self.ipInformation[agentType] = []
+		
+	    while(len(self.ipInformation[agentType]) <= vacuumID) :
+		self.ipInformation[agentType].append(None)
+
+		self.ipInformation[agentType][vacuumID] = copy.deepcopy(ipInfo)
+	    
 
 
     ## getAgentInformation(self,agentType,id=-1) :
@@ -187,7 +198,9 @@ class MissionUtilities:
 		# This is a vacuum. See if the vacuum is defined.
 		# TODO test this for vacuums!
 		
-		if((id>=0) and (id < len(self.ipInformation[agentType]))) :
+		if((len(self.ipInformation)>=agentType) and \
+		   self.ipInformation[agentType] and 
+		   (id>=0) and (id < len(self.ipInformation[agentType]))) :
 		    # This vacuum exists.
 		    return(self.ipInformation[agentType][id])
 		
