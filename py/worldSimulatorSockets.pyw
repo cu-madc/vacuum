@@ -123,19 +123,26 @@ if(configFileName == False) :
                             Router.PLANNER    :['10.0.1.11',10001],
                             Router.COMMANDER  :['10.0.1.12',10002],
                             Router.WORLD      :['10.0.1.13',10003]}
+    worldAgentBindingInterface = ''
     sensorAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
                              Router.PLANNER    :['10.0.1.11',10001],
                              Router.COMMANDER  :['10.0.1.12',10002],
                              Router.WORLD      :['10.0.1.13',10003]}
+    sensorAgentBindingInterface = ''
     plannerAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
                               Router.PLANNER    :['10.0.1.11',10001],
                               Router.COMMANDER  :['10.0.1.12',10002],
                               Router.WORLD      :['10.0.1.13',10003]}
+    plannerAgentBindingInterface = ''
     commanderAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
                                 Router.PLANNER    :['10.0.1.11',10001],
                                 Router.COMMANDER  :['10.0.1.12',10002],
                                 Router.WORLD      :['10.0.1.13',10003]}
+    commanderAgentBindingInterface = ''
     vacuumAgentInterfaces = {Router.WORLD      :['10.0.1.13',10003]}
+    vacuum1AgentBindingInterface = ''
+    vacuum2AgentBindingInterface = ''
+    vacuum3AgentBindingInterface = ''
     commander2Vacuums = [ ['10.0.1.14',10004],
                           ['10.0.1.15',10005],
                           ['10.0.1.16',10006]]
@@ -149,19 +156,26 @@ else:
                             Router.PLANNER    :[config.get('world','plannerAddress'),config.getint('world','plannerPort')],
                             Router.COMMANDER  :[config.get('world','commanderAddress'),config.getint('world','commanderPort')],
                             Router.WORLD      :[config.get('world','worldAddress'),config.getint('world','worldPort')]}
+    worldAgentBindingInterface = config.get('world','bindingInterface')
     sensorAgentInterfaces = {Router.SENSORARRAY:[config.get('sensor','sensorAddress'),config.getint('sensor','sensorPort')],
                              Router.PLANNER    :[config.get('sensor','plannerAddress'),config.getint('sensor','plannerPort')],
                              Router.COMMANDER  :[config.get('sensor','commanderAddress'),config.getint('sensor','commanderPort')],
                              Router.WORLD      :[config.get('sensor','worldAddress'),config.getint('sensor','worldPort')]}
+    sensorAgentBindingInterface = config.get('sensor','bindingInterface')
     plannerAgentInterfaces = {Router.SENSORARRAY:[config.get('planner','sensorAddress'),config.getint('planner','sensorPort')],
                               Router.PLANNER    :[config.get('planner','plannerAddress'),config.getint('planner','plannerPort')],
                               Router.COMMANDER  :[config.get('planner','commanderAddress'),config.getint('planner','commanderPort')],
                               Router.WORLD      :[config.get('planner','worldAddress'),config.getint('planner','worldPort')]}
+    plannerAgentBindingInterface = config.get('planner','bindingInterface')
     commanderAgentInterfaces = {Router.SENSORARRAY:[config.get('commander','sensorAddress'),config.getint('commander','sensorPort')],
                                 Router.PLANNER    :[config.get('commander','plannerAddress'),config.getint('commander','plannerPort')],
                                 Router.COMMANDER  :[config.get('commander','commanderAddress'),config.getint('commander','commanderPort')],
                                 Router.WORLD      :[config.get('commander','worldAddress'),config.getint('commander','worldPort')]}
+    commanderAgentBindingInterface = config.get('commander','bindingInterface')
     vacuumAgentInterfaces = {Router.WORLD    :[config.get('vacuums','worldAddress'),config.getint('vacuums','worldPort')]}    
+    vacuum1AgentBindingInterface = config.get('vacuums','vacuum1BindingInterface')
+    vacuum2AgentBindingInterface = config.get('vacuums','vacuum2BindingInterface')
+    vacuum3AgentBindingInterface = config.get('vacuums','vacuum3BindingInterface')
     commander2Vacuums = [ [config.get('commander2vacuums','vacuum1Address'),config.getint('commander2vacuums','vacuum1Port')],
                           [config.get('commander2vacuums','vacuum2Address'),config.getint('commander2vacuums','vacuum2Port')],
                           [config.get('commander2vacuums','vacuum3Address'),config.getint('commander2vacuums','vacuum3Port')]]
