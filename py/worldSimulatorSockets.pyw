@@ -62,6 +62,7 @@
 
 import sys
 from datetime import date
+import ConfigParser
 
 from numpy import *
 from numpy.linalg import *
@@ -93,13 +94,19 @@ worldOutputFileName  = "./worldOutput-" + \
 vacuumOutputFileName = "./vacuumOutput-" + \
     str(theDate.year) + "-" + str(theDate.month) + "-" + str(theDate.day) + ".txt"
 
-if(len(sys.argv) >= 3) :
+if(len(sys.argv) >= 4) :
     # The name of the vacuum data file is specified.
-    vacuumOutputFileName = sys.argv[2]
+    vacuumOutputFileName = sys.argv[3]
+
+if(len(sys.argv) >= 3) :
+    # The name of the world data file is specified
+    worldOutputFileName = sys.argv[2]
 
 if(len(sys.argv) >= 2) :
-    # The name of the world data file is specified
-    worldOutputFileName = sys.argv[1]
+    # The name of the config file is specified
+    configFileName = sys.argv[1]
+else:
+    configFileName = False
 
 #print(worldOutputFileName)
 #print(vacuumOutputFileName)
@@ -111,41 +118,62 @@ if(len(sys.argv) >= 2) :
 #		   Router.COMMANDER  :['10.0.1.12',10002],
 #		   Router.WORLD      :['10.0.1.13',10003]}
 
-worldAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
-                        Router.PLANNER    :['10.0.1.11',10001],
-                        Router.COMMANDER  :['10.0.1.12',10002],
-                        Router.WORLD      :['10.0.1.13',10003]}
-
-sensorAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
-                         Router.PLANNER    :['10.0.1.11',10001],
-                         Router.COMMANDER  :['10.0.1.12',10002],
-                         Router.WORLD      :['10.0.1.13',10003]}
-
-plannerAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
-                          Router.PLANNER    :['10.0.1.11',10001],
-                          Router.COMMANDER  :['10.0.1.12',10002],
-                          Router.WORLD      :['10.0.1.13',10003]}
-
-commanderAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+if(configFileName == False) :
+    worldAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
                             Router.PLANNER    :['10.0.1.11',10001],
                             Router.COMMANDER  :['10.0.1.12',10002],
                             Router.WORLD      :['10.0.1.13',10003]}
-
-vacuumAgentInterfaces = {Router.WORLD      :['10.0.1.13',10003]}
-
+    sensorAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+                             Router.PLANNER    :['10.0.1.11',10001],
+                             Router.COMMANDER  :['10.0.1.12',10002],
+                             Router.WORLD      :['10.0.1.13',10003]}
+    plannerAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+                              Router.PLANNER    :['10.0.1.11',10001],
+                              Router.COMMANDER  :['10.0.1.12',10002],
+                              Router.WORLD      :['10.0.1.13',10003]}
+    commanderAgentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+                                Router.PLANNER    :['10.0.1.11',10001],
+                                Router.COMMANDER  :['10.0.1.12',10002],
+                                Router.WORLD      :['10.0.1.13',10003]}
+    vacuumAgentInterfaces = {Router.WORLD      :['10.0.1.13',10003]}
+    commander2Vacuums = [ ['10.0.1.14',10004],
+                          ['10.0.1.15',10005],
+                          ['10.0.1.16',10006]]
+    vacuums2Commander = [ ['10.0.1.11',10001],
+                          ['10.0.1.11',10001],
+                          ['10.0.1.11',10001]]
+else:
+    config = ConfigParser.SafeConfigParser()
+    config.read(configFileName)
+    worldAgentInterfaces = {Router.SENSORARRAY:[config.get('world','sensorAddress'),config.getint('world','sensorPort')],
+                            Router.PLANNER    :[config.get('world','plannerAddress'),config.getint('world','plannerPort')],
+                            Router.COMMANDER  :[config.get('world','commanderAddress'),config.getint('world','commanderPort')],
+                            Router.WORLD      :[config.get('world','worldAddress'),config.getint('world','worldPort')]}
+    sensorAgentInterfaces = {Router.SENSORARRAY:[config.get('sensor','sensorAddress'),config.getint('sensor','sensorPort')],
+                             Router.PLANNER    :[config.get('sensor','plannerAddress'),config.getint('sensor','plannerPort')],
+                             Router.COMMANDER  :[config.get('sensor','commanderAddress'),config.getint('sensor','commanderPort')],
+                             Router.WORLD      :[config.get('sensor','worldAddress'),config.getint('sensor','worldPort')]}
+    plannerAgentInterfaces = {Router.SENSORARRAY:[config.get('planner','sensorAddress'),config.getint('planner','sensorPort')],
+                              Router.PLANNER    :[config.get('planner','plannerAddress'),config.getint('planner','plannerPort')],
+                              Router.COMMANDER  :[config.get('planner','commanderAddress'),config.getint('planner','commanderPort')],
+                              Router.WORLD      :[config.get('planner','worldAddress'),config.getint('planner','worldPort')]}
+    commanderAgentInterfaces = {Router.SENSORARRAY:[config.get('commander','sensorAddress'),config.getint('commander','sensorPort')],
+                                Router.PLANNER    :[config.get('commander','plannerAddress'),config.getint('commander','plannerPort')],
+                                Router.COMMANDER  :[config.get('commander','commanderAddress'),config.getint('commander','commanderPort')],
+                                Router.WORLD      :[config.get('commander','worldAddress'),config.getint('commander','worldPort')]}
+    vacuumAgentInterfaces = {Router.WORLD    :[config.get('vacuums','worldAddress'),config.getint('vacuums','worldPort')]}    
+    commander2Vacuums = [ [config.get('commander2vacuums','vacuum1Address'),config.getint('commander2vacuums','vacuum1Port')],
+                          [config.get('commander2vacuums','vacuum2Address'),config.getint('commander2vacuums','vacuum2Port')],
+                          [config.get('commander2vacuums','vacuum3Address'),config.getint('commander2vacuums','vacuum3Port')]]
+    vacuums2Commander = [ [config.get('vacuums2commander','vacuum1toCommanderAddress'),config.getint('vacuums2commander','vacuum1toCommanderPort')],
+                          [config.get('vacuums2commander','vacuum2toCommanderAddress'),config.getint('vacuums2commander','vacuum2toCommanderPort')],
+                          [config.get('vacuums2commander','vacuum3toCommanderAddress'),config.getint('vacuums2commander','vacuum3toCommanderPort')]]
 
 # Set the host addresses and ports for the different vacuums 
 #vacummInterfaces = [ ['10.0.1.14',10004],
 #		     ['10.0.1.15',10005],
 #		     ['10.0.1.16',10006]]
 
-commander2Vacuums = [ ['10.0.1.14',10004],
-                      ['10.0.1.15',10005],
-                      ['10.0.1.16',10006]]
-
-vacuums2Commander = [ ['10.0.1.11',10001],
-                      ['10.0.1.11',10001],
-                      ['10.0.1.11',10001]]
 
 # Set the other mission parameters
 numVacs=len(commander2Vacuums)
