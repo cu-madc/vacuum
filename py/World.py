@@ -472,7 +472,7 @@ class  World (Agent):
 
 
     # Routine to handle the poll requests
-    def poll(self) :
+    def poll(self,dest=None,info=None) :
 	pass
 
 

@@ -315,7 +315,7 @@ sensor.start()
 
 # Set the ip info for the planner and start it in its own process
 plan.setHostname(plannerInterfaces[Router.PLANNER][0])
-plan.setPorta(plannerInterfaces[Router.PLANNER][1])
+plan.setPort(plannerInterfaces[Router.PLANNER][1])
 plan.start()
 
 # Set the ip info for the world and start up the graphical interface

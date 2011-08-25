@@ -369,11 +369,13 @@ class Vacuum (Agent):
 
 
     # Routine to handle requests to record data
-    def poll(self) :
+    def poll(self,dest=None,info=None) :
 	myPos = self.getPosition()
 	myInfo = [self.time,self.getID(),self.getStatus(),self.getWorking(),
 		  myPos[0],myPos[1],self.repairs,self.odometer,self.missions]
-	self.channel.sendInfoViaCallback(Router.WORLD,myInfo)
+	#Agent.poll(self,Router.DATACOLLECTOR,myInfo)
+	Agent.poll(self,Router.WORLD,myInfo)
+	
 
 
 

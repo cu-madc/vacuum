@@ -267,8 +267,10 @@ class Agent (Process):
 	pass
 
     # Routine to handle the poll requests
-    def poll(self) :
-	pass
+    def poll(self,dest=None,info=None) :
+	if(dest and info) :
+	    self.channel.sendInfoViaCallback(dest,info)
+
 
 
     # Routine to handle the reset requests
