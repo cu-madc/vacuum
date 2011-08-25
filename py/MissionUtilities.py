@@ -265,6 +265,10 @@ class MissionUtilities:
 	elif(agent == 'vacuum') :
 	    return(Router.VACUUM)
 
+	elif(agent == 'data collector') :
+	    return(Router.DATACOLLECTOR)
+
+
 	return(-1)
 
 
@@ -488,3 +492,7 @@ if (__name__ =='__main__') :
 
     print("Vacuum 2 info: {0}".format(\
 	mission.getAgentInformation(Router.VACUUM,2)))
+
+
+    print("Mission collector info: {0}".format(\
+	mission.getAgentInformation(Router.DATACOLLECTOR,2)))
