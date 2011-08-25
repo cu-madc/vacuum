@@ -68,7 +68,8 @@ class Router:
 	       PLANNER, \
 	       SENSORARRAY, \
 	       VACUUM, \
-	       WORLD = range(5)
+	       WORLD, \
+	       DATACOLLECTOR = range(6)
 
     DEBUG = False
 
