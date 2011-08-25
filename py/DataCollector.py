@@ -92,6 +92,64 @@ class DataCollector (Agent):
 	    pass
 
 
+
+    def quit(self) :
+
+	if(self.getDataCollection()) :
+	    self.worldDataFile.close()
+	    self.vacuumDataFile.close()
+	    
+        exit(0) # Say bye bye!
+	
+
+    # Used for the output of data
+    def setWorldFileName(self,name) :
+	Agent.setWorldFileName(self,name)
+
+	self.worldDataWriter  = csv.writer(self.worldDataFile, delimiter=',',
+					   quotechar='\'',
+					   quoting=csv.QUOTE_MINIMAL)
+
+	self.worldDataWriter.writerow(["time","row","col","dust","moisture"])
+	
+
+
+    def setVacuumFileName(self,name) :
+	Agent.setVacuumFileName(self,name)
+
+	self.vacuumDataWriter = csv.writer(self.vacuumDataFile, delimiter=',',
+					   quotechar='\'',
+					   quoting=csv.QUOTE_MINIMAL)
+
+	self.vacuumDataWriter.writerow(["time","id","status","working",
+				       "xpos","ypos","repairs","odomoter","missions"])
+
+
+    ## Routine to get the required data.
+    def getData(self,timeStep) :
+
+
+	for vacuum in self.vacuumArray:
+	    # Request info from the given vacuum.
+	    vacuum.poll()
+
+	# Get the appropriate data associated with the world.
+        # self.A is the array of values for dirt levels
+        # self.Moisture is the array of values for moisture level
+	for row in range(self.N) :
+	    for col in range(self.N) :
+		self.worldDataWriter.writerow([timeStep,row,col,self.A[row][col],self.Moisture[row][col]])
+		
+	#self.vacuumDataWriter
+
+
+    # Get data from a vacuum
+    def getVacuumData(self,info) :
+	self.vacuumDataWriter.writerow(info)
+	
+
+
+
     
 if (__name__ =='__main__') :
 

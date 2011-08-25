@@ -117,6 +117,7 @@ class  World (Agent):
 	self.channel.sendString(Router.COMMANDER,parameter.xml2Char(False))
 	self.channel.sendString(Router.PLANNER,parameter.xml2Char(False))
 	self.channel.sendString(Router.SENSORARRAY,parameter.xml2Char(False))
+	self.channel.sendString(Router.DATACOLLECTOR,parameter.xml2Char(False))
 
 	
 	for definedVacuum in self.vacuumArray :
