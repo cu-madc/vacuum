@@ -1,0 +1,73 @@
+
+planner,world,10.0.1.13,10003
+planner,commander,10.0.1.12,10002
+planner,sensor,10.0.1.10,10000
+planner,planner,10.0.1.11,10002
+planner,vacuum,0,10.0.1.14,10004
+planner,vacuum,1,10.0.1.15,10005
+planner,vacuum,2,10.0.1.16,10006
+planner,data collector,10.0.1.17,10007
+
+commander,world,10.0.2.13,10003
+commander,commander,10.0.2.12,10002
+commander,sensor,10.0.2.10,10000
+commander,planner,10.0.2.11,10002
+commander,vacuum,0,10.0.2.14,10004
+commander,vacuum,1,10.0.2.15,10005
+commander,vacuum,2,10.0.2.16,10006
+commander,data collector,10.0.2.17,10007
+
+sensor,world,10.0.3.13,10003
+sensor,commander,10.0.3.12,10002
+sensor,sensor,10.0.3.10,10000
+sensor,planner,10.0.3.11,10002
+sensor,vacuum,2,10.0.3.16,10006
+sensor,vacuum,1,10.0.3.15,10005
+sensor,vacuum,0,10.0.3.14,10004
+sensor,data collector,10.0.3.17,10007
+
+world,world,10.0.4.13,10003
+world,commander,10.0.4.12,10002
+world,sensor,10.0.4.10,10000
+world,planner,10.0.4.11,10002
+world,vacuum,0,10.0.4.14,10004
+world,vacuum,2,10.0.4.16,10006
+world,vacuum,1,10.0.4.15,10005
+world,data collector,10.0.4.17,10007
+
+vacuum,0,world,10.0.1.13,10003
+vacuum,0,commander,10.0.1.12,10002
+vacuum,0,sensor,10.0.1.10,10000
+vacuum,0,planner,10.0.1.11,10002
+vacuum,0,vacuum,2,10.0.1.16,10006
+vacuum,0,vacuum,1,10.0.1.15,10005
+vacuum,0,vacuum,0,10.0.1.14,10004
+vacuum,0,,data collector,10.0.1.17,10007
+
+vacuum,1,world,10.0.2.13,10003
+vacuum,1,commander,10.0.2.12,10002
+vacuum,1,sensor,10.0.2.10,10000
+vacuum,1,planner,10.0.2.11,10002
+vacuum,1,vacuum,0,10.0.2.14,10004
+vacuum,1,vacuum,2,10.0.2.16,10006
+vacuum,1,vacuum,1,10.0.2.15,10005
+vacuum,1,,data collector,10.0.2.17,10007
+
+vacuum,2,world,10.0.3.13,10003
+vacuum,2,commander,10.0.3.12,10002
+vacuum,2,sensor,10.0.3.10,10000
+vacuum,2,planner,10.0.3.11,10002
+vacuum,2,vacuum,1,10.0.3.15,10005
+vacuum,2,vacuum,2,10.0.3.16,10006
+vacuum,2,vacuum,0,10.0.3.14,10004
+vacuum,2,,data collector,10.0.3.17,10007
+
+data collector,planner,10.0.5.17,10007
+data collector,world,10.0.5.13,10003
+data collector,commander,10.0.5.12,10002
+data collector,sensor,10.0.5.10,10000
+data collector,planner,10.0.5.11,10002
+data collector,vacuum,0,10.0.5.14,10004
+data collector,vacuum,1,10.0.5.15,10005
+data collector,vacuum,2,10.0.5.16,10006
+
