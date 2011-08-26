@@ -85,10 +85,10 @@ class Agent (Process):
 	self.queueUse = False
 
 	# Initialize the data collection.
-	self.worldFileName  = ""
-	self.vacuumFileName = ""
 	self.worldDataFile = None
 	self.vacuumDataFile = None
+	self.setWorldFileName("")
+	self.setVacuumFileName("")
 
 	self.setDataCollection()
 	self.setDataCollectionFrequency()
@@ -140,16 +140,47 @@ class Agent (Process):
 	
 	if(self.worldDataFile) :
 	    self.worldDataFile.close()
-	self.worldDataFile  = open(self.worldFileName,"w")
-	self.worldDataFile.close()
+	    self.worldDataFile = None
+
+    # Get the file name
+    def getWorldFileName(self):
+	return(self.worldFileName);
+
+    # open the file object
+    def openWorldDataFile(self,mode) :
+	if(self.worldDataFile) :
+	    self.worldDataFile.close()
+
+	try:
+	    self.worldDataFile  = open(self.worldFileName,mode)
+	except IOError:
+	    self.worldDataFile = None
+	    print("Could not open up file: {0}".format(self.worldFileName))
+	    
+	#self.worldDataFile.close()
 
     def setVacuumFileName(self,name) :
 	self.vacuumFileName = name
 
 	if(self.vacuumDataFile) :
 	    self.vacuumDataFile.close()
-	self.vacuumDataFile = open(self.vacuumFileName,"w")
-	self.vacuumDataFile.close()
+	    self.vacuumDataFile = None
+
+    def getVacuumFileName(self):
+	return(self.vacuumFileName)
+
+    # Open the vacuum file
+    def openVacuumDataFile(self,mode) :
+	if(self.vacuumDataFile) :
+	    self.vacuumDataFile.close()
+
+	try:
+	    self.vacuumDataFile = open(self.vacuumFileName,mode)
+	except IOError:
+	    self.vacuumDataFile = None
+	    print("Could not open up file: {0}".format(self.vacuumFileName))
+
+	#self.vacuumDataFile.close()
 
 
     def setDataCollection(self,value=False) :
@@ -174,6 +205,18 @@ class Agent (Process):
     # called and will spawn a new agent. It should not be called
     # directly.
     def run(self) :
+
+	#if(self.getDataCollection()) :
+	#    print("Data collection is on!")
+	#    
+	#    if(self.getWorldFileName()) :
+	#	print("opening the world data file: {0}".format(self.getWorldFileName()))
+	#	self.openWorldDataFile("a")
+
+        #   if(self.getVacuumFileName()) :
+	#	print("opening the vacuum data file: {0}".format(self.getVacuumFileName()))
+	#	self.openVacuumDataFile("a")
+		
 	self.channel.getRouter().createAndInitializeSocketForever()
 
 

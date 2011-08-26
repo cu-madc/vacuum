@@ -204,10 +204,11 @@ class SensorArray (Agent):
 
 if (__name__ =='__main__') :
     # Set the host addresses and ports for the different agents
-    agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
-		       Router.PLANNER    :['10.0.1.11',10001],
-		       Router.COMMANDER  :['10.0.1.12',10002],
-		       Router.WORLD      :['10.0.1.13',10003]}
+    agentInterfaces = {Router.SENSORARRAY  :['10.0.1.10',10000],
+		       Router.PLANNER      :['10.0.1.11',10001],
+		       Router.COMMANDER    :['10.0.1.12',10002],
+		       Router.DATACOLLECTOR:['10.0.1.14',10004],
+		       Router.WORLD        :['10.0.1.13',10003]}
 
     # Set the host addresses and ports for the different vacuums 
     vacummInterfaces = [ ['10.0.1.14',10004],

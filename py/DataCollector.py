@@ -97,14 +97,20 @@ class DataCollector (Agent):
 
 
 
-    def quit(self) :
+    def shutdownServer(self) :
+	Agent.shutdownServer(self)
+	
+	if(self.worldDataFile) :
+	    print("Closing the world data file");
+	    self.worldDataFile.close()
+	    self.worldDataFile = None
 
-	if(self.getDataCollection()) :
-	    #self.worldDataFile.close()
-	    #self.vacuumDataFile.close()
-	    pass
+	if(self.vacuumDataFile) :
+	    print("Closing the vacuum data file");
+	    self.vacuumDataFile.close()
+	    self.vacuumDataFile = None
 	    
-        exit(0) # Say bye bye!
+        #exit(0) # Say bye bye!
 	
 
     # Used for the output of data
@@ -117,9 +123,12 @@ class DataCollector (Agent):
 
 	#self.worldDataWriter.writerow(["time","row","col","dust","moisture"])
 
-	self.worldDataFile  = open(self.worldFileName,"a")
-	self.worldDataFile.write("time,row,col,dust,moisture\n")
-	self.worldDataFile.close()
+	if(name) :
+	    self.openWorldDataFile("w")
+	    if(self.worldDataFile) :
+		self.worldDataFile.write("time,row,col,dust,moisture\n")
+		self.worldDataFile.close()
+		self.worldDataFile = None
 	
 
 
@@ -133,31 +142,42 @@ class DataCollector (Agent):
 	#self.vacuumDataWriter.writerow(["time","id","status","working",
 	#			       "xpos","ypos","repairs","odomoter","missions"])
 
-	self.vacuumDataFile = open(self.vacuumFileName,"a")
-	self.vacuumDataFile.write("time,id,status,working,xpos,ypos,repairs,odomoter,missions\n")
-	self.vacuumDataFile.close()
+	if(name) :
+	    self.openVacuumDataFile("w")
+	    if(self.vacuumDataFile) :
+		self.vacuumDataFile.write(
+		    "time,id,status,working,xpos,ypos,repairs,odomoter,missions\n")
+		self.vacuumDataFile.close()
+		self.vacuumDataFile = None
 
 
 
     # Method to handle an incoming message and determine what to do
     def handleMessage(self,type,passedInformation) :
-	print("DataCollector.handleMessage, type:/{0}/ - {1}".format(type,passedInformation))
+	#print("DataCollector.handleMessage, type:/{0}/ - {1}".format(type,passedInformation))
 
 	if (type=="world data") :
 	    theData = passedInformation["data"]
 	    #print("World data: {0}".format(theData))
 
-	    self.worldDataFile  = open(self.worldFileName,"a")
-	    self.worldDataFile.write(theData + "\n")
-	    self.worldDataFile.close()
+	    if((not self.worldDataFile) and self.getWorldFileName()):
+		self.openWorldDataFile("a")
+		
+	    if(self.worldDataFile) :
+		self.worldDataFile.write(theData + "\n")
+		#print(self.worldDataFile)
 
 	elif (type=="vacuum data") :
 	    theData = passedInformation["data"]
 	    #print("vacuum data: {0}".format(theData))
 
-	    self.vacuumDataFile = open(self.vacuumFileName,"a")
-	    self.vacuumDataFile.write(theData + "\n")
-	    self.vacuumDataFile.close()
+	    if((not self.vacuumDataFile) and self.getVacuumFileName()) :
+		self.openVacuumDataFile("a")
+		
+	    if(self.vacuumDataFile) :
+		#print("writing the vacuum data...")
+		self.vacuumDataFile.write(theData + "\n")
+	    
 
 
     # Static method that is used as a helper to make it easier to
@@ -199,9 +219,23 @@ class RowData :
     
 if (__name__ =='__main__') :
 
-    from XML.XMLMessageForAgent import XMLMessageForAgent
-    newTime = XMLMessageForAgent()
-    newTime.createRootNode(False)
-    newTime.createObjectClassElements(Agent.DATACOLLECTOR,"world data")
-    newTime.addData(RowData([1,2,3,"GH ajj"]).getInfo())
-    print(newTime.xml2Char())
+
+    # Set the host addresses and ports for the different agents
+    agentInterfaces = {Router.SENSORARRAY  :['10.0.1.10',10000],
+		       Router.PLANNER      :['10.0.1.11',10001],
+		       Router.COMMANDER    :['10.0.1.12',10002],
+		       Router.DATACOLLECTOR:['10.0.1.14',10004],
+		       Router.WORLD        :['10.0.1.13',10003]}
+
+    # Set the host addresses and ports for the different vacuums 
+    vacummInterfaces = [ ['10.0.1.14',10004],
+			 ['10.0.1.15',10005],
+			 ['10.0.1.16',10006]]
+
+    # create and set the data collector
+    dataCollector = DataCollector()
+    
+    # Set the ip info for the dataCollector and start it in its own process
+    dataCollector.setHostname(agentInterfaces[Router.DATACOLLECTOR][0])
+    dataCollector.setPort(agentInterfaces[Router.DATACOLLECTOR][1])
+    dataCollector.run()
