@@ -101,6 +101,9 @@ class XMLMessageForAgent (XMLMessageCreator) :
     def addTime(self,time) :
 	self.addNodeWithValue("time",time)
 
+    def addData(self,value) :
+	self.addNodeWithValue("data",value)
+
 
 
 

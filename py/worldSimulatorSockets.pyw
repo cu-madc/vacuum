@@ -170,7 +170,7 @@ W.setIPInformation(worldInterfaces)       # Let the world know all the ip info a
 
 # Set up the world to collect data. This is necessary because the
 # world controls the information that is sent out to the vacuums.
-W.setDataCollection(not True)
+W.setDataCollection(True)
 W.setDataCollectionFrequency(1)
 
 
@@ -183,6 +183,8 @@ dataCollector.setWorldFileName(
 dataCollector.setIPInformation(dataCollectorInterfaces)       # give it all the relevant ip info.
 dataCollector.setRouterChannel(Router.WORLD,W.getChannel())   # inform the sensor about the
                                                               # world's channel
+dataCollector.setDataCollection(True)                         # Make sure the data collector
+                                                              # knows it has to receive the data.
 
 
 
@@ -350,5 +352,5 @@ W.getChannel().getRouter().createAndInitializeSocket()
 
 
 
-W.stepInTime(20,0,1)
+W.stepInTime(10,0,1)
 W.quit()

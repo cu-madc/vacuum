@@ -70,6 +70,7 @@ import csv
 from Channel import Channel
 from Router import Router
 from Agent import Agent
+from DataCollector import RowData
 from XML.XMLMessageForAgent import XMLMessageForAgent
 
 class  World (Agent):
@@ -125,10 +126,6 @@ class  World (Agent):
 	    self.channel.sendString(Router.VACUUM,parameter.xml2Char(False),definedVacuum.getID())
 	    definedVacuum.checkIncomingQueue()  # Make sure the vacuum processes its world queue.
 	    
-
-	if(self.getDataCollection()) :
-	    self.worldDataFile.close()
-	    self.vacuumDataFile.close()
 	    
         exit(0) # Say bye bye!
 
@@ -294,29 +291,6 @@ class  World (Agent):
 
     def setRainSize(self,cloudsize) :
         self.cloudsize = cloudsize # average size of rain event
-
-
-    # Used for the output of data
-    def setWorldFileName(self,name) :
-	Agent.setWorldFileName(self,name)
-
-	self.worldDataWriter  = csv.writer(self.worldDataFile, delimiter=',',
-					   quotechar='\'',
-					   quoting=csv.QUOTE_MINIMAL)
-
-	self.worldDataWriter.writerow(["time","row","col","dust","moisture"])
-	
-
-
-    def setVacuumFileName(self,name) :
-	Agent.setVacuumFileName(self,name)
-
-	self.vacuumDataWriter = csv.writer(self.vacuumDataFile, delimiter=',',
-					   quotechar='\'',
-					   quoting=csv.QUOTE_MINIMAL)
-
-	self.vacuumDataWriter.writerow(["time","id","status","working",
-				       "xpos","ypos","repairs","odomoter","missions"])
 
 
     def inc(self) :
@@ -510,29 +484,33 @@ class  World (Agent):
 	    if(self.getDataCollection()) :
 		if(i%self.dataSkip == 0) :
 		    # We need to collect data on this time step.
-		    self.getData(i)
+		    for vacuum in self.vacuumArray:
+			# Request info from the given vacuum.
+			vacuum.poll()
+
+		    self.sendData(i)
+
+
 		
 	    self.inc()
 	    if((skip>0) and (i%skip==0)) :
 		print(i)
 
 
-    ## Routine to get the required data.
-    def getData(self,timeStep) :
+    ## Routine to send the required data to the data collector
+    def sendData(self,timeStep) :
 
-
-	for vacuum in self.vacuumArray:
-	    # Request info from the given vacuum.
-	    vacuum.poll()
 
 	# Get the appropriate data associated with the world.
         # self.A is the array of values for dirt levels
         # self.Moisture is the array of values for moisture level
 	for row in range(self.N) :
 	    for col in range(self.N) :
-		self.worldDataWriter.writerow([timeStep,row,col,self.A[row][col],self.Moisture[row][col]])
-		
-	#self.vacuumDataWriter
+
+		theData = RowData([timeStep,row,col,self.A[row][col],self.Moisture[row][col]]).getInfo()
+		#print("sending world data: {0}".format(theData))
+		Agent.poll(self,Router.DATACOLLECTOR,theData,"world data")
+		#self.channel.sendString(Router.DATACOLLECTOR,regionData.xml2Char())
 
 
     # Get data from a vacuum
@@ -555,7 +533,7 @@ class  World (Agent):
 if (__name__ =='__main__') :
     from Vacuum import Vacuum
 
-    
+    #exit(0)
     # Set the host addresses and ports for the different agents
     agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
 		       Router.PLANNER    :['10.0.1.11',10001],

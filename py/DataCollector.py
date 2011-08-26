@@ -100,8 +100,9 @@ class DataCollector (Agent):
     def quit(self) :
 
 	if(self.getDataCollection()) :
-	    self.worldDataFile.close()
-	    self.vacuumDataFile.close()
+	    #self.worldDataFile.close()
+	    #self.vacuumDataFile.close()
+	    pass
 	    
         exit(0) # Say bye bye!
 	
@@ -110,47 +111,53 @@ class DataCollector (Agent):
     def setWorldFileName(self,name) :
 	Agent.setWorldFileName(self,name)
 
-	self.worldDataWriter  = csv.writer(self.worldDataFile, delimiter=',',
-					   quotechar='\'',
-					   quoting=csv.QUOTE_MINIMAL)
+	#self.worldDataWriter  = csv.writer(self.worldDataFile, delimiter=',',
+	#				   quotechar='\'',
+	#				   quoting=csv.QUOTE_MINIMAL)
 
-	self.worldDataWriter.writerow(["time","row","col","dust","moisture"])
+	#self.worldDataWriter.writerow(["time","row","col","dust","moisture"])
+
+	self.worldDataFile  = open(self.worldFileName,"a")
+	self.worldDataFile.write("time,row,col,dust,moisture\n")
+	self.worldDataFile.close()
 	
 
 
     def setVacuumFileName(self,name) :
 	Agent.setVacuumFileName(self,name)
 
-	self.vacuumDataWriter = csv.writer(self.vacuumDataFile, delimiter=',',
-					   quotechar='\'',
-					   quoting=csv.QUOTE_MINIMAL)
+	#self.vacuumDataWriter = csv.writer(self.vacuumDataFile, delimiter=',',
+	#				   quotechar='\'',
+	#				   quoting=csv.QUOTE_MINIMAL)
 
-	self.vacuumDataWriter.writerow(["time","id","status","working",
-				       "xpos","ypos","repairs","odomoter","missions"])
+	#self.vacuumDataWriter.writerow(["time","id","status","working",
+	#			       "xpos","ypos","repairs","odomoter","missions"])
 
-
-    ## Routine to get the required data.
-    def getData(self,timeStep) :
-
-
-	for vacuum in self.vacuumArray:
-	    # Request info from the given vacuum.
-	    vacuum.poll()
-
-	# Get the appropriate data associated with the world.
-        # self.A is the array of values for dirt levels
-        # self.Moisture is the array of values for moisture level
-	for row in range(self.N) :
-	    for col in range(self.N) :
-		self.worldDataWriter.writerow([timeStep,row,col,self.A[row][col],self.Moisture[row][col]])
-		
-	#self.vacuumDataWriter
+	self.vacuumDataFile = open(self.vacuumFileName,"a")
+	self.vacuumDataFile.write("time,id,status,working,xpos,ypos,repairs,odomoter,missions\n")
+	self.vacuumDataFile.close()
 
 
-    # Get data from a vacuum
-    def getVacuumData(self,info) :
-	self.vacuumDataWriter.writerow(info)
-	
+
+    # Method to handle an incoming message and determine what to do
+    def handleMessage(self,type,passedInformation) :
+	print("DataCollector.handleMessage, type:/{0}/ - {1}".format(type,passedInformation))
+
+	if (type=="world data") :
+	    theData = passedInformation["data"]
+	    #print("World data: {0}".format(theData))
+
+	    self.worldDataFile  = open(self.worldFileName,"a")
+	    self.worldDataFile.write(theData + "\n")
+	    self.worldDataFile.close()
+
+	elif (type=="vacuum data") :
+	    theData = passedInformation["data"]
+	    #print("vacuum data: {0}".format(theData))
+
+	    self.vacuumDataFile = open(self.vacuumFileName,"a")
+	    self.vacuumDataFile.write(theData + "\n")
+	    self.vacuumDataFile.close()
 
 
     # Static method that is used as a helper to make it easier to
@@ -192,9 +199,9 @@ class RowData :
     
 if (__name__ =='__main__') :
 
+    from XML.XMLMessageForAgent import XMLMessageForAgent
     newTime = XMLMessageForAgent()
     newTime.createRootNode(False)
     newTime.createObjectClassElements(Agent.DATACOLLECTOR,"world data")
-    newTime.vacuumID(id)
-    newTime.addTime(T)
+    newTime.addData(RowData([1,2,3,"GH ajj"]).getInfo())
     print(newTime.xml2Char())

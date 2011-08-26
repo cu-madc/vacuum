@@ -62,6 +62,7 @@
 from multiprocessing import Process, Queue
 from Router import Router
 
+
 class Agent (Process):
 
     COMMANDER, \
@@ -140,6 +141,7 @@ class Agent (Process):
 	if(self.worldDataFile) :
 	    self.worldDataFile.close()
 	self.worldDataFile  = open(self.worldFileName,"w")
+	self.worldDataFile.close()
 
     def setVacuumFileName(self,name) :
 	self.vacuumFileName = name
@@ -147,6 +149,7 @@ class Agent (Process):
 	if(self.vacuumDataFile) :
 	    self.vacuumDataFile.close()
 	self.vacuumDataFile = open(self.vacuumFileName,"w")
+	self.vacuumDataFile.close()
 
 
     def setDataCollection(self,value=False) :
@@ -267,9 +270,23 @@ class Agent (Process):
 	pass
 
     # Routine to handle the poll requests
-    def poll(self,dest=None,info=None) :
-	if(dest and info) :
-	    self.channel.sendInfoViaCallback(dest,info)
+    def poll(self,dest=None,info=None,label=None) :
+	if(dest and info and label) :
+
+	    from XML.XMLMessageForAgent import XMLMessageForAgent
+	    localData = XMLMessageForAgent()
+	    localData.createRootNode(False)
+	    localData.createObjectClassElements(Agent.DATACOLLECTOR,label)
+	    localData.addData(info)
+
+	    #if(label=="vacuum data") :
+	    #     print(localData.xml2Char())
+	    #      self.channel.sendString(dest,localData.xml2Char(),-1,False,True)
+
+	    #else :
+	    self.channel.sendString(dest,localData.xml2Char(),-1,False,False)
+
+	    #self.channel.sendInfoViaCallback(dest,info)
 
 
 

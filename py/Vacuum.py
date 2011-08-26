@@ -65,6 +65,8 @@ from numpy.linalg import *
 from Channel import Channel
 from Router import Router
 from Agent import Agent
+from DataCollector import RowData
+
 from XML.XMLMessageForAgent import XMLMessageForAgent
 
 
@@ -371,10 +373,10 @@ class Vacuum (Agent):
     # Routine to handle requests to record data
     def poll(self,dest=None,info=None) :
 	myPos = self.getPosition()
-	myInfo = [self.time,self.getID(),self.getStatus(),self.getWorking(),
-		  myPos[0],myPos[1],self.repairs,self.odometer,self.missions]
-	#Agent.poll(self,Router.DATACOLLECTOR,myInfo)
-	Agent.poll(self,Router.WORLD,myInfo)
+	Agent.poll(self,Router.DATACOLLECTOR,
+		   RowData([self.time,self.getID(),self.getStatus(),self.getWorking(),
+			    myPos[0],myPos[1],self.repairs,self.odometer,self.missions]).getInfo(),
+		   "vacuum data")
 	
 
 
