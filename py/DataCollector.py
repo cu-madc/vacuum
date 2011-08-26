@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-#  Vacuum.py
+#  DataCollector.py
 # 
 #   Created on: 24 Aug, 2011
 #       Author: Kelly Black
@@ -63,6 +63,7 @@
 #from numpy.linalg import *
 
 import csv
+import re
 #import sys
 
 from Channel import Channel
@@ -162,7 +163,38 @@ class DataCollector (Agent):
 
 
 
+# Simple class to accumulate a string of csv values.
+class Accumulator :
+   def __init__(self) :
+        self.myData = ""
+   def write(self,newInfo) :
+        self.myData += newInfo
+   def get(self) :
+        return(self.myData)
+
+
+# Simple class to take a list of information and make a single line to
+# be used in a csv file.
+class RowData :
+    scrubLineEndings = re.compile(r'[\r\n]+')
+    def __init__(self,info) :
+	self.myAccumulator = Accumulator()
+	self.myCSV = csv.writer(self.myAccumulator)
+	self.addRow(info)
+
+    def addRow(self,info) :
+	self.myCSV.writerow(info)
+
+    def getInfo(self) :
+	current = self.myAccumulator.get()
+	return(self.scrubLineEndings.sub('',current))
+
     
 if (__name__ =='__main__') :
 
-    pass
+    newTime = XMLMessageForAgent()
+    newTime.createRootNode(False)
+    newTime.createObjectClassElements(Agent.DATACOLLECTOR,"world data")
+    newTime.vacuumID(id)
+    newTime.addTime(T)
+    print(newTime.xml2Char())
