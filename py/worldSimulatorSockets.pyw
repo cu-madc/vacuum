@@ -72,6 +72,7 @@ from SensorArray import SensorArray
 from World import World
 from Vacuum import Vacuum
 from Router import Router
+from DataCollector import DataCollector
 
 from MissionUtilities import MissionUtilities
 
@@ -88,16 +89,17 @@ DEBUG = False
 
 
 # Set the host addresses and ports for the different vacuums 
-vacuumInterfaces = [ ['10.0.1.14',10004],
-		     ['10.0.1.15',10005],
-		     ['10.0.1.16',10006]]
+vacuumInterfaces = [ ['10.0.1.15',10004],
+		     ['10.0.1.16',10005],
+		     ['10.0.1.17',10006]]
 
 # Set the host addresses and ports for the different agents
-agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
-		   Router.PLANNER    :['10.0.1.11',10001],
-		   Router.COMMANDER  :['10.0.1.12',10002],
-		   Router.WORLD      :['10.0.1.13',10003],
-		   Router.VACUUM     : vacuumInterfaces}
+agentInterfaces = {Router.SENSORARRAY  :['10.0.1.10',10000],
+		   Router.PLANNER      :['10.0.1.11',10001],
+		   Router.COMMANDER    :['10.0.1.12',10002],
+		   Router.WORLD        :['10.0.1.13',10003],
+		   Router.DATACOLLECTOR:['10.0.1.14',10004],
+		   Router.VACUUM       : vacuumInterfaces}
 
 
 # Create the parser to help fix the default ip values and parse the
@@ -107,6 +109,7 @@ utilityHelper.setDefaultIPInformation(agentInterfaces,Router.SENSORARRAY)
 utilityHelper.setDefaultIPInformation(agentInterfaces,Router.PLANNER)
 utilityHelper.setDefaultIPInformation(agentInterfaces,Router.COMMANDER)
 utilityHelper.setDefaultIPInformation(agentInterfaces,Router.WORLD)
+utilityHelper.setDefaultIPInformation(agentInterfaces,Router.DATACOLLECTOR)
 
 utilityHelper.setDefaultIPInformation(agentInterfaces,Router.VACUUM,0)
 utilityHelper.setDefaultIPInformation(agentInterfaces,Router.VACUUM,1)
@@ -118,25 +121,27 @@ utilityHelper.parseCommandLine()
 
 
 # Defing the ip information that will be used for each agent.
-sensorInterfaces    = utilityHelper.getAgentInformation(Router.SENSORARRAY)
-plannerInterfaces   = utilityHelper.getAgentInformation(Router.PLANNER)
-commanderInterfaces = utilityHelper.getAgentInformation(Router.COMMANDER)
-worldInterfaces     = utilityHelper.getAgentInformation(Router.WORLD)
-vacuumInterfaceList = [utilityHelper.getAgentInformation(Router.VACUUM,0),
-		       utilityHelper.getAgentInformation(Router.VACUUM,1),
-		       utilityHelper.getAgentInformation(Router.VACUUM,2)]
+sensorInterfaces        = utilityHelper.getAgentInformation(Router.SENSORARRAY)
+plannerInterfaces       = utilityHelper.getAgentInformation(Router.PLANNER)
+commanderInterfaces     = utilityHelper.getAgentInformation(Router.COMMANDER)
+worldInterfaces         = utilityHelper.getAgentInformation(Router.WORLD)
+dataCollectorInterfaces = utilityHelper.getAgentInformation(Router.DATACOLLECTOR)
+vacuumInterfaceList     = [utilityHelper.getAgentInformation(Router.VACUUM,0),
+			   utilityHelper.getAgentInformation(Router.VACUUM,1),
+			   utilityHelper.getAgentInformation(Router.VACUUM,2)]
 
 
 if(DEBUG) :
     # Print out the ip information to see if it is correct
-    print("Sensor:    {0}".format(sensorInterfaces))
-    print("Planner:   {0}".format(plannerInterfaces))
-    print("Commander: {0}".format(commanderInterfaces))
-    print("World:     {0}".format(worldInterfaces))
+    print("Sensor:        {0}".format(sensorInterfaces))
+    print("Planner:       {0}".format(plannerInterfaces))
+    print("Commander:     {0}".format(commanderInterfaces))
+    print("World:         {0}".format(worldInterfaces))
+    print("data collector:{0}".format(dataCollectorInterfaces))
 
-    print("vacuum 0:  {0}".format(vacuumInterfaceList[0]))
-    print("vacuum 1:  {0}".format(vacuumInterfaceList[1]))
-    print("vacuum 2:  {0}".format(vacuumInterfaceList[2]))
+    print("vacuum 0:      {0}".format(vacuumInterfaceList[0]))
+    print("vacuum 1:      {0}".format(vacuumInterfaceList[1]))
+    print("vacuum 2:      {0}".format(vacuumInterfaceList[2]))
 
 
 
@@ -163,11 +168,21 @@ chan = W.getChannel()                     # Get the world's channel object
 W.getChannel().setNumberVacuums(numVacs)  # Let the world's channel know how many vac's to use
 W.setIPInformation(worldInterfaces)       # Let the world know all the ip info about the agents.
 
-# Set the world up to record data
-W.setVacuumFileName(utilityHelper.getvacuumOutputFileName())
-W.setWorldFileName(utilityHelper.getWorldOutputFileName())
-W.setDataCollection(True)
+# Set up the world to collect data. This is necessary because the
+# world controls the information that is sent out to the vacuums.
+W.setDataCollection(not True)
 W.setDataCollectionFrequency(1)
+
+
+# Create the data collector and set it up to record data
+dataCollector = DataCollector.spawnDataCollector()            # create the data collector
+dataCollector.setVacuumFileName(                              # Set the relevant file names
+    utilityHelper.getvacuumOutputFileName())                  # to be used by the data collector.
+dataCollector.setWorldFileName(
+    utilityHelper.getWorldOutputFileName())
+dataCollector.setIPInformation(dataCollectorInterfaces)       # give it all the relevant ip info.
+dataCollector.setRouterChannel(Router.WORLD,W.getChannel())   # inform the sensor about the
+                                                              # world's channel
 
 
 
@@ -278,6 +293,10 @@ for i in range(numVacs) :
     # Let this vacuum know about the ip information about all of the other agents and the world.
     vacuum.setIPInformation(vacuumInterfaceList[i])
     vacuum.setRouterChannel(Router.WORLD,W.getChannel())
+    vacuum.setRouterChannel(Router.DATACOLLECTOR,dataCollector.getChannel())
+
+    # Let the data collector know about this vacuum's channel information.
+    dataCollector.setVacuumRouterInformation(vacuum.getChannel(),i)
 
 
     # Set the ip information for this particular vacuum.
@@ -317,6 +336,12 @@ sensor.start()
 plan.setHostname(plannerInterfaces[Router.PLANNER][0])
 plan.setPort(plannerInterfaces[Router.PLANNER][1])
 plan.start()
+
+# Set the ip info for the data collector and start it in its own process
+dataCollector.setHostname(dataCollectorInterfaces[Router.DATACOLLECTOR][0])
+dataCollector.setPort(dataCollectorInterfaces[Router.DATACOLLECTOR][1])
+dataCollector.start()
+
 
 # Set the ip info for the world and start up the graphical interface
 W.setHostname(worldInterfaces[Router.WORLD][0])

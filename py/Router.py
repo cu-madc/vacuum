@@ -75,7 +75,7 @@ class Router:
 
     def __init__(self,channel) :
 	self.channel = channel
-	self.agents = [dict(),dict(),dict(),dict(),dict()]
+	self.agents = [dict(),dict(),dict(),dict(),dict(),dict()]
 	self.vacuumArray = []     # array of object handles
 
 	self.setReliability(1.0)   # Probability of properly transmitting the

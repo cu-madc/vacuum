@@ -62,6 +62,9 @@
 #from numpy import *
 #from numpy.linalg import *
 
+import csv
+#import sys
+
 from Channel import Channel
 from Router import Router
 from Agent import Agent
@@ -72,7 +75,7 @@ class DataCollector (Agent):
     # Data collector object
 
 
-    def __init__(selfchannel=None) : #class constructor
+    def __init__(self,channel=None) : #class constructor
 	Agent.__init__(self,Router.DATACOLLECTOR)
 	self.setChannel(channel)              #channel to commander
 
@@ -147,6 +150,15 @@ class DataCollector (Agent):
     def getVacuumData(self,info) :
 	self.vacuumDataWriter.writerow(info)
 	
+
+
+    # Static method that is used as a helper to make it easier to
+    # create a data colelctor object.
+    @staticmethod
+    def spawnDataCollector() :
+	data = DataCollector()
+	channel = data.initializeChannel()
+	return(data)
 
 
 
