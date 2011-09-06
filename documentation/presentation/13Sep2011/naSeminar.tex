@@ -1,0 +1,363 @@
+\documentclass{beamer}
+
+\mode<presentation>
+
+\usetheme{Frankfurt}%
+\usecolortheme{seagull}
+\usepackage{multimedia}
+%\usepackage{movie15}
+
+\logo{\includegraphics[height=.25in]{clarksonGreen}}
+
+%\definecolor{garnet}{RGB}{179,0,91}
+%\definecolor{garnet}{RGB}{108,43,53}
+\definecolor{garnet}{RGB}{136,0,0}
+%\definecolor{clarksonGreen}{RGB}{0,71,28}
+\definecolor{clarksonGreen}{RGB}{0,52,21}
+\setbeamercolor{palette primary}{fg=clarksonGreen,bg=white}
+\setbeamercolor{palette secondary}{fg=clarksonGreen,bg=white}
+\setbeamercolor{palette tertiary}{fg=clarksonGreen,bg=white}
+\setbeamercolor{palette quaternary}{bg=clarksonGreen,fg=white}
+\setbeamercolor{block title}{fg=black,bg=black!15}
+\setbeamercolor{block body}{fg=black,bg=black!10}
+\setbeamercolor{titlelike}{bg=clarksonGreen,fg=white} % parent=palette quaternary}
+
+
+
+% Misc definitions that are nice to have
+\newcommand{\lp}{\left(}
+\newcommand{\rp}{\right)}
+
+
+
+%\usepackage{pgfpages}
+%%\pgfpagesuselayout{resize}[border shrink=5mm,landscape]
+%\pgfpagesuselayout{2 on 1}[border shrink=5mm]
+
+
+
+\begin{document}
+
+\title{Mission Model}
+\subtitle{Software Development}
+\author{MADC Team}
+\institute{Clarkson University}
+\date{13 Sep 2011}
+
+\begin{frame}
+  \titlepage
+  \begin{abstract}
+    Broad overview of the software development of the mission
+    model. The mission model is implemented in python with each agent
+    represented by a separate class. Underlying supporting classes
+    encapsulate the way information is exchanged and interpreted.
+  \end{abstract}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Outline}
+  \tableofcontents[pausesection,hideallsubsections]
+\end{frame}
+
+
+\section{Network Analysis}
+
+\begin{frame}
+  \frametitle{Network Analysis}
+  
+  The goal is to identify and minimize mission degradation due to
+  actions by an ``aggressor.''  
+
+  \begin{itemize}
+  \item How does the network degrade due to the aggressor's actions?
+  \item What is the aggressor doing?
+  \item What action should the defendor take?
+  \item Provide a framework for a hybrid simulation/emulation model
+    \begin{itemize}
+    \item Core - Network emulator
+    \item Mission model 
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Mission Model}
+
+  minimal model to capture the essential actions.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Components of the Mission Model}
+
+  \includegraphics[height=6cm]{conceptualWorld.png}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Details - World}
+
+  \begin{itemize}
+  \item A grid of ``locations''
+  \item ``dust'' settles on each grid area with an exponential distribution
+    with parameter $\lambda$.
+  \item A grid area can become ``wet'' which can disable a
+    vacuum. (Uniform distribution)
+  \item Each grid independent of the others.
+  \item Interacts with the sensor and the vacuums.
+  \item ``Controller'' for the mission simulation.
+  \end{itemize}
+  
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Details - Vacuum}
+
+  \begin{itemize}
+  \item Moves after receiving a command from the commander.
+  \item Has a maximum distance it can move in a round.
+  \item ``Cleans'' a grid area. The more dust the longer it takes.
+  \item Shuts itself down if the area is ``wet.''
+  \item If moves into an area that is ``wet'' then requires repairs.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Details - Commander}
+
+  \begin{itemize}
+  \item Receives recommendation from the planner and takes action.
+  \item Sends the information directly to the vacuum.
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Details - Sensor}
+  
+  \begin{itemize}
+  \item Receives information from the world.
+  \item Keeps track of dust levels and wetness.
+  \item Adds noise (uniform distribution)
+  \item Sends information to the planner.
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Details - Planner}
+
+  \begin{itemize}
+  \item Determines what to do next.
+  \item Predicts what area will have greatest dust level.
+  \item Uses Bayesian update (assuming exponential distribution)
+  \item Try to avoid wetness
+  \item Send information to the Commander.
+  \end{itemize}
+  
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Details - Data Collection}
+
+  \begin{itemize}
+  \item Place holder to deal with data collecion
+  \item Keep track of file operations
+  \item Receive information from  world and vacuums.
+  \end{itemize}
+
+\end{frame}
+
+
+
+\section{Model Implementation}
+
+
+
+
+\begin{frame}
+  \frametitle{Computational Model}
+  \only<1>{\includegraphics[height=6cm]{computationalMissionCore.png}}
+  \only<2>{\includegraphics[height=6cm]{computationalMissionPython.png}}
+  \only<3>{\includegraphics[height=6cm]{computationalMission.png}}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Why}
+
+  {In a nutshell:}
+
+  \begin{itemize}
+  \item<1-> This is the subject of Todd and Pat's discussion which
+    will follow.
+  \item<2-> We need flexible implementation.
+  \item<2-> We need flexible configurations and data management.
+  \end{itemize}
+  
+
+\end{frame}
+
+
+\section{Simulation Requirements}
+
+\begin{frame}
+  \frametitle{Simulation Requirements}
+
+  \begin{itemize}
+  \item Want to run multiple instances of a simulation. (Parallel
+    model evaluation.)
+  \item Need to get data quickly and easily.
+  \item Need to make changes during execution:
+    \begin{itemize}
+    \item Change a parameter set.
+    \item Stop a simulation
+    \item Start a simulation.
+    \item Query the state of a simulation via an external request.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Application Goals}
+
+  \begin{itemize}
+  \item Agents need to communicate with each other.
+  \item Communication interface should be through standard network
+    API's (ex: library calls through Python TCP classes.)
+  \item Access to data with minimal impact to the simulation but do it
+    in a distributed environment.
+  \item Make changes to the simulation while it is running.
+  \item Implement the mission model on a wide range of computational
+    platforms.
+  \end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Network Goals}
+
+  \begin{itemize}
+  \item Allow flexibility for a wide range of networks.
+  \item Be able to monitor the network in a way that is consistent
+    with ``real'' network monitoring tools.
+  \item Be able to configure the network with minimal \textit{a
+      priori} knowledge of the application.
+  \item Be able to exchange data in a seamless fashion with minimal
+    impact to the simulation.
+  \end{itemize}
+
+\end{frame}
+
+
+\section{Implementation Details}
+
+\begin{frame}
+  \frametitle{Core}
+
+  Todd and Pat will discuss this.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Encapsulating Agent Communications}
+
+  Each agent has a mission and a communication channel:
+
+  \only<1>{\includegraphics[height=7.0cm]{agent}}
+  \only<2>{\includegraphics[height=7.0cm]{agentRouter}}
+  \only<3>{\includegraphics[height=7.0cm]{agentSocketRouter}}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Data Exchange Considerations}
+
+  \begin{itemize}
+  \item Data exchange occurs over network.
+  \item Data exchange between agents within simulation should be
+    consistent with external requests.
+  \item Want portable parser using industry standard formats.
+  \item Have investigated numerous approaches:
+    \begin{itemize}
+    \item HLA
+    \item GME
+    \item OWL
+    \end{itemize}
+  \item Currently using XML format based heavily on HLA-DIF.
+  \item OWL appears to offer the best alternative.
+  \end{itemize}
+  
+
+\end{frame}
+
+
+
+
+%\begin{frame}
+%  \frametitle{Test Cases}
+%
+%  $r=2$, $\alpha=0.5$.
+%
+%  \begin{columns}[t]
+%    \column{.5\textwidth}
+%    \centerline{\includegraphics[height=5.0cm]{meanError-r2-alpha0_5}}
+%
+%    \column{.5\textwidth}
+%    \centerline{\includegraphics[height=5.0cm]{varError-r2-alpha0_5}}
+%  \end{columns}
+%
+%\end{frame}
+
+
+
+%  \begin{columns}[t]
+%    
+%    \column{.5\textwidth}
+%    \begin{block}{Barney?}
+%      Is it okay to trust your kids with Barney?
+%    \end{block}
+%    \pause
+%  
+%    \column{.5\textwidth}
+%    \begin{block}{No, not Barney!}
+%      Probably not.
+%    \end{block}
+%
+%  \end{columns}
+%
+%
+%\end{frame}
+
+
+
+
+
+\begin{frame}
+  \frametitle{}
+
+  \centerline{\textbf{\Large Questions?}}
+  
+\end{frame}
+
+
+
+\end{document}
+
+% LocalWords:  Clarkson pausesection hideallsubsections
