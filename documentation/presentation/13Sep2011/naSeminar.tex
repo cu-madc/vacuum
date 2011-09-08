@@ -38,7 +38,7 @@
 
 \begin{document}
 
-\title{Mission Model}
+\title{Network Impact on a Simple Mission Model}
 \subtitle{Software Development}
 \author{MADC Team}
 \institute{Clarkson University}
@@ -87,7 +87,15 @@
 \begin{frame}
   \frametitle{Mission Model}
 
-  minimal model to capture the essential actions.
+  Goal: Create a minimal model to capture the elements of a
+  ``mission.''
+
+  \begin{itemize}
+  \item Hierarchical structure between various agents.
+  \item Communication structure.
+  \item Quantifiable task.
+  \item Collect Data.
+  \end{itemize}
 
 \end{frame}
 
@@ -147,7 +155,7 @@
   \begin{itemize}
   \item Receives information from the world.
   \item Keeps track of dust levels and wetness.
-  \item Adds noise (uniform distribution)
+  \item Adds noise (uniform distribution).
   \item Sends information to the planner.
   \end{itemize}
 
@@ -160,8 +168,10 @@
   \begin{itemize}
   \item Determines what to do next.
   \item Predicts what area will have greatest dust level.
-  \item Uses Bayesian update (assuming exponential distribution)
-  \item Try to avoid wetness
+  \item Uses Bayesian update (assuming exponential distribution).
+  \item Maintain a queue of assignments.
+  \item Track current status of the vacuums.
+  \item Try to avoid wetness.
   \item Send information to the Commander.
   \end{itemize}
   
@@ -172,9 +182,10 @@
   \frametitle{Details - Data Collection}
 
   \begin{itemize}
-  \item Place holder to deal with data collecion
-  \item Keep track of file operations
+  \item Placeholder to deal with data collecion.
+  \item Keep track of file operations.
   \item Receive information from  world and vacuums.
+  \item Communication does not interfere with the emulated network.
   \end{itemize}
 
 \end{frame}
@@ -194,20 +205,6 @@
 \end{frame}
 
 
-\begin{frame}
-  \frametitle{Why}
-
-  {In a nutshell:}
-
-  \begin{itemize}
-  \item<1-> This is the subject of Todd and Pat's discussion which
-    will follow.
-  \item<2-> We need flexible implementation.
-  \item<2-> We need flexible configurations and data management.
-  \end{itemize}
-  
-
-\end{frame}
 
 
 \section{Simulation Requirements}
@@ -269,7 +266,13 @@
 \begin{frame}
   \frametitle{Core}
 
-  Todd and Pat will discuss this.
+  \begin{itemize}
+  \item Configuration file can be generated automatically.
+  \item Makes use of local network stack.
+  \item Configuration can be done manually and configuration file read
+    by other programs.
+  \item Processes can be run in containers or in separate processes.
+  \end{itemize}
 
 \end{frame}
 
@@ -346,13 +349,51 @@
 %\end{frame}
 
 
-
+\begin{frame}
+  \frametitle{Example}
+  
+\end{frame}
 
 
 \begin{frame}
-  \frametitle{}
+  \frametitle{Parallel Development}
+  
+  \begin{itemize}
+  \item Main repository on github.
+  \item Three remote repositories.
+  \item Mission model developed in parallel.
+  \end{itemize}
 
-  \centerline{\textbf{\Large Questions?}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Data Analysis}
+
+  \begin{itemize}
+  \item Create a simple sample network.
+  \item Identify critical network connections.
+  \item Vary packet drop rates at predetermined rates.
+  \item ANOVA
+    \begin{itemize}
+    \item Average dust levels.
+    \item Maximum dust levels.
+    \item Cost and total movement.
+    \item Need to develop a cost function.
+    \item Asymmetric goals.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Conclusion}
+
+  \begin{itemize}
+  \item Developing a flexible system that is easily adaptable.
+  \item Hybrid emulation/simulation model.
+  \item Can begin to collect data and perform data analysis.
+  \item Have a system ready to be delivered to Air Force.
+  \end{itemize}
   
 \end{frame}
 
