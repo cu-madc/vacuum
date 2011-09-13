@@ -73,7 +73,7 @@
   \begin{itemize}
   \item How does the network degrade due to the aggressor's actions?
   \item What is the aggressor doing?
-  \item What action should the defendor take?
+  \item What action should the defender take?
   \item Provide a framework for a hybrid simulation/emulation model
     \begin{itemize}
     \item Core - Network emulator
@@ -83,6 +83,10 @@
 
 \end{frame}
 
+
+
+
+\section{Model Development}
 
 \begin{frame}
   \frametitle{Mission Model}
@@ -134,6 +138,7 @@
   \item ``Cleans'' a grid area. The more dust the longer it takes.
   \item Shuts itself down if the area is ``wet.''
   \item If moves into an area that is ``wet'' then requires repairs.
+  \item Keep track of resources consumed.
   \end{itemize}
   
 \end{frame}
@@ -155,7 +160,7 @@
   \begin{itemize}
   \item Receives information from the world.
   \item Keeps track of dust levels and wetness.
-  \item Adds noise (uniform distribution).
+  \item Adds noise  (multiplicative - uniform distribution).
   \item Sends information to the planner.
   \end{itemize}
 
@@ -168,7 +173,9 @@
   \begin{itemize}
   \item Determines what to do next.
   \item Predicts what area will have greatest dust level.
-  \item Uses Bayesian update (assuming exponential distribution).
+  \item Uses Bayesian update (assuming exponential distribution with
+    normal noise - precision updated based on the precision from the
+    theoretical variance from the multiplicative noise).
   \item Maintain a queue of assignments.
   \item Track current status of the vacuums.
   \item Try to avoid wetness.
@@ -182,17 +189,13 @@
   \frametitle{Details - Data Collection}
 
   \begin{itemize}
-  \item Placeholder to deal with data collecion.
+  \item Placeholder to deal with data collection.
   \item Keep track of file operations.
   \item Receive information from  world and vacuums.
   \item Communication does not interfere with the emulated network.
   \end{itemize}
 
 \end{frame}
-
-
-
-\section{Model Implementation}
 
 
 
@@ -234,7 +237,7 @@
   \begin{itemize}
   \item Agents need to communicate with each other.
   \item Communication interface should be through standard network
-    API's (ex: library calls through Python TCP classes.)
+    API's (ex: library calls through TCP classes.)
   \item Access to data with minimal impact to the simulation but do it
     in a distributed environment.
   \item Make changes to the simulation while it is running.
@@ -277,6 +280,21 @@
 \end{frame}
 
 
+\section{Software Development}
+
+\begin{frame}
+  \frametitle{Parallel Development}
+  
+  \begin{itemize}
+  \item Main repository on git-hub.
+  \item Three remote repositories.
+  \item Mission model developed in parallel.
+  \item Changes merged collaboratively.
+  \end{itemize}
+
+\end{frame}
+
+
 \begin{frame}
   \frametitle{Encapsulating Agent Communications}
 
@@ -304,13 +322,32 @@
     \item OWL
     \end{itemize}
   \item Currently using XML format based heavily on HLA-DIF.
-  \item OWL appears to offer the best alternative.
+  \item OWL considered.
   \end{itemize}
   
 
 \end{frame}
 
 
+\begin{frame}
+  \frametitle{Data Exchange Contexts}
+  
+  \begin{itemize}
+  \item Some information exchanged over the core network:
+    \begin{itemize}
+    \item Information between sensor, planner, and commander.
+    \item Information between commander and vacuums.
+    \end{itemize}
+
+  \item Some information exchanged outside of the core network:
+    \begin{itemize}
+    \item Information between the world and vacuums/sensors.
+    \item Information between the data agents and other agents.
+    \end{itemize}
+
+  \end{itemize}
+
+\end{frame}
 
 
 %\begin{frame}
@@ -355,16 +392,6 @@
 \end{frame}
 
 
-\begin{frame}
-  \frametitle{Parallel Development}
-  
-  \begin{itemize}
-  \item Main repository on github.
-  \item Three remote repositories.
-  \item Mission model developed in parallel.
-  \end{itemize}
-
-\end{frame}
 
 \begin{frame}
   \frametitle{Data Analysis}
@@ -373,17 +400,31 @@
   \item Create a simple sample network.
   \item Identify critical network connections.
   \item Vary packet drop rates at predetermined rates.
-  \item ANOVA
+  \item ANOVA - Need to develop a cost function.
     \begin{itemize}
     \item Average dust levels.
     \item Maximum dust levels.
     \item Cost and total movement.
-    \item Need to develop a cost function.
     \item Asymmetric goals.
     \end{itemize}
   \end{itemize}
 
 \end{frame}
+
+\begin{frame}
+  \frametitle{Preliminary Data}
+
+  \includegraphics[height=7cm]{dustLevelsMeans}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Preliminary Data}
+
+  \includegraphics[height=7cm]{dustLevelsBoxplot}
+
+\end{frame}
+
 
 \begin{frame}
   \frametitle{Conclusion}
@@ -392,8 +433,10 @@
   \item Developing a flexible system that is easily adaptable.
   \item Hybrid emulation/simulation model.
   \item Can begin to collect data and perform data analysis.
-  \item Have a system ready to be delivered to Air Force.
+  \item Have a system ready to be delivered to AFRL.
   \end{itemize}
+
+  Support from AFRL agreement number FA8750-10-2-0245.
   
 \end{frame}
 
@@ -401,4 +444,5 @@
 
 \end{document}
 
-% LocalWords:  Clarkson pausesection hideallsubsections
+% LocalWords:  Clarkson pausesection hideallsubsections MADC API's TCP priori
+% LocalWords:  HLA GME DIF ANOVA AFRL
