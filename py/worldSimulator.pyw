@@ -94,7 +94,7 @@ v         = .1
 cloudsize = 20
 
 # Set the network reliability
-reliability = 0.98
+reliability = 0.90
 
 # Create the parser to help fix the default ip values and parse the
 # configuration files.

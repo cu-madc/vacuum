@@ -1,10 +1,10 @@
 
 
-high = read.csv('worldOutput-1.0-2011-09-12.csv')
-medHigh  = read.csv('worldOutput-0.99-2011-09-12.csv')
-med  = read.csv('worldOutput-0.98-2011-09-12.csv')
-medLow  = read.csv('worldOutput-0.97-2011-09-12.csv')
-low  = read.csv('worldOutput-0.96-2011-09-12.csv')
+high = read.csv('../worldOutput-1.0-2011-09-12.csv')
+medHigh  = read.csv('../worldOutput-0.99-2011-09-12.csv')
+med  = read.csv('../worldOutput-0.98-2011-09-12.csv')
+medLow  = read.csv('../worldOutput-0.97-2011-09-12.csv')
+low  = read.csv('../worldOutput-0.96-2011-09-12.csv')
 
 high = high$dust
 high = high[500:length(high)]
@@ -29,10 +29,21 @@ factors = c(rep(1.0,length(high)),
 
 dust = c(high,medHigh,med,medLow,low)
 
+
 a = aov(dust ~ factors)
 
+png(file='dustLevelsBoxplot.png')
 boxplot(dust~factors,xlab='Network Reliability',ylab='Dust Levels')
+dev.off()
 
 library(gplots)
+png(file='dustLevelsMeans.png')
 plotmeans(dust~factors,xlab='Network Reliability',ylab='Dust Amounts')
+dev.off()
 
+
+#factors = factors[dust!=0]
+#dust = log(dust[dust!=0])
+#png(file='dustLevelsLogMeans.png')
+#boxplot(dust~factors,xlab='Network Reliability',ylab='Dust Levels')
+#dev.off()
