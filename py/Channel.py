@@ -133,6 +133,13 @@ class Channel:
     def getDebug(self) :
 	return(Channel.DEBUG)
 
+    def setReliability(self,value) :
+        self.router.setReliability(value)
+
+    def getReliability(self) :
+        return(self.router.getReliability())
+
+
     def setRouterChannel(self,type,channel) :
 	self.router.setChannel(type,channel)
 

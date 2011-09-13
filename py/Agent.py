@@ -110,6 +110,13 @@ class Agent (Process):
         return(self.channel)
 
 
+    def setReliability(self,value) :
+        self.channel.setReliability(value)
+
+    def getReliability(self) :
+        return(self.channel.getReliability())
+
+
     # This is for setting/getting the type of agent this is. The types
     # are kept track of in the Router class.
     def setMyType(self,type) :

@@ -68,9 +68,20 @@ from Commander import Commander
 from Planner import Planner
 from SensorArray import SensorArray
 from GraphicalWorld import GraphicalWorld
+from World import World
 from Vacuum import Vacuum
 from Router import Router
+from DataCollector import DataCollector
 
+from MissionUtilities import MissionUtilities
+
+
+# Handle the command line arguments
+# The assumed form for the command line is the following
+#
+# ./worldSimulator.pyw --worldData=worldOutput-#DATESTAMP#.csv --vacuumData=vacuumOutput-#DATESTAMP#.csv --ipInfo=ipInfo.dat
+#
+#
 
 
 
@@ -82,26 +93,55 @@ s = 10.0
 v         = .1
 cloudsize = 20
 
+# Set the network reliability
+reliability = 0.98
+
+# Create the parser to help fix the default ip values and parse the
+# configuration files.
+utilityHelper = MissionUtilities()
+utilityHelper.parseCommandLine()
+
+
 # Create the world and get the gridsize
-W = GraphicalWorld.spawnWorld(r,s,v,cloudsize);
+W = World.spawnWorld(r,s,v,cloudsize);
+W.setReliability(reliability)
 N = W.getNumber()
 chan = W.getChannel()
+
+# Set up the world to collect data. This is necessary because the
+# world controls the information that is sent out to the vacuums.
+W.setDataCollection(True)
+W.setDataCollectionFrequency(1)
+
 
 
 # create and set the sensor
 accuracy = 0.4
 sensor = SensorArray.spawnSensorArray(accuracy)
 W.setSensor(sensor)
+sensor.setReliability(reliability)
 
 
 # create the planner
 plan=Planner.spawnPlanner(r*s/float(N*N),r,s,accuracy,N)
+plan.setReliability(reliability)
 W.setPlanner(plan)
 
 
 # create the commander
-command = Commander.spawnCommander()  
+command = Commander.spawnCommander()
+command.setReliability(reliability)
 #W.setCommander(command)
+
+
+# Create the data collector and set it up to record data
+dataCollector = DataCollector.spawnDataCollector()            # create the data collector
+dataCollector.setVacuumFileName(                              # Set the relevant file names
+    utilityHelper.getvacuumOutputFileName())                  # to be used by the data collector.
+dataCollector.setWorldFileName(
+    utilityHelper.getWorldOutputFileName())
+dataCollector.setDataCollection(True)                         # Make sure the data collector
+                                                              # knows it has to receive the data.
 
 
 # Create the vacuums
@@ -132,6 +172,7 @@ for i in range(numVacs) :
     vacuum.setRouterChannel(Router.COMMANDER,command.getChannel())
     vacuum.setRouterChannel(Router.PLANNER,plan.getChannel())
     vacuum.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
+    vacuum.setRouterChannel(Router.DATACOLLECTOR,dataCollector.getChannel())
 
 
     #vacuum.registerWorld(W,command)
@@ -156,12 +197,16 @@ command.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
 W.setRouterChannel(Router.SENSORARRAY,sensor.getChannel())
 W.setRouterChannel(Router.PLANNER,plan.getChannel())
 W.setRouterChannel(Router.COMMANDER,command.getChannel())
+W.setRouterChannel(Router.DATACOLLECTOR,dataCollector.getChannel())
+
+# Set the channel pointers for the data collector
+dataCollector.setRouterChannel(Router.WORLD,W.getChannel())
 
 
 # Create the window and enter the event polling loop for the window manager.
 H = []
 R = []
-W.draw()
-W.mainloop()
+W.stepInTime(5000,0,-1)
+W.quit()
 
 
