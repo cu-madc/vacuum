@@ -105,7 +105,7 @@ class  World (Agent):
         return(self.planner)
 
 
-    def quit(self) :
+    def quit(self,exitStatus=0) :
 	from XML.XMLMessageExternalCommand import XMLMessageExternalCommand
 
 	# Send a set of exit commands to the different agents. First
@@ -134,7 +134,7 @@ class  World (Agent):
 	    for id in range(self.numberVacuums):
 		self.channel.sendString(Router.VACUUM,parameter.xml2Char(False),id)
 	    
-        exit(0) # Say bye bye!
+        exit(exitStatus) # Say bye bye!
 
     
     def intializeVariables(self,r,s,v,cloudsize) :
