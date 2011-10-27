@@ -94,7 +94,7 @@ v         = .1
 cloudsize = 20
 
 # Set the network reliability
-reliability = 0.90
+reliability = 0.85
 
 # Create the parser to help fix the default ip values and parse the
 # configuration files.
@@ -104,7 +104,7 @@ utilityHelper.parseCommandLine()
 
 # Create the world and get the gridsize
 W = World.spawnWorld(r,s,v,cloudsize);
-W.setReliability(reliability)
+W.setReliability(1.0)
 N = W.getNumber()
 chan = W.getChannel()
 
