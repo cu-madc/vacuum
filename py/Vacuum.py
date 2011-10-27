@@ -393,4 +393,49 @@ class Vacuum (Agent):
     
 if (__name__ =='__main__') :
 
-    vacuum = Vacuum(1,0.0)
+    # Start up a mission utility object to get command line options.
+    from MissionUtilities import MissionUtilities
+    utilityHelper = MissionUtilities()
+
+
+    # Set the host addresses and ports for the different agents
+    agentInterfaces = {Router.SENSORARRAY:['10.0.1.10',10000],
+		       Router.PLANNER    :['10.0.1.11',10001],
+		       Router.COMMANDER  :['10.0.1.12',10002],
+		       Router.WORLD      :['10.0.1.13',10003]}
+
+    # Set the host addresses and ports for the different vacuums 
+    vacummInterfaces = [ ['10.0.1.14',10004],
+			 ['10.0.1.15',10005],
+			 ['10.0.1.16',10006]]
+
+    # Set the number of vacuums to use and decide which one this is
+    numVacs = len(vacummInterfaces)
+    myID = utilityHelper.getIDNum()
+
+    vacuum = Vacuum.spawnVacuum(myID,0)
+    #print("New Vacuum: {0} - {1}, {2}".format(vacuum,id(vacuum),i))
+    vacuum.getChannel().setNumberVacuums(numVacs)      # Tell the vacuum how many other
+						       # vacuums there will be
+    vacuum.setQueueUse(False)                          # Tell the vacuum to *not* get info
+						       # from the world through the queue.
+    pos = vacuum.getPosition()                         # get the default pos.
+
+
+    # Let this vacuum know about the ip information about all of the other agents and the world.
+    vacuum.setIPInformation(agentInterfaces)
+
+
+    # Set the ip information for this particular vacuum.
+    #print("Setting vacuum {0} - {1}:{2}".format(i,vacummInterfaces[i][0],vacummInterfaces[i][1]))
+    vacuum.setHostname(vacummInterfaces[myID][0])
+    vacuum.setPort(vacummInterfaces[myID][1])
+
+    for i in range(numVacs) :
+	# Let the vacuum know about the other vacuums including their ip information.
+	vacuum.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
+
+
+    # If you want the vacuum to run in its own process then uncomment out the next line (.start)
+    vacuum.start()
+
