@@ -90,13 +90,16 @@ class MissionUtilities:
 	# Create empty ip address information.
 	self.ipInformation = []
 
+	# set the default id number
+	self.idNum = 0
+
 
     ## parseCommandLine(self)
     #
     # Routine to parse the command line options.
     #
     def parseCommandLine(self) :
-	args = getopt.getopt(sys.argv[1:],'',["worldData=","vacuumData=","ipInfo="])
+	args = getopt.getopt(sys.argv[1:],'',["worldData=","vacuumData=","ipInfo=","id="])
 	for argument in args[0]:
 
 	    if("--worldData" in argument) :
@@ -110,6 +113,15 @@ class MissionUtilities:
 		self.setIPInfoFileName(argument[1])
 		self.parseIPInformation()
 
+	    if("--id" in argument) :
+		# This is an option to set the id number for this
+		# agent. This is usually used for vacuums.
+		try:
+		    self.setIDNum(int(argument[1]))
+		except ValueError:
+		    self.setIDNum(0)
+		    
+		#print("Here is the id number: {0}".format(self.getIDNum()))
 
 
     ## setWorldOutputFileName(self,fileName)
@@ -162,6 +174,20 @@ class MissionUtilities:
     # Routine to get the name of the data file that has the ip address information.
     def getIPInfoFileName(self) :
 	return(self.ipInfoFileName)
+
+    ## setIDNum(self,value)
+    #
+    # Routine to set the id number.
+    def setIDNum(self,value) :
+	self.idNum = value
+
+
+    ## getIDNum(self)
+    #
+    # Routine to return the id number.
+    def getIDNum(self) :
+	return(self.idNum)
+
 
 
     ## setDefaultIPInformation(self,ipInfo,agentType)
