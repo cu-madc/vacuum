@@ -211,7 +211,7 @@ class Agent (Process):
     # assigned to this agent. This is called when the start method is
     # called and will spawn a new agent. It should not be called
     # directly.
-    def run(self) :
+    def run(self,debug=False) :
 
 	#if(self.getDataCollection()) :
 	#    print("Data collection is on!")
@@ -223,8 +223,11 @@ class Agent (Process):
         #   if(self.getVacuumFileName()) :
 	#	print("opening the vacuum data file: {0}".format(self.getVacuumFileName()))
 	#	self.openVacuumDataFile("a")
-		
-	self.channel.getRouter().createAndInitializeSocketForever()
+
+	if(debug) :
+	    print("Agent.run: Starting the Socket server")
+	    
+	self.channel.getRouter().createAndInitializeSocketForever(debug)
 
 
     # For specifying the hostname/port number used by this agent. 

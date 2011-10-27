@@ -396,6 +396,7 @@ if (__name__ =='__main__') :
     # Start up a mission utility object to get command line options.
     from MissionUtilities import MissionUtilities
     utilityHelper = MissionUtilities()
+    utilityHelper.parseCommandLine()
 
 
     # Set the host addresses and ports for the different agents
@@ -412,6 +413,7 @@ if (__name__ =='__main__') :
     # Set the number of vacuums to use and decide which one this is
     numVacs = len(vacummInterfaces)
     myID = utilityHelper.getIDNum()
+    #print("My id is {0}".format(myID))
 
     vacuum = Vacuum.spawnVacuum(myID,0)
     #print("New Vacuum: {0} - {1}, {2}".format(vacuum,id(vacuum),i))
@@ -426,16 +428,14 @@ if (__name__ =='__main__') :
     vacuum.setIPInformation(agentInterfaces)
 
 
-    # Set the ip information for this particular vacuum.
-    #print("Setting vacuum {0} - {1}:{2}".format(i,vacummInterfaces[i][0],vacummInterfaces[i][1]))
-    vacuum.setHostname(vacummInterfaces[myID][0])
-    vacuum.setPort(vacummInterfaces[myID][1])
-
     for i in range(numVacs) :
 	# Let the vacuum know about the other vacuums including their ip information.
 	vacuum.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
 
 
-    # If you want the vacuum to run in its own process then uncomment out the next line (.start)
-    vacuum.start()
+    # Set the ip information for this particular vacuum.
+    #print("Setting vacuum {0} - {1}:{2}".format(i,vacummInterfaces[i][0],vacummInterfaces[i][1]))
+    vacuum.setHostname(vacummInterfaces[myID][0])
+    vacuum.setPort(vacummInterfaces[myID][1])
+    vacuum.run(False)
 

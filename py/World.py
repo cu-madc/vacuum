@@ -120,12 +120,19 @@ class  World (Agent):
 	self.channel.sendString(Router.SENSORARRAY,parameter.xml2Char(False))
 	self.channel.sendString(Router.DATACOLLECTOR,parameter.xml2Char(False))
 
-	
-	for definedVacuum in self.vacuumArray :
-	    # Send the message to each vacuum
-	    self.channel.sendString(Router.VACUUM,parameter.xml2Char(False),definedVacuum.getID())
-	    definedVacuum.checkIncomingQueue()  # Make sure the vacuum processes its world queue.
-	    
+
+	if(len(self.vacuumArray) > 0) :
+	    # There are locally defined vacuums. Send the message and then process the queue.
+	    for definedVacuum in self.vacuumArray :
+		# Send the message to each vacuum
+		self.channel.sendString(Router.VACUUM,parameter.xml2Char(False),definedVacuum.getID())
+		definedVacuum.checkIncomingQueue()  # Make sure the vacuum processes its world queue.
+
+	else:
+	    # There are no locally defined vacuums so just send
+	    # everything over the network to the respective id number.
+	    for id in range(self.numberVacuums):
+		self.channel.sendString(Router.VACUUM,parameter.xml2Char(False),id)
 	    
         exit(0) # Say bye bye!
 
@@ -163,6 +170,7 @@ class  World (Agent):
     def setNumberVacuums(self,number) :
 	# Routine to set the value that tracks the number of vacuums.
 	self.numberVacuums = number
+	#print("World.setNumberVacuums: The number of vacuums is {0}".format(self.numberVacuums))
 
 
     def addVacuum(self,vacuum,debug=False) :
@@ -350,7 +358,7 @@ class  World (Agent):
 
 	# Make sure that the vacuums update themselves.
         for vacuum in range(self.numberVacuums):
-	    #print("World.inc: Sending to vacuum {0}".format(vacuum))
+	    print("World.inc: Sending to vacuum {0}".format(vacuum))
             self.sendVacuumWorldTime(T,vacuum,self.Moisture)
 
 
@@ -430,7 +438,7 @@ class  World (Agent):
     # vacuum. This tells the vacuum that it needs to take whatever
     # actions are appropriate for a given time step.
     def sendVacuumWorldTime(self,T,id,wetness) :
-	#print("World.sendVacuumWorldTime - sending information")
+	print("World.sendVacuumWorldTime - sending information to vacuum {0}/{1}".format(id,T))
 	newTime = XMLMessageForAgent()
         newTime.createRootNode(False)
 	newTime.createObjectClassElements(Agent.VACUUM,"World Time")
@@ -567,43 +575,10 @@ if (__name__ =='__main__') :
     W.setIPInformation(agentInterfaces)       # Let the world know all the ip info about the agents.
 
 
-
-
-    # Create vacuums
-    vacArray = []
+    W.setNumberVacuums(numVacs)               # Tell the world how many vacumms there are.
     for i in range(numVacs) :
-	vacuum = Vacuum.spawnVacuum(i,0)
-	#print("New Vacuum: {0} - {1}, {2}".format(vacuum,id(vacuum),i))
-	vacuum.getChannel().setNumberVacuums(numVacs)      # Tell the vacuum how many other
-							   # vacuums there will be
-	vacuum.setQueueUse(True)                           # Tell the vacuum to get info
-							   # from the world through the queue.
-	vacArray.append(vacuum)                            # Append this to the vac's kept track of here.
-	pos = vacuum.getPosition()                         # get the default pos.
-	chan.getRouter().addVacuum(vacuum.getChannel(),i)  # Tell the world where the vacuum starts.
-
-	W.addVacuum(vacuum,False)                          # Add the vacuum to the world's list of vac's
-
-
-	chan.addVacuum(vacuum,i,pos[0],pos[1],False)       # Let the world's channel know about this vac
-
-	# Let this vacuum know about the ip information about all of the other agents and the world.
-	vacuum.setIPInformation(agentInterfaces)
-	vacuum.setRouterChannel(Router.WORLD,W.getChannel())
-
-
-	# Set the ip information for this particular vacuum.
-	#print("Setting vacuum {0} - {1}:{2}".format(i,vacummInterfaces[i][0],vacummInterfaces[i][1]))
-	vacuum.setHostname(vacummInterfaces[i][0])
-	vacuum.setPort(vacummInterfaces[i][1])
-
-	# If you want the vacuum to run in its own process then uncomment out the next line (.start)
-	#vacuum.start()
-
-	# If you want the vacuum to run in this process with a direct
-	# connection to the world then uncomment out the next line.
-	vacuum.getChannel().getRouter().createAndInitializeSocket()
-
+	# Let the world know about the other vacuums including their ip information.
+	W.setHostInformation(Router.VACUUM,vacummInterfaces[i][0],vacummInterfaces[i][1],i)
 
 
     # Set the ip info for the world and start up the graphical interface
@@ -616,14 +591,11 @@ if (__name__ =='__main__') :
     parameter = XMLMessageExternalCommand()
     parameter.setParameterValue(XMLMessageExternalCommand.RESTART)
     parameter.createRootNode()
-    for vacuum in vacArray:
-	# Turn on each of the vacuums - i.e. reset the vacuum.
-	# print("GraphicalWorld.start - Vacuum: {0}".format(vacuum))
-	#vacuum.setWorking(True)
-	#vacuum.setStatus(3)
-	#vacuum.initializeTime(0.0)
+    for i in range(numVacs) :
+	# Reset each vacuum.
+	print("GraphicalWorld.start - Vacuum: {0}".format(i))
 	W.channel.getRouter().sendString(
-	    Router.VACUUM,parameter.xml2Char(False),vacuum.getID())
+	    Router.VACUUM,parameter.xml2Char(False),i,False,True)
 
     H = []
     R = []

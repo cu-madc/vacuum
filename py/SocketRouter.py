@@ -182,7 +182,7 @@ class SocketRouter(Router):
 	    
 
 
-    def createAndInitializeSocketForever(self) :
+    def createAndInitializeSocketForever(self,debug=False) :
 	# *********************************************************************
 	# Set up and create the socket used for waiting for information.
 	# it will loop and wait on the socket "forever."
@@ -190,7 +190,7 @@ class SocketRouter(Router):
 
 	# Poll the queue periodically
 	self.setRunning(True)
-	if(SocketRouter.DEBUG) :
+	if(SocketRouter.DEBUG or debug) :
 	    	print("SocketRouter.createAndInitializeSocketForever - creating socket server {0}:{1}".format
 		      (self.getHostname(),self.getPort()))
 
@@ -200,7 +200,7 @@ class SocketRouter(Router):
 	    (self.getHostname(),self.getPort()),LocalTCPHandler,self)
 	#print(self.socketServer)
 
-	if(SocketRouter.DEBUG) :
+	if(SocketRouter.DEBUG or debug) :
 	    print("SocketRouter.createAndInitializeSocketForever Started listener, listening on {0}:{1}".format
 		  (self.getHostname(),self.getPort()))
 
@@ -418,6 +418,7 @@ class LocalTCPHandler (BaseRequestHandler):
 
 	else:
 	    # This is a request that is coming into a blocking tcp server.
+	    # print("acting on message:\n{0}".format(message))
 	    self.server.myParent.channel.receiveXMLReportParseAndDecide(message)
 		
 
@@ -456,8 +457,9 @@ class BasicTCPServer (TCPServer):
 
     DEBUG = False
 
-    def __init__(self,connectionInfo,handler,parent) :
+    def __init__(self,connectionInfo,handler,parent,debug=False) :
 	self.setParentClass(parent)
+	self.DEBUG = self.DEBUG or debug
         #ThreadingMixIn.__init__(self)
 	if(BasicTCPServer.DEBUG) :
 		print("Created the basic socket server class: {0}".format(connectionInfo))
